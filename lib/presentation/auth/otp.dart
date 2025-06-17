@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gold_house/presentation/auth/sign_up.dart';
 import 'package:gold_house/presentation/enterance/select_lg.dart';
 import 'package:gold_house/presentation/widgets/custom_button.dart';
@@ -28,11 +29,11 @@ class _OtpScreenState extends State<OtpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 50),
+                  SizedBox(height: 50.h),
                   Text(
                     "Biz quyidagi telefon raqamga sms yubordik:\n ${widget.phoneNumber}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF757575)),
+                    style: TextStyle(fontSize: 15.sp, color: Color(0xFF757575)),
                   ),
                   // const SizedBox(height: 16),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.1),
@@ -47,9 +48,13 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                       );
                     },
-                    child: const Text(
-                      "Accaunt yo'qmi?",
-                      style: TextStyle(color: Color(0xFF757575)),
+                    child: Text(
+                      "Telefon Raqamni o'zgartirish",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.sp,
+                        color: Color(0xFF757575),
+                      ),
                     ),
                   ),
                 ],
