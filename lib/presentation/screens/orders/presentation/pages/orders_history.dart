@@ -8,37 +8,7 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  final List<OrderModel> orders = [
-    OrderModel(
-      isVisible: false,
-      id: "63224636",
-      status: OrderStatus.delivered,
-      date: "Juma 10 yanvar",
-      productName: "",
-      productPrice: 126650,
-      image: "assets/images/penopleks.png",
-    ),
-    OrderModel(
-      isVisible: false,
-      id: "63224637",
-      status: OrderStatus.processing,
-      date: "Juma 10 yanvar",
-      productName: "PENOPEX COMFORT",
-      productPrice: 125650,
-      image: "assets/images/penopleks.png",
-      installmentText: "1.999 so‘mdan / 12oy",
-    ),
-    OrderModel(
-      isVisible: false,
-      id: "63224638",
-      status: OrderStatus.cancelled,
-      date: "Juma 10 yanvar",
-      productName: "",
-      productPrice: 126650,
-      image: "assets/images/penopleks.png",
-    ),
-  ];
-
+  final orders = AllStaticLists().orders;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

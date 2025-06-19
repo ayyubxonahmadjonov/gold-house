@@ -1,4 +1,4 @@
-import '../../core/constants/app_imports.dart';
+import '../constants/app_imports.dart';
 
 class CustomSearchbar extends StatefulWidget {
   final String hintText;

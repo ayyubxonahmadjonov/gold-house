@@ -1,4 +1,4 @@
-import '../../core/constants/app_imports.dart';
+import '../constants/app_imports.dart';
 
 class CustomPhoneForm extends StatefulWidget {
   final TextEditingController controller;

@@ -1,6 +1,6 @@
-import 'package:gold_house/presentation/auth/sign_in.dart';
+import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
 
-import '../../core/constants/app_imports.dart';
+import '../../../../../core/constants/app_imports.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

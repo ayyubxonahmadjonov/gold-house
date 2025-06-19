@@ -8,7 +8,7 @@ class SelectBusinessScreen extends StatefulWidget {
 }
 
 class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
-  String selectedBusiness = "";
+  String selectedBusiness = "Giaz Mebel";
 
   void _selectBusiness(String title) {
     setState(() {
@@ -27,21 +27,21 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BusinessCard(
-                imagePath: "assets/icons/mebel.svg",
+                imagePath: "assets/images/gold.svg",
                 title: "Giaz Mebel",
                 isSelected: selectedBusiness == "Giaz Mebel",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/icons/story_baza.svg",
+                imagePath: "assets/images/story_baza.svg",
                 title: "Stroy Baza №1",
                 isSelected: selectedBusiness == "Stroy Baza №1",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/icons/gold.svg",
+                imagePath: "assets/images/gold.svg",
                 title: "Gold Klinker",
                 isSelected: selectedBusiness == "Gold Klinker",
                 onTap: _selectBusiness,
@@ -106,12 +106,7 @@ class BusinessCard extends StatelessWidget {
             const SizedBox(width: 12),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset(
-                imagePath,
-                // width: 35,
-                // height: 35,
-                // fit: BoxFit.cover,
-              ),
+              child: SvgPicture.asset(imagePath, color: Colors.red),
             ),
             const SizedBox(width: 16),
             Text(

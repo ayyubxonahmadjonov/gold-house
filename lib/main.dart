@@ -1,12 +1,9 @@
-import 'package:gold_house/presentation/widgets/custom_usernotifier.dart';
-
 import '../../core/constants/app_imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferencesService.init();
   await HiveService.init();
-  await UserPrefsNotifier().loadUserData();
 
   runApp(const MyApp());
 }

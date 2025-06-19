@@ -1,4 +1,4 @@
-import '../../core/constants/app_imports.dart';
+import '../../../core/constants/app_imports.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,7 +14,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const SearchScreen(),
     OrderHistoryScreen(),
-    const BasketScreen(),
+    const BasketPage(),
     ProfileScreen(),
   ];
 

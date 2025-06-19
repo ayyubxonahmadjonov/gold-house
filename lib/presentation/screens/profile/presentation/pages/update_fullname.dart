@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
+import 'package:gold_house/core/shared/custom_awesome_dialog.dart';
 
-import 'package:gold_house/presentation/widgets/custom_textfield.dart';
+import 'package:gold_house/core/shared/custom_textfield.dart';
 
 class UpdateFullname extends StatefulWidget {
   const UpdateFullname({super.key});
@@ -51,9 +52,22 @@ class _UpdateFullnameState extends State<UpdateFullname> {
               child: CustomButton(
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
-                  prefs.setString('profilename', nameController.text);
-                  prefs.setString('profilesurname', surnameController.text);
-                  setState(() {});
+                  prefs.setString(
+                    'profilfullname',
+                    "${nameController.text} ${surnameController.text}",
+                  );
+
+                  CustomAwesomeDialog.showInfoDialog(
+                    onOkPress: () {
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
+
+                    dialogtype: DialogType.success,
+                    context,
+                    title: "O'zgarishlarni saqlandi",
+                    desc: "Ism va familiyangiz muvaffaqiyatli o'zgartirildi",
+                  );
                 },
                 title: "O'zgarishlarni salash",
                 bacColor: AppColors.yellow,

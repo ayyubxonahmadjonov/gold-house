@@ -1,6 +1,6 @@
-import 'package:gold_house/presentation/main_screen/bottom_bar_pages/profile/update_fullname.dart';
+import 'package:gold_house/presentation/screens/profile/presentation/pages/update_fullname.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../core/constants/app_imports.dart';
+import '../../../../../core/constants/app_imports.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -20,14 +20,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  String name = "";
-  String surname = "";
-
   @override
   Widget build(BuildContext context) {
     final prefs = SharedPreferencesService.instance;
-    name = prefs.getString("profilename") ?? "";
-    surname = prefs.getString("profilesurname") ?? "";
+
+    ValueNotifier<String> fullname = ValueNotifier<String>(
+      "${prefs.getString("profilfullname")}",
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -42,20 +42,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey),
               ),
-              child: ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return UpdateFullname();
-                      },
-                    ),
+              child: ValueListenableBuilder(
+                valueListenable: fullname,
+                builder: (context, value, child) {
+                  return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateFullname();
+                          },
+                        ),
+                      );
+                    },
+                    leading: Icon(Icons.person),
+                    title: Text("${fullname.value}"),
+                    subtitle: Text("+998 88 739 11"),
                   );
                 },
-                leading: Icon(Icons.person),
-                title: Text("$name $surname"),
-                subtitle: Text("+998 88 739 11"),
               ),
             ),
             SizedBox(height: 20.h),

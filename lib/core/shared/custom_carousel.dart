@@ -1,4 +1,4 @@
-import '../../core/constants/app_imports.dart';
+import '../constants/app_imports.dart';
 
 class CustomCarousel extends StatefulWidget {
   final List<String> images;

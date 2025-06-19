@@ -1,4 +1,4 @@
-import '../../core/constants/app_imports.dart';
+import '../../../../../core/constants/app_imports.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
