@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:gold_house/data/local/shared_preferences/shared_service.dart';
-import 'package:gold_house/presentation/enterance/select_business.dart';
-import 'package:gold_house/presentation/main_screen/main_screen.dart';
+import '../../core/constants/app_imports.dart';
 
 class SelectRgScreen extends StatefulWidget {
   const SelectRgScreen({super.key});

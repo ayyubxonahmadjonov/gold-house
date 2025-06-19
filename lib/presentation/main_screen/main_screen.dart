@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:gold_house/core/constants/app_colors.dart';
-import 'package:gold_house/presentation/home/home_screen.dart';
-import 'package:gold_house/presentation/main_screen/bottom_bar_pages/basket.dart';
-import 'package:gold_house/presentation/main_screen/bottom_bar_pages/categories.dart';
-import 'package:gold_house/presentation/main_screen/bottom_bar_pages/penoplex.dart';
-import 'package:gold_house/presentation/main_screen/bottom_bar_pages/profile.dart';
+import '../../core/constants/app_imports.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,7 +13,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const SearchScreen(),
-    const PenoPlexScreen(),
+    OrderHistoryScreen(),
     const BasketScreen(),
     ProfileScreen(),
   ];
@@ -46,21 +40,29 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            backgroundColor: AppColors.navbarColor,
+
             icon: ImageIcon(AssetImage('assets/icons/search.png')),
 
             label: 'Search',
           ),
           BottomNavigationBarItem(
+            backgroundColor: AppColors.navbarColor,
+
             icon: ImageIcon(AssetImage('assets/icons/box.png')),
 
             label: 'Box',
           ),
           BottomNavigationBarItem(
+            backgroundColor: AppColors.navbarColor,
+
             icon: ImageIcon(AssetImage('assets/icons/basket.png')),
 
             label: 'Basket',
           ),
           BottomNavigationBarItem(
+            backgroundColor: AppColors.navbarColor,
+
             icon: ImageIcon(AssetImage('assets/icons/profile.png')),
 
             label: 'Profile',

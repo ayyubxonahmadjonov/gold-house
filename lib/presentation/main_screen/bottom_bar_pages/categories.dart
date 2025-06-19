@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/core/constants/app_colors.dart';
-import 'package:gold_house/presentation/widgets/custom_searchbar.dart';
+import '../../../core/constants/app_imports.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

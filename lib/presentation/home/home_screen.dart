@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/core/constants/app_colors.dart';
-import 'package:gold_house/presentation/widgets/custom_carousel.dart';
-import 'package:gold_house/presentation/widgets/custom_searchbar.dart';
-import 'package:gold_house/presentation/widgets/selected_row.dart';
+import 'package:gold_house/presentation/home/description_screen.dart';
+
+import '../../core/constants/app_imports.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -73,66 +70,86 @@ class _HomeScreenState extends State<HomeScreen> {
                       childAspectRatio: 0.7,
                     ),
                     itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 160.h,
-                              width: 160.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.whitegrey,
-                                borderRadius: BorderRadius.circular(10.r),
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.5),
-                                ),
-                              ),
-                              child: Image.asset(
-                                "assets/images/penopleks.png",
-                                width: 120.w,
-                              ),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => ProductDescriptionPage(
+                                    title: "Penopleks",
+                                    color: "Ko'k",
+                                    size: "4x6",
+                                    description:
+                                        "Lorem Ipsum matbaa va matn terish sanoatining oddiygina soxta matnidir. Lorem Ipsum 1500-yillardan beri sanoatning standart qo'g'irchoq matni bo'lib kelgan, o'shandan beri noma'lum printer galleyni olib, kitob namunasini yaratish uchun shifrlagan. U nafaqat besh asr davomida, balki elektron terishga sakrashdan ham omon qoldi va deyarli o'zgarishsiz qoldi. U 1960-yillarda Lorem Ipsum parchalarini oʻz ichiga olgan Letraset varaqlarining chiqarilishi va yaqinda ",
+                                    price: "1,116,500",
+                                    monthlyPrice: "135,650",
+                                    months: "24 oy",
+                                  ),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              "PENOPLEKS",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              children: [
-                                Text(
-                                  "Narxi:9.999 UZS",
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 160.h,
+                                width: 160.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.whitegrey,
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  border: Border.all(
+                                    color: Colors.black.withOpacity(0.5),
                                   ),
                                 ),
-                                SizedBox(width: 10.w),
-                                ImageIcon(
-                                  AssetImage("assets/icons/basket.png"),
-                                  size: 16.w,
-                                  color: AppColors.yellow,
+                                child: Image.asset(
+                                  "assets/images/penopleks.png",
+                                  width: 120.w,
                                 ),
-                                IconButton(
-                                  icon: Icon(
-                                    isFavorite
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "PENOPLEKS",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 10.h),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Narxi:9.999 UZS",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  ImageIcon(
+                                    AssetImage("assets/icons/basket.png"),
                                     size: 16.w,
+                                    color: AppColors.yellow,
                                   ),
-                                  onPressed: () {},
-                                  color:
+                                  IconButton(
+                                    icon: Icon(
                                       isFavorite
-                                          ? Colors.red
-                                          : AppColors.yellow,
-                                ),
-                              ],
-                            ),
-                          ],
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      size: 16.w,
+                                    ),
+                                    onPressed: () {},
+                                    color:
+                                        isFavorite
+                                            ? Colors.red
+                                            : AppColors.yellow,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

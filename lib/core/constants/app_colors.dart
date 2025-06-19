@@ -9,4 +9,6 @@ class AppColors {
   static const Color whiteOpacity2 = Color.fromRGBO(255, 255, 255, 0.5);
   static const Color whiteOpacity1 = Color.fromRGBO(255, 255, 255, 1);
   static const Color whitegrey = Color.fromRGBO(242, 242, 241, 1);
+  static const Color brown = Color.fromRGBO(190, 160, 134, 1);
+  static const Color red = Colors.red;
 }

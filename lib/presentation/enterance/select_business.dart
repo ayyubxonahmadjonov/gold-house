@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gold_house/data/local/shared_preferences/shared_service.dart';
-import 'package:gold_house/presentation/enterance/slelct_rg.dart';
-import 'package:gold_house/presentation/widgets/custom_button.dart';
+import '../../core/constants/app_imports.dart';
 
 class SelectBusinessScreen extends StatefulWidget {
   const SelectBusinessScreen({super.key});

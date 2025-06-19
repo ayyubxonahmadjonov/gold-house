@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/core/constants/app_colors.dart';
+import '../../core/constants/app_imports.dart';
 
 class CustomSearchbar extends StatefulWidget {
   final String hintText;

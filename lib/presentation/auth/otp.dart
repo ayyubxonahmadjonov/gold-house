@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/presentation/auth/sign_up.dart';
-import 'package:gold_house/presentation/enterance/select_lg.dart';
-import 'package:gold_house/presentation/widgets/custom_button.dart';
+import '../../core/constants/app_imports.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;

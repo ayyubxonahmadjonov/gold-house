@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/data/local/hive_helper/hive_class.dart';
-import 'package:gold_house/data/local/shared_preferences/shared_service.dart';
-import 'package:gold_house/presentation/auth/sign_up.dart';
-import 'package:gold_house/presentation/errors/404_page.dart';
-import 'package:gold_house/presentation/errors/noconnection.dart';
+import 'package:gold_house/presentation/widgets/custom_usernotifier.dart';
+
+import '../../core/constants/app_imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferencesService.init();
   await HiveService.init();
+  await UserPrefsNotifier().loadUserData();
 
   runApp(const MyApp());
 }
@@ -31,7 +28,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: SignUpScreen(),
+          home: MainScreen(),
         );
       },
     );

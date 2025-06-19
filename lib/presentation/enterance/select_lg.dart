@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:gold_house/data/local/shared_preferences/shared_service.dart';
-import 'package:gold_house/presentation/enterance/select_business.dart'
-    show SelectBusinessScreen;
-import 'package:gold_house/presentation/enterance/slelct_rg.dart';
-import 'package:gold_house/presentation/widgets/custom_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/app_imports.dart';
 
 class SelectLgScreen extends StatefulWidget {
   const SelectLgScreen({super.key});

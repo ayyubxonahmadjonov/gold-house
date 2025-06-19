@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/presentation/auth/otp.dart';
 import 'package:gold_house/presentation/auth/sign_in.dart';
-import 'package:gold_house/presentation/widgets/custom_intel_phone.dart';
-import 'package:gold_house/presentation/widgets/custom_button.dart';
+
+import '../../core/constants/app_imports.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

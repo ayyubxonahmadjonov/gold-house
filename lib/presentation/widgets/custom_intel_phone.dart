@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:gold_house/data/local/shared_preferences/shared_service.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:intl_phone_field/phone_number.dart';
+import '../../core/constants/app_imports.dart';
 
 class CustomPhoneForm extends StatefulWidget {
   final TextEditingController controller;
