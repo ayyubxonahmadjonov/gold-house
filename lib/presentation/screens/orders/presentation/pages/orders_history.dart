@@ -13,6 +13,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+
         backgroundColor: AppColors.primaryColor,
         title: Text("Buyurtmalarim"),
       ),

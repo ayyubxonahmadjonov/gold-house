@@ -17,17 +17,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Column(
         children: [
-          /// Tepadagi qism scroll bo‘lmasligi kerak
           Container(
             color: AppColors.primaryColor,
             child: Column(
               children: [
-                SizedBox(height: 70.h),
-                Image.asset("assets/images/app_logo.png"),
+                SizedBox(height: 60.h),
+                SvgPicture.asset("assets/images/app_logo.png"),
                 CustomSearchbar(
                   hintText: "Qidirish",
                   prefixicon: Icon(Icons.search),
                 ),
+                SizedBox(height: 10.h),
               ],
             ),
           ),
