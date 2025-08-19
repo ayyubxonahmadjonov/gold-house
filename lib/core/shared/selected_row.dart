@@ -8,7 +8,7 @@ class SelectableRow extends StatefulWidget {
 }
 
 class _SelectableRowState extends State<SelectableRow> {
-  int selectedIndex = 1;
+  int selectedIndex = 0;
 
   final List<String> items = ["Stroy Baza №1", "Mebel", "Gold klinker"];
 
@@ -27,9 +27,13 @@ class _SelectableRowState extends State<SelectableRow> {
           final isSelected = selectedIndex == index;
           return GestureDetector(
             onTap: () {
+              BlocProvider.of<GetProductsBloc>(context).add(GetProductsByBranchIdEvent(branchId: index.toString()));
               setState(() {
+     
                 selectedIndex = index;
+
               });
+
             },
             child: Text(
               items[index],

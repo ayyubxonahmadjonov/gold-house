@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_imports.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -58,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                     leading: Icon(Icons.person),
-                    title: Text("${fullname.value}"),
+                    title: Text(fullname.value),
                     subtitle: Text("+998 88 739 11"),
                   );
                 },

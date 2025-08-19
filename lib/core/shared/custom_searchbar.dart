@@ -20,7 +20,7 @@ class _CustomSearchbarState extends State<CustomSearchbar> {
           filled: true,
           hintText: widget.hintText,
 
-          prefixIcon: widget.prefixicon ?? null,
+          prefixIcon: widget.prefixicon,
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(10),

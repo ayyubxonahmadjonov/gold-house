@@ -1,3 +1,6 @@
+import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_up.dart' as widget;
+import 'package:pinput/pinput.dart';
+
 import '../../../../../core/constants/app_imports.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -9,6 +12,7 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+  TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,39 +24,77 @@ class _OtpScreenState extends State<OtpScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 50.h),
-                  Text(
-                    "Biz quyidagi telefon raqamga sms yubordik:\n ${widget.phoneNumber}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15.sp, color: Color(0xFF757575)),
+              child: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
+                listener: (context, state) {
+              if(state is OtpVerificationSuccess){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SelectLgScreen(),
                   ),
-                  // const SizedBox(height: 16),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                  const OtpForm(),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
+                );
+              }
+              if(state is OtpVerificationError){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+              }
+                },
+                builder: (context, state) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 50.h),
+                      Text(
+                        "Biz quyidagi telefon raqamga sms yubordik:\n ${widget.phoneNumber}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Color(0xFF757575),
                         ),
-                      );
-                    },
-                    child: Text(
-                      "Telefon Raqamni o'zgartirish",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15.sp,
-                        color: Color(0xFF757575),
                       ),
-                    ),
-                  ),
-                ],
+                      // const SizedBox(height: 16),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
+                      Pinput(
+                      
+                        length: 6,
+                        controller: otpController,
+                      ),
+                      SizedBox(height: 50.h),
+                      CustomButton(
+                      
+                        title: "Tasdiqlash",
+                        onPressed: () {
+                          BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: widget.phoneNumber, verification_code: otpController.text));
+                        }, bacColor: Colors.yellow, textColor: Colors.black, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 5, width: 330.w, height: 50.h,
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Telefon Raqamni o'zgartirish",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.sp,
+                            color: Color(0xFF757575),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -85,6 +127,7 @@ class OtpForm extends StatelessWidget {
                   onSaved: (pin) {},
                   onChanged: (pin) {
                     if (pin.isNotEmpty) {
+                      print("bu pin $pin");
                       FocusScope.of(context).nextFocus();
                     }
                   },
@@ -198,8 +241,11 @@ class OtpForm extends StatelessWidget {
                 height: 60,
                 width: 64,
                 child: TextFormField(
-                  onSaved: (pin) {},
+                  onSaved: (pin) {
+                    print("bu pin2 $pin");
+                  },
                   onChanged: (pin) {
+                    print("bu pin3 $pin");
                     if (pin.isNotEmpty) {
                       FocusScope.of(context).nextFocus();
                     }
@@ -235,11 +281,10 @@ class OtpForm extends StatelessWidget {
             borderRadius: 5,
             width: 350,
             height: 50,
-            onPressed:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SelectLgScreen()),
-                ),
+            onPressed:() {
+              BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: widget.phoneNumber, verification_code:"" ));
+            },
+              
           ),
         ],
       ),

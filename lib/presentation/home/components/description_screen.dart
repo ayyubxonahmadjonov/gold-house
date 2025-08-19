@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gold_house/core/constants/app_colors.dart';
+import 'package:gold_house/presentation/home/components/monthly_payment.dart';
 
 class ProductDescriptionPage extends StatelessWidget {
   final String title;
@@ -7,39 +9,52 @@ class ProductDescriptionPage extends StatelessWidget {
   final String size;
   final String description;
   final String price;
-  final String monthlyPrice;
-  final String months;
+  final String monthlyPrice3;
+  final String monthlyPrice6;
+  final String monthlyPrice12;
+  final String monthlyPrice24;
+  final String image;
+  final bool isAvailable;
 
   const ProductDescriptionPage({
     super.key,
+    required this.image,
+    required this.isAvailable,
     required this.title,
     required this.color,
     required this.size,
     required this.description,
     required this.price,
-    required this.monthlyPrice,
-    required this.months,
+    required this.monthlyPrice3,
+    required this.monthlyPrice6,
+    required this.monthlyPrice12,
+    required this.monthlyPrice24,
+
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
+surfaceTintColor: AppColors.white,
+        backgroundColor: AppColors.white,
         leading: const BackButton(),
         title: Text(title),
         actions: const [Icon(Icons.favorite_border), SizedBox(width: 16)],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image slider
             Center(
               child: Column(
+
                 children: [
-                  Image.asset('assets/images/penopleks.png', height: 200.h),
-                  SizedBox(height: 8.h),
+                  Image.network('https://backkk.stroybazan1.uz$image', height: 200.h, fit: BoxFit.contain,),
+                  SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -59,7 +74,7 @@ class ProductDescriptionPage extends StatelessWidget {
 
             // Color
             Text(
-              'Mavjud',
+              isAvailable ? 'Mavjud' : 'Mavjud emas',
               style: TextStyle(color: Colors.green, fontSize: 14.sp),
             ),
             SizedBox(height: 6.h),
@@ -68,7 +83,7 @@ class ProductDescriptionPage extends StatelessWidget {
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 6.h),
-            Text("Rang : $color", style: TextStyle(fontSize: 14.sp)),
+          if(color.isNotEmpty)  Text("Rang : $color", style: TextStyle(fontSize: 14.sp)),
 
             SizedBox(height: 12.h),
             // Thumbnails
@@ -94,10 +109,7 @@ class ProductDescriptionPage extends StatelessWidget {
 
             SizedBox(height: 12.h),
             // Sizes
-            Wrap(
-              spacing: 8.w,
-              children: List.generate(3, (index) {
-                return Container(
+Container(
                   padding: EdgeInsets.symmetric(
                     vertical: 10.h,
                     horizontal: 14.w,
@@ -107,10 +119,8 @@ class ProductDescriptionPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(size),
-                );
-              }),
-            ),
-
+                ),
+            
             SizedBox(height: 20.h),
             Text(
               "Tasnif",
@@ -126,39 +136,12 @@ class ProductDescriptionPage extends StatelessWidget {
             ),
 
             SizedBox(height: 12.h),
-            Container(
-              padding: EdgeInsets.all(12.h),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8.w,
-                      children:
-                          ['3oy', '6oy', '12oy', months].map((e) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Text(e),
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                  Text("$monthlyPrice so’m x $months"),
-                ],
-              ),
-            ),
-
+MonthlyPaymentWidget(
+  monthlyPrice3: monthlyPrice3,
+  monthlyPrice6: monthlyPrice6,
+  monthlyPrice12: monthlyPrice12,
+  monthlyPrice24: monthlyPrice24,
+),
             SizedBox(height: 12.h),
             Text(
               "Siz buyurtmani 3 oydan 24 oygacha muddatli to‘lov evaziga xarid qilishingiz mumkin.",

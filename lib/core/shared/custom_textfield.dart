@@ -5,7 +5,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
 
-  CustomTextField({
+  const CustomTextField({
     super.key,
     this.label,
     required this.hintText,

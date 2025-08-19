@@ -26,7 +26,9 @@ export 'package:gold_house/presentation/screens/auth/presentation/pages/otp.dart
 export 'package:gold_house/presentation/errors/404_page.dart';
 export 'package:gold_house/presentation/errors/noconnection.dart';
 
-// Main Screens
+export 'package:gold_house/bloc/products/get_products_bloc.dart';
+export 'package:gold_house/bloc/get_cities/get_cities_bloc.dart';
+
 export 'package:gold_house/presentation/home/home_screen.dart';
 export 'package:gold_house/presentation/screens/main/main_screen.dart';
 export 'package:gold_house/presentation/screens/basket/presentation/pages/basket.dart';
@@ -45,3 +47,7 @@ export 'package:gold_house/core/shared/custom_carousel.dart';
 export 'package:gold_house/core/shared/custom_searchbar.dart';
 export 'package:gold_house/core/shared/custom_intel_phone.dart';
 export 'package:gold_house/core/shared/selected_row.dart';
+export 'package:flutter_bloc/flutter_bloc.dart';
+export 'package:gold_house/bloc/login/auth_login_bloc.dart';
+export 'package:gold_house/bloc/otp/otp_verification_bloc.dart';
+export 'package:gold_house/bloc/register/auth_register_bloc.dart';

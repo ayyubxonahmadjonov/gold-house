@@ -1,3 +1,6 @@
+import 'package:gold_house/bloc/get_cities/get_cities_bloc.dart';
+import 'package:gold_house/data/models/city_model.dart';
+
 import '../../core/constants/app_imports.dart';
 
 class SelectRgScreen extends StatefulWidget {
@@ -9,97 +12,152 @@ class SelectRgScreen extends StatefulWidget {
 
 class _SelectRgScreenState extends State<SelectRgScreen> {
   String selectedCity = "Andijon";
-  final List<String> cities = ["Toshkent", "Andijon", "Farg'ona", "Namangan"];
 
-  void _showCityDialog() {
-    String? tempSelected = selectedCity;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            "Shaharni tanlang",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return SizedBox(
-                width: double.maxFinite,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: cities.length,
-                  itemBuilder: (context, index) {
-                    final city = cities[index];
-                    return RadioListTile<String>(
-                      title: Text(
-                        city,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color:
-                              tempSelected == city
+void _showCityDialog() {
+  String? tempSelected = selectedCity;
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return BlocConsumer<GetCitiesBloc, GetCitiesState>(
+        listener: (context, state) {
+          // kerak bo'lsa snackbar yoki boshqa listener eventlar
+        },
+        builder: (context, state) {
+  
+          if (state is GetCitiesLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is GetCitiesError) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text("Xatolik"),
+              content: Text("Shaharlarni yuklashda muammo yuz berdi.${state.message}"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          }
+
+
+          if (state is GetCitiesSuccess) {
+            print(state.cities.first);
+            List<City> cities = state.cities; 
+
+            if (cities.isEmpty) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: const Text("Ma'lumot yo‘q"),
+                content: const Text("Hech qanday shahar topilmadi."),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            }
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text(
+                "Shaharni tanlang",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              content: StatefulBuilder(
+                builder: (context, setState) {
+                  return SizedBox(
+                    width: double.maxFinite,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: cities.length,
+                      itemBuilder: (context, index) {
+                        final city = cities[index].nameUz; // yoki nameRu/nameEn
+                        return RadioListTile<String>(
+                          title: Text(
+                            city,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: tempSelected == city
                                   ? Colors.amber[800]
                                   : Colors.black87,
-                        ),
-                      ),
-                      value: city,
-                      groupValue: tempSelected,
-                      activeColor: Colors.amber[800],
-                      onChanged: (value) {
-                        setState(() {
-                          tempSelected = value!;
-                        });
-                      },
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber[800],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
-              onPressed:
-                  tempSelected == null
-                      ? null
-                      : () async {
-                        setState(() {
-                          selectedCity = tempSelected!;
-                        });
-                        final prefs = SharedPreferencesService.instance;
-                        await prefs.saveString("selected_city", selectedCity);
-                        print(prefs.getString("selected_city"));
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainScreen(),
+                            ),
                           ),
+                          value: city,
+                          groupValue: tempSelected,
+                          activeColor: Colors.amber[800],
+                          onChanged: (value) {
+                            setState(() {
+                              tempSelected = value!;
+                            });
+                          },
                         );
                       },
-              child: const Text(
-                "Tasdiqlash",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                  );
+                },
               ),
-            ),
-          ],
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber[800],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+               onPressed: tempSelected == null
+    ? null
+    : () async {
+        selectedCity = tempSelected!;
+
+        // SharedPreferencesService ga saqlaymiz
+
+        await SharedPreferencesService.instance.saveString("selected_city", selectedCity);
+
+      
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainScreen(),
+          ),
         );
       },
-    );
-  }
+   child: const Text(
+                    "Tasdiqlash",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                ),
+          
+              ],
+            );
+          }
+
+          // Default fallback (hech qaysi holatga tushmagan bo'lsa)
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +170,7 @@ class _SelectRgScreenState extends State<SelectRgScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 📍 Location icon (siz rasm joylashtirasiz)
+              
                 Image.asset(
                   'assets/icons/location.png',
                   width: 100,
@@ -149,7 +207,12 @@ class _SelectRgScreenState extends State<SelectRgScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: _showCityDialog,
+                      onPressed: ()  {
+                      BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
+                      Future.delayed(const Duration(seconds: 1)).then((value) {
+                        _showCityDialog();
+                      });
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade200,
                         foregroundColor: Colors.black87,

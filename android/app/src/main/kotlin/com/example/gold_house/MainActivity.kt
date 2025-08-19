@@ -1,4 +1,4 @@
-package com.example.gold_house
+package com.gold_house
 
 import io.flutter.embedding.android.FlutterActivity
 

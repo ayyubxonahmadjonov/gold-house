@@ -1,23 +1,37 @@
 import 'package:gold_house/data/models/basket_product_model.dart';
 import 'package:gold_house/data/models/order_model.dart';
-
+class ProductModel {
+  final String name;
+  final double price;
+  final String imageUrl;
+  final String color;
+  final String size;
+  
+  const ProductModel({
+    required this.name,
+    required this.price,
+    required this.imageUrl,
+    required this.color,
+    required this.size,
+  });
+}
 class AllStaticLists {
   final products = [
-    Product(
+    ProductModel(
       name: 'PENOPLEX COMFORT',
       price: 125650,
       imageUrl: 'assets/images/penopleks.png',
       color: "Qizil",
       size: '4x6',
     ),
-    Product(
+    ProductModel(
       name: 'PENOPLEX COMFORT',
       price: 135650,
       imageUrl: 'assets/images/penopleks.png',
-      color: "To\'q sariq",
+      color: "To'q sariq",
       size: '4x6',
     ),
-    Product(
+    ProductModel(
       name: 'PENOPLEX COMFORT',
       price: 455650,
       imageUrl: 'assets/images/penopleks.png',

@@ -8,7 +8,7 @@ class SelectBusinessScreen extends StatefulWidget {
 }
 
 class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
-  String selectedBusiness = "Giaz Mebel";
+  String selectedBusiness = "Stroy Baza №1";
 
   void _selectBusiness(String title) {
     setState(() {
@@ -27,7 +27,7 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BusinessCard(
-                imagePath: "assets/images/gold.svg",
+                imagePath: "assets/icons/statistics.svg",
                 title: "Giaz Mebel",
                 isSelected: selectedBusiness == "Giaz Mebel",
                 onTap: _selectBusiness,
@@ -41,7 +41,7 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/gold.svg",
+                imagePath: "assets/images/aaaa.svg",
                 title: "Gold Klinker",
                 isSelected: selectedBusiness == "Gold Klinker",
                 onTap: _selectBusiness,
@@ -73,7 +73,7 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
   }
 }
 
-class BusinessCard extends StatelessWidget {
+class BusinessCard extends StatefulWidget {
   final String imagePath;
   final String title;
   final bool isSelected;
@@ -88,15 +88,20 @@ class BusinessCard extends StatelessWidget {
   });
 
   @override
+  State<BusinessCard> createState() => _BusinessCardState();
+}
+
+class _BusinessCardState extends State<BusinessCard> {
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap(title),
+      onTap: () => widget.onTap(widget.title),
       child: Container(
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.yellow : Colors.black,
+            color: widget.isSelected ? Colors.yellow : Colors.black,
             width: 1.8,
           ),
           color: Colors.white,
@@ -104,13 +109,13 @@ class BusinessCard extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 12),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset(imagePath, color: Colors.red),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: SvgPicture.asset(widget.imagePath, ),
+            // ),
             const SizedBox(width: 16),
             Text(
-              title,
+              widget.title,
               style: const TextStyle(
                 fontSize: 16.5,
                 fontWeight: FontWeight.w500,

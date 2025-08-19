@@ -79,7 +79,7 @@ class _SelectLgScreenState extends State<SelectLgScreen> {
               onPressed: () async {
                 final prefs = SharedPreferencesService.instance;
                 await prefs.saveString("selected_lg", _selectedLanguage);
-                final savedLanguage = await prefs.getString("selected_lg");
+                final savedLanguage = prefs.getString("selected_lg");
 
                 Navigator.push(
                   context,

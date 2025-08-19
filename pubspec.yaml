@@ -45,10 +45,21 @@ dependencies:
   carousel_slider: ^5.1.1
   url_launcher: ^6.3.1
   awesome_dialog: ^3.2.1
+  http: ^1.5.0
+  flutter_bloc: ^9.1.1
+  pinput: ^5.0.1
+  shimmer: ^3.0.0
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo.jpg"  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

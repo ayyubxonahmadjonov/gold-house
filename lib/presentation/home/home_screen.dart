@@ -1,4 +1,5 @@
-import 'package:gold_house/presentation/home/description_screen.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:gold_house/presentation/home/components/description_screen.dart';
 
 import '../../core/constants/app_imports.dart';
 
@@ -11,10 +12,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isFavorite = false;
+  bool isMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<GetProductsBloc>(context)
+        .add(GetProductsByBranchIdEvent(branchId: "0"));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
           Container(
@@ -22,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 SizedBox(height: 60.h),
-                SvgPicture.asset("assets/images/app_logo.png"),
+                Image.asset("assets/images/app_logo.png"),
                 CustomSearchbar(
                   hintText: "Qidirish",
                   prefixicon: Icon(Icons.search),
@@ -33,23 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SelectableRow(),
 
-          /// Scroll bo‘lishi kerak bo‘lgan qism
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Carousel
-                  CustomCarousel(
-                    images: [
-                      "https://windows10spotlight.com/wp-content/uploads/2023/01/81a6e74c8adbf7f55406e8c4b80669d5.jpg",
-                      "https://i.pinimg.com/originals/dc/55/a7/dc55a7baa9cbd457221ae6d12d9b1b51.jpg",
-                      "https://cdn.wallpapersafari.com/30/62/jHBzTk.jpg",
-                    ],
-                  ),
+                  const CustomCarousel(),
 
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Text(
                       "Tavsiya etilgan mahsulotlar",
                       style: TextStyle(
@@ -59,107 +61,197 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  /// GridView.builder scroll emas, faqat ichidan joy oladi
-                  GridView.builder(
-                    itemCount: 8,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-
-                      childAspectRatio: 0.7,
-                    ),
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ProductDescriptionPage(
-                                    title: "Penopleks",
-                                    color: "Ko'k",
-                                    size: "4x6",
-                                    description:
-                                        "Lorem Ipsum matbaa va matn terish sanoatining oddiygina soxta matnidir. Lorem Ipsum 1500-yillardan beri sanoatning standart qo'g'irchoq matni bo'lib kelgan, o'shandan beri noma'lum printer galleyni olib, kitob namunasini yaratish uchun shifrlagan. U nafaqat besh asr davomida, balki elektron terishga sakrashdan ham omon qoldi va deyarli o'zgarishsiz qoldi. U 1960-yillarda Lorem Ipsum parchalarini oʻz ichiga olgan Letraset varaqlarining chiqarilishi va yaqinda ",
-                                    price: "1,116,500",
-                                    monthlyPrice: "135,650",
-                                    months: "24 oy",
+                  BlocConsumer<GetProductsBloc, GetProductsState>(
+                    listener: (context, state) {
+                      if (state is GetProductsError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is GetProductsSuccess) {
+                
+                        return GridView.builder(
+                          itemCount: state.products.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.7,
+                          ),
+                          itemBuilder: (context, index) {
+                            state.products[index].variants.length>1?isMore=true:isMore=false;
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductDescriptionPage(
+                                      isAvailable: state.products[index].isAvailable,
+                                      image: state.products[index].image,
+                                      title: state.products[index].nameUz,
+                                      color: state.products[index]
+                                              .variants[0].colorUz ?? "",
+                                        
+                                      size: state.products[index]
+                                              .variants[0].sizeUz ??
+                                          "",
+                                      description: state
+                                              .products[index].descriptionUz ??
+                                          "",
+                                      price: state.products[index]
+                                          .variants[0].price
+                                          .toString(),
+                                      monthlyPrice3: state.products[index]
+                                          .variants[0].monthlyPayment3
+                                          .toString(),
+                                      monthlyPrice6: state.products[index]
+                                          .variants[0].monthlyPayment6
+                                          .toString(),
+                                      monthlyPrice12: state.products[index]
+                                          .variants[0].monthlyPayment12
+                                          .toString(),
+                                      monthlyPrice24: state.products[index]
+                                          .variants[0].monthlyPayment24
+                                          .toString(),
+                                      
+                                       
+                                    ),
                                   ),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 160.h,
-                                width: 160.w,
-                                decoration: BoxDecoration(
-                                  color: AppColors.whitegrey,
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.5),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/penopleks.png",
-                                  width: 120.w,
+                                );
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 160.h,
+                                      width: 160.w,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(15.r),
+                                        child: Image.network(
+                                          "https://backkk.stroybazan1.uz${state.products[index].image}",
+                                          width: 100.w,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (ctx, child, prog) {
+                                            if (prog == null) return child;
+                                            return _buildShimmerBox(
+                                                height: 160.h, width: 160.w);
+                                          },
+                                          errorBuilder: (ctx, err, st) {
+                                            return _buildShimmerBox(
+                                                height: 160.h, width: 160.w);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      state.products[index].nameUz,
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Narxi: ${state.products[index].variants[0].price} UZS",
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10.w),
+                                        ImageIcon(
+                                          const AssetImage(
+                                              "assets/icons/basket.png"),
+                                          size: 16.w,
+                                          color: AppColors.yellow,
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            isFavorite
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            size: 16.w,
+                                          ),
+                                          onPressed: () {},
+                                          color: isFavorite
+                                              ? Colors.red
+                                              : AppColors.yellow,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              Text(
-                                "PENOPLEKS",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(height: 10.h),
-                              Row(
+                            );
+                          },
+                        );
+                      } else {
+        
+                        return GridView.builder(
+                          itemCount: 4, 
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.7,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "Narxi:9.999 UZS",
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  ImageIcon(
-                                    AssetImage("assets/icons/basket.png"),
-                                    size: 16.w,
-                                    color: AppColors.yellow,
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      isFavorite
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      size: 16.w,
-                                    ),
-                                    onPressed: () {},
-                                    color:
-                                        isFavorite
-                                            ? Colors.red
-                                            : AppColors.yellow,
-                                  ),
+                                  _buildShimmerBox(
+                                      height: 160.h, width: 160.w),
+                                  const SizedBox(height: 10),
+                                  _buildShimmerBox(height: 15.h, width: 80.w),
+                                  const SizedBox(height: 5),
+                                  _buildShimmerBox(height: 12.h, width: 120.w),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                      );
+                            );
+                          },
+                        );
+                      }
                     },
+              
                   ),
+            
                   SizedBox(height: 30.h),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerBox({required double height, required double width}) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.grey[500],
+          borderRadius: BorderRadius.circular(10.r),
+        ),
       ),
     );
   }

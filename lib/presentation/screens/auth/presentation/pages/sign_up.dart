@@ -1,5 +1,5 @@
-import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
 
+import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart'; 
 import '../../../../../core/constants/app_imports.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,64 +15,80 @@ String phoneNumber = '';
 class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 50.h),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: BlocConsumer<AuthRegisterBloc, AuthRegisterState>(
+        listener: (context, state) {
+          if (state is AuthRegisterSuccess) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OtpScreen(phoneNumber: phoneNumber)),
+            );
+          }
+          if (state is AuthRegisterError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
 
-            Text(
-              "Xush kelibsiz!",
-              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(height: 70.h),
+        },
+        builder: (context, state) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 50.h),
 
-            CustomPhoneForm(
-              controller: phoneController,
-              onPhoneChanged: (phone) {
-                phoneNumber = phone.completeNumber;
-                print("bu phone $phoneNumber");
-              },
-            ),
-            SizedBox(height: 30.h),
-
-            CustomButton(
-              title: "Kirish",
-              bacColor: Colors.yellow,
-              textColor: Colors.black,
-              fontWeight: FontWeight.w600,
-              fontSize: 20,
-              borderRadius: 5,
-              width: 340.w,
-              height: 50.h,
-              onPressed:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OtpScreen(phoneNumber: phoneNumber),
-                    ),
-                  ),
-            ),
-
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInScreen()),
-                );
-              },
-              child: Text(
-                "Login orqali kirish",
+              Text(
+                "Xush kelibsiz!",
                 style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
               ),
-            ),
-            SizedBox(height: 30.h),
-          ],
-        ),
+              SizedBox(height: 70.h),
+
+              CustomPhoneForm(
+                controller: phoneController,
+                onPhoneChanged: (phone) {
+                  phoneNumber = phone.completeNumber;
+                  print("bu phone $phoneNumber");
+                },
+              ),
+              SizedBox(height: 30.h),
+
+              CustomButton(
+                title:   state is AuthRegisterLoading ? "Yuklanmoqda..." : "Kirish",
+                bacColor: Colors.yellow,
+                textColor: Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                borderRadius: 5,
+                width: 340.w,
+                height: 50.h,
+                onPressed:() {
+                  context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: "+998887392122"));
+                },
+                   
+              ),
+
+              const Spacer(),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignInScreen()),
+                  );
+                },
+                child: Text(
+                  "Login orqali kirish",
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30.h),
+            ],
+          );
+        },
       ),
     );
   }
