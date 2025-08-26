@@ -1,3 +1,3 @@
 class HiveAdapters {
-  static const String userData = 'UserDataModelAdapter';
+  static const String basketAdapter = 'BasketModelAdapter';
 }

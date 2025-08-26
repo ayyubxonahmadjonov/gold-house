@@ -1,3 +1,9 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:gold_house/core/shared/custom_awesome_dialog.dart';
+import 'package:gold_house/data/datasources/local/hive_helper/hive_names.dart';
+import 'package:gold_house/data/models/basket_model.dart';
+import 'package:gold_house/presentation/screens/basket/presentation/formalize_product.dart';
+
 import '../../../../../core/constants/app_imports.dart';
 
 class BasketPage extends StatefulWidget {
@@ -8,25 +14,29 @@ class BasketPage extends StatefulWidget {
 }
 
 class _BasketPageState extends State<BasketPage> {
-  final products = AllStaticLists().products;
-
   late List<bool> selected;
   late List<int> quantity;
   bool selectAll = true;
   bool isInstallment = false;
-
+  List<BasketModel> basketList = HiveBoxes.basketData.values.toList();
+  final token = SharedPreferencesService.instance.getString("access");
+  final delivery_address = SharedPreferencesService.instance.getString("selected_city");
   @override
   void initState() {
     super.initState();
-    selected = List.generate(products.length, (index) => true);
-    quantity = List.generate(products.length, (index) => 1);
+    selected = List.generate(basketList.length, (index) => true);
+    quantity = List.generate(basketList.length, (index) => 1);
   }
 
   double get total {
     double sum = 0;
-    for (int i = 0; i < products.length; i++) {
+    for (int i = 0; i < basketList.length; i++) {
+      
       if (selected[i]) {
-        sum += products[i].price * quantity[i];
+
+        sum += (double.parse(basketList[i].price) * quantity[i]);
+        basketList[i].quantity = quantity[i].toString();
+        HiveBoxes.basketData.put(basketList[i].productId, basketList[i]);
       }
     }
     return sum;
@@ -40,7 +50,7 @@ class _BasketPageState extends State<BasketPage> {
         title: const Text('Savatcha', style: TextStyle(color: Colors.black)),
         backgroundColor: AppColors.primaryColor,
       ),
-      body: Padding(
+      body:  basketList.isEmpty? Center(child: Text("Savatcha bo'sh"),):  Padding(
         padding: EdgeInsets.all(8.r),
         child: Column(
           children: [
@@ -67,11 +77,13 @@ class _BasketPageState extends State<BasketPage> {
             SizedBox(height: 12.h),
 
             // Mahsulotlar listi
-            Expanded(
+            Container(
+              height: MediaQuery.of(context).size.height*0.45,
               child: ListView.builder(
-                itemCount: products.length,
+                itemCount: basketList.length,
                 itemBuilder: (context, index) {
-                  final product = products[index];
+                  final product = basketList[index];
+                  
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: EdgeInsets.all(10.r),
@@ -79,8 +91,8 @@ class _BasketPageState extends State<BasketPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset(
-                          product.imageUrl,
+                        Image.network(
+                          "https://backkk.stroybazan1.uz${product.image}",
                           width: 80.w,
                           height: 80.h,
                           fit: BoxFit.contain,
@@ -91,7 +103,7 @@ class _BasketPageState extends State<BasketPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                product.name,
+                                product.title,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.sp,
@@ -105,15 +117,15 @@ class _BasketPageState extends State<BasketPage> {
                                     style: TextStyle(fontSize: 12.sp),
                                   ),
                                   SizedBox(width: 10),
-                                  Text(
+                               product.color != "" ?   Text(
                                     "Rang: ${product.color}",
                                     style: TextStyle(fontSize: 12.sp),
-                                  ),
+                                  ) : const SizedBox(),
                                 ],
                               ),
                               SizedBox(height: 10),
                               Text(
-                                "${product.price.toStringAsFixed(3)} so‘m",
+                                "${product.price} so‘m",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13.sp,
@@ -177,51 +189,82 @@ class _BasketPageState extends State<BasketPage> {
               ),
             ),
 
-            SizedBox(height: 16.h),
 
             // Payment switch
             CustomSelectableWidget(isInstallment: isInstallment),
             SizedBox(height: 20.h),
 
             // Umumiy va rasmiylashtirish
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Umumiy:', style: TextStyle(fontSize: 16)),
-                Text(
-                  "${total.toStringAsFixed(3)} so‘m",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Umumiy:', style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600)),
+                  Text(
+                    "${total.toStringAsFixed(3)} so‘m",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: 30.h),
 
             SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD8BB6C),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  // TODO: Rasmiylashtirish
-                },
-                child: Text(
-                  "Rasmiylashtirish",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              width: MediaQuery.of(context).size.width*0.9,
+              height: 55,
+              child:  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD8BB6C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (token == null) {
+                        CustomAwesomeDialog.showInfoDialog(
+                          context,
+                          title: "Xatolik",
+                          desc:
+                              "Buyurtma qilish uchun siz oldin ro'yhatdan o'tishingiz kerak",
+                          dialogtype: DialogType.error,
+                          onOkPress: () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        );
+                      
+                      } 
+                      else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>  FormalizeProduct(total_price: total.toString(),
+                       
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      "Rasmiylashtirish",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+              ,
             ),
           ],
         ),

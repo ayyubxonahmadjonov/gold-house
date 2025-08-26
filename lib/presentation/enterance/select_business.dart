@@ -50,8 +50,7 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
               CustomButton(
                 title: "Saqlash",
                 onPressed: () async {
-                  final prefs = SharedPreferencesService.instance;
-                  await prefs.saveString("selected_business", selectedBusiness);
+       SharedPreferencesService.instance.saveString("selected_business", selectedBusiness);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SelectRgScreen()),

@@ -1,9 +1,17 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gold_house/core/constants/app_colors.dart';
+import 'package:gold_house/data/datasources/local/hive_helper/hive_names.dart';
+import 'package:gold_house/data/models/basket_model.dart';
 import 'package:gold_house/presentation/home/components/monthly_payment.dart';
+import 'package:gold_house/presentation/screens/basket/presentation/pages/basket.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class ProductDescriptionPage extends StatelessWidget {
+class ProductDescriptionPage extends StatefulWidget {
+  final String productId;
   final String title;
   final String color;
   final String size;
@@ -13,18 +21,21 @@ class ProductDescriptionPage extends StatelessWidget {
   final String monthlyPrice6;
   final String monthlyPrice12;
   final String monthlyPrice24;
-  final String image;
+  List<String> images;
   final bool isAvailable;
 
-  const ProductDescriptionPage({
+   ProductDescriptionPage({    
+
     super.key,
-    required this.image,
+    required this.productId,
     required this.isAvailable,
     required this.title,
     required this.color,
     required this.size,
     required this.description,
     required this.price,
+    required this.images,
+
     required this.monthlyPrice3,
     required this.monthlyPrice6,
     required this.monthlyPrice12,
@@ -33,6 +44,12 @@ class ProductDescriptionPage extends StatelessWidget {
   });
 
   @override
+  State<ProductDescriptionPage> createState() => _ProductDescriptionPageState();
+}
+
+class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
+  int activeIndex = 0;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -40,8 +57,12 @@ class ProductDescriptionPage extends StatelessWidget {
 surfaceTintColor: AppColors.white,
         backgroundColor: AppColors.white,
         leading: const BackButton(),
-        title: Text(title),
-        actions: const [Icon(Icons.favorite_border), SizedBox(width: 16)],
+        title: Text(widget.title),
+        actions: [IconButton(
+          onPressed: (){
+            
+          },
+          icon: Icon(Icons.favorite_border),), SizedBox(width: 16)],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -53,20 +74,52 @@ surfaceTintColor: AppColors.white,
               child: Column(
 
                 children: [
-                  Image.network('https://backkk.stroybazan1.uz$image', height: 200.h, fit: BoxFit.contain,),
-                  SizedBox(height: 10.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.circle, size: 10.sp, color: Colors.black),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        Icons.circle_outlined,
-                        size: 10.sp,
-                        color: Colors.grey,
-                      ),
-                    ],
+                if(widget.images.length == 1) Image.network('https://backkk.stroybazan1.uz${widget.images.first}', height: 200.h, fit: BoxFit.contain,),
+                
+                if(widget.images.length > 1) ...[
+                  CarouselSlider.builder(
+                    itemCount: widget.images.length,
+                    itemBuilder: (context, index, realIndex) {
+                      return Image.network(
+                      errorBuilder: (context, error, stackTrace) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            height: 200.h,
+                            width: double.infinity,
+                            color: Colors.white,
+                          ),
+                        );
+                      },
+                        'https://backkk.stroybazan1.uz${widget.images[index]}',
+                        fit: BoxFit.contain,
+                      );
+                    },
+                    options: CarouselOptions(
+                      height: 220.h,
+                      viewportFraction: 1,
+                      enableInfiniteScroll: true,
+                      autoPlay: true,
+                      onPageChanged: (index, reason) {
+                        setState(() => activeIndex = index);
+                      },
+                    ),
                   ),
+                  SizedBox(height: 8.h),
+                  AnimatedSmoothIndicator(
+                    activeIndex: activeIndex,
+                    count: widget.images.length,
+                    effect: ExpandingDotsEffect(
+                      dotHeight: 6,
+                      dotWidth: 6,
+                      activeDotColor: Colors.black,
+                      dotColor: Colors.grey,
+                    ),
+                  ),  
+                ],
+                  SizedBox(height: 10.h),
+              
                 ],
               ),
             ),
@@ -74,43 +127,51 @@ surfaceTintColor: AppColors.white,
 
             // Color
             Text(
-              isAvailable ? 'Mavjud' : 'Mavjud emas',
-              style: TextStyle(color: Colors.green, fontSize: 14.sp),
+              widget.isAvailable ? 'Mavjud' : 'Mavjud emas',
+              style: TextStyle(color: Colors.green, fontSize: 15.sp,fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 6.h),
             Text(
-              title,
+              widget.title,
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 6.h),
-          if(color.isNotEmpty)  Text("Rang : $color", style: TextStyle(fontSize: 14.sp)),
+          if(widget.color.isNotEmpty)  Text("Rang : ${widget.color}", style: TextStyle(fontSize: 14.sp)),
 
             SizedBox(height: 12.h),
-            // Thumbnails
+    
             SizedBox(
               height: 60.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5,
+                itemCount: widget.images.length,
                 itemBuilder: (_, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: Image.asset(
-                      'assets/images/penopleks.png',
+                    child: Image.network(
+                      'https://backkk.stroybazan1.uz${widget.images[index]}',
+                      errorBuilder: (context, error, stackTrace) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            width: 60.w,
+                            height: 60.h,
+                            color: Colors.white,
+                          ),
+                        );
+                      },
                       width: 60.w,
                     ),
                   );
                 },
               ),
             ),
-
             SizedBox(height: 12.h),
-            Text("O‘lchami (Metr²): $size"),
-
+            Text("O‘lchami (Metr²): ${widget.size}"),
             SizedBox(height: 12.h),
             // Sizes
-Container(
-                  padding: EdgeInsets.symmetric(
+Container(              padding: EdgeInsets.symmetric(
                     vertical: 10.h,
                     horizontal: 14.w,
                   ),
@@ -118,7 +179,7 @@ Container(
                     border: Border.all(color: Colors.black26),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Text(size),
+                  child: Text(widget.size),
                 ),
             
             SizedBox(height: 20.h),
@@ -127,20 +188,20 @@ Container(
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
-            Text(description, style: TextStyle(fontSize: 14.sp)),
+            Text(widget.description, style: TextStyle(fontSize: 14.sp)),
 
             SizedBox(height: 16.h),
             Text(
-              "$price so’m",
+              "${widget.price} so’m",
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 12.h),
 MonthlyPaymentWidget(
-  monthlyPrice3: monthlyPrice3,
-  monthlyPrice6: monthlyPrice6,
-  monthlyPrice12: monthlyPrice12,
-  monthlyPrice24: monthlyPrice24,
+  monthlyPrice3: widget.monthlyPrice3,
+  monthlyPrice6: widget.monthlyPrice6,
+  monthlyPrice12: widget.monthlyPrice12,
+  monthlyPrice24: widget.monthlyPrice24,
 ),
             SizedBox(height: 12.h),
             Text(
@@ -224,10 +285,72 @@ MonthlyPaymentWidget(
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16.h),
+      bottomNavigationBar: SafeArea(
+          minimum: EdgeInsets.all(16.h),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+        BasketModel basketModel = BasketModel(
+          productId: widget.productId,
+          title: widget.title,
+          color: widget.color,
+          size: widget.size,
+          description: widget.description,
+          price: widget.price,
+          monthlyPrice3: widget.monthlyPrice3,
+          monthlyPrice6: widget.monthlyPrice6,
+          monthlyPrice12: widget.monthlyPrice12,
+          monthlyPrice24: widget.monthlyPrice24,
+          image: widget.images.first,
+          isAvailable: widget.isAvailable,
+        );
+        HiveBoxes.basketData.put(widget.productId, basketModel);
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+        
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+          ),
+          margin: EdgeInsets.all(12),
+          duration: Duration(seconds: 1),
+          content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+        Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 24),
+            SizedBox(width: 8),
+            Text(
+              "Mahsulot savatga qo'shildi",
+              style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        TextButton.icon(
+          onPressed: () {
+           Navigator.push(context, MaterialPageRoute(builder: (context) => const BasketPage()));
+          },
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          icon: Icon(Icons.shopping_cart, size: 12),
+          label: Text("Savatga o'tish"),
+        ),
+                ],
+          ),
+        ),
+                );
+                
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFDCB04B),
             padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -237,7 +360,7 @@ MonthlyPaymentWidget(
           ),
           child: Text(
             "Savatchaga qo‘shish",
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,color: AppColors.white),
           ),
         ),
       ),

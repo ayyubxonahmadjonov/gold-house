@@ -1,4 +1,7 @@
-import 'package:gold_house/bloc/bloc/banners_bloc.dart';
+import 'package:gold_house/bloc/banners/banners_bloc.dart';
+import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
+import 'package:gold_house/bloc/create_order/create_order_bloc.dart';
+import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 
 class MyApp extends StatefulWidget {
@@ -9,7 +12,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-    String? token;
+    String? selected_lg;
 
   @override
   void initState() {
@@ -18,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> getToken() async {
-    token = SharedPreferencesService.instance.getString("access");
+    selected_lg = SharedPreferencesService.instance.getString("selected_lg");
   }
 
   @override
@@ -48,6 +51,15 @@ class _MyAppState extends State<MyApp> {
                   BlocProvider(
               create: (context) => BannersBloc(),
             ),
+            BlocProvider(
+              create: (context) => MyOrdersBloc(),
+            ),
+            BlocProvider(
+              create: (context) => CreateOrderBloc(),
+            ),
+            BlocProvider(
+              create: (context) => GetCategoriesBloc(),
+            ),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',
@@ -56,7 +68,7 @@ class _MyAppState extends State<MyApp> {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-            home: token != null ? MainScreen() : SignUpScreen(),
+            home: selected_lg != null ? MainScreen() : SelectLgScreen()
           ),
         );
       },

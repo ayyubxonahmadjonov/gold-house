@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: BlocConsumer<AuthRegisterBloc, AuthRegisterState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
+            SharedPreferencesService.instance.saveString("phone", phoneNumber);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OtpScreen(phoneNumber: phoneNumber)),
@@ -53,7 +54,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
               SizedBox(height: 30.h),
-
               CustomButton(
                 title:   state is AuthRegisterLoading ? "Yuklanmoqda..." : "Kirish",
                 bacColor: Colors.yellow,
@@ -64,9 +64,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed:() {
-                  context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: "+998887392122"));
-                },
-                   
+                  context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: phoneNumber));
+                },   
               ),
 
               const Spacer(),

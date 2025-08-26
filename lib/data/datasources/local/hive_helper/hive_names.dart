@@ -1,6 +1,12 @@
 
+import 'package:gold_house/data/models/basket_model.dart';
+import 'package:hive/hive.dart';
+
 class HiveBoxes {
   const HiveBoxes._();
+    static final Box<BasketModel> basketData = Hive.box(
+    HiveBoxNames.basketData,
+  );
 
   static Future<void> clearAllBoxes() async {
     await Future.wait([]);
@@ -9,9 +15,5 @@ class HiveBoxes {
 
 class HiveBoxNames {
   static const String userData = "userData";
-  static const String appLanguage = "appLanguage";
-  static const String primaryColor = "primaryColor";
-  static const String profilePhoto = "profilePhoto";
-  static const String acces_token = "accestoken";
-  static const String refresh_token = "refreshtoken";
+static const String basketData = "basketData";
 }

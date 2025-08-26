@@ -1,4 +1,4 @@
-import 'package:gold_house/bloc/bloc/banners_bloc.dart';
+import 'package:gold_house/bloc/banners/banners_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import '../constants/app_imports.dart';
 

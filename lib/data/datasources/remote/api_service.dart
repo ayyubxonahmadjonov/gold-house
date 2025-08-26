@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
 import 'package:gold_house/data/datasources/remote/http_inspector.dart';
 import 'package:gold_house/data/models/http_result.dart';
+import 'package:gold_house/main.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -23,6 +25,8 @@ class ApiService {
   }
   }
 
+
+  
   //=====LOGIN=====
   static Future<HttpResult> login(String phone_number, ) async {
     var body = {"phone_number": phone_number,};
@@ -44,7 +48,7 @@ class ApiService {
 
     return await _post("api/api/register/", body: body);
   }
-static Future<HttpResult> getAllCities() async {
+  static Future<HttpResult> getAllCities() async {
     return await _get("api/api/cities/");
   }
   static Future<HttpResult> verify_otp(
@@ -60,38 +64,18 @@ static Future<HttpResult> getAllCities() async {
 
     return await _post("api/api/verify-otp/", body: body);
   }
-
 static Future<HttpResult> getProductsbyBranchId(String branch_id) async {
     return await _get("api/api/products/?branch=$branch_id",);
   }
-  static Future<HttpResult> resetPasswordbyPhoneNumber(
-    String phone_number,
-  ) async {
-    var body = {"phone_number": phone_number};
-
-    return await _post("api/api/password-reset/", body: body);
+static Future<HttpResult> getCategories() async {
+    return await _get("api/api/categories/");
   }
 static Future<HttpResult> getBanners() async {
     return await _get("api/api/banners/");
   }
-  static Future<HttpResult> setNewPassword(
-    String reset_token,
-    String new_password,
-    String confirm_password,
-  ) async {
-    var body = {
-      "reset_token": reset_token,
-      "new_password": new_password,
-      "confirm_password": confirm_password,
-    };
-
-    return await _post("api/api/password-reset/set-password/", body: body);
-  }
-
 
   static Future<bool> refreshAccessToken() async {
      dynamic refreshToken = await SharedPreferencesService.instance.getString("refresh");
-
     Uri url = Uri.parse('$_baseUrl/api/api/token/refresh/');
     try {
       var response = await http
@@ -100,20 +84,22 @@ static Future<HttpResult> getBanners() async {
       if (response.statusCode == 200) {
         print('result is succes in refreshAccessToken');
         final decoded = jsonDecode(response.body);
+
+        print(decoded);
         final newAccess = decoded["access"];
-        final newRefresh = decoded["refresh"] ?? "refreshToken";
+        // final newRefresh = decoded["refresh"] ;
         SharedPreferencesService.instance.saveString("access", newAccess);
-        SharedPreferencesService.instance.saveString("refresh", newRefresh);
-
-
-
+        // SharedPreferencesService.instance.saveString("refresh", newRefresh);
         return true;
+
       } else {
-        /// Tokenlarni o'chiramiz
 
-
-        /// SplashScreen ga redirect qilamiz
-  
+        await SharedPreferencesService.instance.remove("access");
+        await SharedPreferencesService.instance.remove("refresh");
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => SignUpScreen()),
+          (route) => false,
+        );
 
         return false;
       }
@@ -130,12 +116,38 @@ static Future<HttpResult> getBanners() async {
     }
   }
 
+static Future<HttpResult> getMyOrders(
+
+  ) async {
+    return await _get("api/api/orders/my/",);
+  }
+ 
+ static Future<HttpResult> creatOrder(int productId, int variantId, int quantity, String deliveryAddress, String paymentMethod, bool useCashback, int branchId, int part, String status, String delivery_method) async {
+    return await _post("api/api/order/create/", body: {
+ 
+  "cart_items": [
+    {
+      "product_id": productId,
+      "variant_id": variantId,
+      "quantity": quantity,
+    }
+  ],
+  "delivery_address": deliveryAddress,
+  "payment_method": paymentMethod,
+  "use_cashback": useCashback,
+  "branch_id": branchId,
+  "part": part,
+  "status": status,
+  "delivery_method": delivery_method
+
+ });
+  }
   //=====GET ALL COURSES =====
 
   static Future<HttpResult> _post(
     String path, {
     Object? body,
-    bool? isSecondHeader = false,
+
   }) async {
     Uri url = Uri.parse('$_baseUrl$path');
     try {
@@ -148,9 +160,10 @@ static Future<HttpResult> getBanners() async {
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 401) {
+        print("result is 401 in _post");
         final isRefreshed = await refreshAccessToken();
         if (isRefreshed) {
-          return await _post(path, body: body, isSecondHeader: isSecondHeader);
+          return await _post(path, body: body,);
         }
       }
 
@@ -168,39 +181,40 @@ static Future<HttpResult> getBanners() async {
     }
   }
 
-static Future<HttpResult> _get(String path, {Map<String, dynamic>? query}) async {
-  try {
-    final url = Uri.parse('$_baseUrl$path');
-    final response = await http
-        .get(url, headers: _header())
-        .timeout(const Duration(seconds: 30));
+  static Future<HttpResult> _get(String path) async {
+    Uri url;
+    url = Uri.parse('$_baseUrl$path');
+    try {
+      http.Response response = await http
+          .get(url, headers: _header())
+          .timeout(const Duration(seconds: 30));
 
-
-    if (response.statusCode == 401) {
-      print('result is 401 in _get');
-      final isRefreshed = await refreshAccessToken();
-      if (isRefreshed) {
-        return await _get(path, query: query);
+      if (response.statusCode == 401) {
+        print("result is 401 in _get");
+        final isRefreshed = await refreshAccessToken();
+        if (isRefreshed) {
+          return await _get(path);
+        }
       }
+
+      HttpInspector.onResponse(response);
+
+      var decoded = json.decode(utf8.decode(response.bodyBytes));
+
+      if (response.statusCode == 200) {
+        return HttpResult(statusCode: 200, isSuccess: true, result: decoded);
+      } else {}
+      return HttpResult(
+        statusCode: response.statusCode,
+
+        result: decoded.toString(),
+        path: path,
+        method: 'GET',
+      );
+    } catch (err) {
+      return HttpResult(statusCode: -1, result: err, path: path, method: 'GET');
     }
-
-    HttpInspector.onResponse(response);
-
-    var decoded = json.decode(utf8.decode(response.bodyBytes));
-
-    if (response.statusCode == 200) {
-      return HttpResult(statusCode: 200, isSuccess: true, result: decoded);
-    }
-    return HttpResult(
-      statusCode: response.statusCode,
-      result: decoded.toString(),
-      path: path,
-      method: 'GET',
-    );
-  } catch (err) {
-    return HttpResult(statusCode: -1, result: err, path: path, method: 'GET');
   }
-}
 
   static Future<HttpResult> _patch(String path, {Object? body}) async {
     Uri url = Uri.parse('$_baseUrl$path');

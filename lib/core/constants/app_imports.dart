@@ -5,7 +5,8 @@ export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'package:gold_house/data/all_static_lists.dart';
 export 'package:gold_house/core/shared/custom_selectable.dart';
-
+export 'package:shimmer/shimmer.dart';
+export 'package:gold_house/presentation/home/components/description_screen.dart';
 // External Packages
 export 'package:carousel_slider/carousel_slider.dart';
 export 'package:shared_preferences/shared_preferences.dart';

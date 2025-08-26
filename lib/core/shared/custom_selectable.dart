@@ -16,41 +16,49 @@ class _CustomSelectableWidgetState extends State<CustomSelectableWidget> {
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => widget.isInstallment = false),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: !widget.isInstallment ? const Color(0xFFD8BB6C) : null,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8),
+      child: Container(
+   
+        margin: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => widget.isInstallment = false),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: !widget.isInstallment ? const Color(0xFFD8BB6C) : null,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                    ),
                   ),
+                  child: const Center(child: Text('Hozirroq to‘lash')),
                 ),
-                child: const Center(child: Text('Hozirroq to‘lash')),
               ),
             ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => widget.isInstallment = true),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: widget.isInstallment ? const Color(0xFFD8BB6C) : null,
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(8),
-                    bottomRight: Radius.circular(8),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => widget.isInstallment = true),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: widget.isInstallment ? const Color(0xFFD8BB6C) : null,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
                   ),
+                  child: const Center(child: Text('Muddatli to‘lov')),
                 ),
-                child: const Center(child: Text('Muddatli to‘lov')),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

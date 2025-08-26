@@ -1,5 +1,5 @@
-import 'package:gold_house/bloc/get_cities/get_cities_bloc.dart';
 import 'package:gold_house/data/models/city_model.dart';
+import 'package:gold_house/presentation/widgets/select_city_dialog.dart';
 
 import '../../core/constants/app_imports.dart';
 
@@ -23,7 +23,7 @@ void _showCityDialog() {
     builder: (context) {
       return BlocConsumer<GetCitiesBloc, GetCitiesState>(
         listener: (context, state) {
-          // kerak bo'lsa snackbar yoki boshqa listener eventlar
+         
         },
         builder: (context, state) {
   
@@ -49,7 +49,7 @@ void _showCityDialog() {
 
 
           if (state is GetCitiesSuccess) {
-            print(state.cities.first);
+       
             List<City> cities = state.cities; 
 
             if (cities.isEmpty) {
@@ -68,87 +68,10 @@ void _showCityDialog() {
               );
             }
 
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: const Text(
-                "Shaharni tanlang",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              content: StatefulBuilder(
-                builder: (context, setState) {
-                  return SizedBox(
-                    width: double.maxFinite,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: cities.length,
-                      itemBuilder: (context, index) {
-                        final city = cities[index].nameUz; // yoki nameRu/nameEn
-                        return RadioListTile<String>(
-                          title: Text(
-                            city,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: tempSelected == city
-                                  ? Colors.amber[800]
-                                  : Colors.black87,
-                            ),
-                          ),
-                          value: city,
-                          groupValue: tempSelected,
-                          activeColor: Colors.amber[800],
-                          onChanged: (value) {
-                            setState(() {
-                              tempSelected = value!;
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              actionsAlignment: MainAxisAlignment.center,
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber[800],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-               onPressed: tempSelected == null
-    ? null
-    : () async {
-        selectedCity = tempSelected!;
-
-        // SharedPreferencesService ga saqlaymiz
-
-        await SharedPreferencesService.instance.saveString("selected_city", selectedCity);
-
-      
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MainScreen(),
-          ),
-        );
-      },
-   child: const Text(
-                    "Tasdiqlash",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
-                ),
-          
-              ],
-            );
+          return SelectCityDialog(
+            cities: cities,
+            initialSelectedCity: selectedCity,
+          );
           }
 
           // Default fallback (hech qaysi holatga tushmagan bo'lsa)
@@ -163,97 +86,95 @@ void _showCityDialog() {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              
-                Image.asset(
-                  'assets/icons/location.png',
-                  width: 100,
-                  height: 100,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+            
+              Image.asset(
+                'assets/icons/location.png',
+                width: 100,
+                height: 100,
+              ),
+      
+              const SizedBox(height: 40),
+      
+              Text(
+                "Siz $selectedCity shahridamisiz ?",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
-
-                const SizedBox(height: 40),
-
-                Text(
-                  "Siz $selectedCity shahridamisiz ?",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+              ),
+      
+              const SizedBox(height: 12),
+      
+              const Text(
+                "Tanlangan hududga qarab yetkazib berish\nusuli va mahsulot mavjudligi belgilanadi.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                  height: 1.5,
                 ),
-
-                const SizedBox(height: 12),
-
-                const Text(
-                  "Tanlangan hududga qarab yetkazib berish\nusuli va mahsulot mavjudligi belgilanadi.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                    height: 1.5,
-                  ),
-                ),
-
-                const SizedBox(height: 40),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: ()  {
-                      BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
-                      Future.delayed(const Duration(seconds: 1)).then((value) {
-                        _showCityDialog();
-                      });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade200,
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+              ),
+      
+              const SizedBox(height: 40),
+      
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: ()  {
+                    BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
+                    Future.delayed(const Duration(seconds: 1)).then((value) {
+                      _showCityDialog();
+                    });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade200,
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 14,
                       ),
-                      child: const Text("Yo'q, o'zgartirish"),
-                    ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow[700],
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text("Ha"),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                    child: const Text("Yo'q, o'zgartirish"),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow[700],
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Ha"),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

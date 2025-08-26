@@ -1,4 +1,5 @@
 import 'package:gold_house/presentation/screens/profile/presentation/pages/update_fullname.dart';
+import 'package:gold_house/presentation/widgets/select_city_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_imports.dart';
 
@@ -22,14 +23,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  ValueNotifier<String> fullname = ValueNotifier<String>(
+    "${SharedPreferencesService.instance.getString("profilfullname")}",
+  );
+
+  String selectedCity = "";
   @override
   Widget build(BuildContext context) {
-    final prefs = SharedPreferencesService.instance;
-
-    ValueNotifier<String> fullname = ValueNotifier<String>(
-      "${prefs.getString("profilfullname")}",
-    );
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -57,7 +57,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return UpdateFullname();
                           },
                         ),
-                      );
+                      ).then((_) {
+                        fullname.value =
+                            SharedPreferencesService.instance.getString(
+                              "profilfullname",
+                            ) ??
+                            "";
+                      });
                     },
                     leading: Icon(Icons.person),
                     title: Text(fullname.value),
@@ -76,7 +82,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   SizedBox(height: 15.h),
 
-                  _buildCategories("Buyurtmalar", () {}, Icons.store),
+                  _buildCategories("Buyurtmalar", () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const BasketPage();
+                        },
+                      ),
+                    );
+                  }, Icons.store),
                   SizedBox(height: 10.h),
 
                   _buildCategories(
@@ -104,10 +119,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   SizedBox(height: 15.h),
 
-                  _buildCategories(
-                    "Shahar tanlash",
-                    () {},
-                    Icons.location_city,
+                  BlocConsumer<GetCitiesBloc, GetCitiesState>(
+                    listener: (context, state) {
+    if(state is GetCitiesSuccess){
+      selectedCity = SharedPreferencesService.instance.getString("selected_city") ?? "Andijon";
+              
+               showDialog(context: context, builder: (context) {
+                 return SelectCityDialog(
+      
+                   cities: state.cities,
+                   initialSelectedCity: selectedCity,
+                 );
+               });
+                      }
+                    },
+                    builder: (context, state) {
+                      return _buildCategories("Shahar tanlash", () {
+                        BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
+           
+                      }, Icons.location_city);
+                    },
                   ),
 
                   SizedBox(height: 15.h),

@@ -74,12 +74,10 @@ class _SelectLgScreenState extends State<SelectLgScreen> {
                 ),
               ),
 
-            Spacer(), // Davom etish tugmasi
+            Spacer(), 
             CustomButton(
               onPressed: () async {
-                final prefs = SharedPreferencesService.instance;
-                await prefs.saveString("selected_lg", _selectedLanguage);
-                final savedLanguage = prefs.getString("selected_lg");
+          SharedPreferencesService.instance.saveString("selected_lg", _selectedLanguage);
 
                 Navigator.push(
                   context,

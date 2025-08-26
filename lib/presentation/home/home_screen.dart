@@ -1,8 +1,7 @@
-import 'package:shimmer/shimmer.dart';
-import 'package:gold_house/presentation/home/components/description_screen.dart';
+
+import 'package:gold_house/data/models/product_model.dart';
 
 import '../../core/constants/app_imports.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -11,9 +10,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isFavorite = false;
+   final Set<int> favoriteProducts = {};
   bool isMore = false;
-
+  String searchQuery = "";
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
         children: [
@@ -34,6 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 60.h),
                 Image.asset("assets/images/app_logo.png"),
                 CustomSearchbar(
+
+                  controller: searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                  onClear: () {
+                    setState(() {
+                      searchQuery = "";
+                      searchController.clear();
+                    });
+                  },
+                
                   hintText: "Qidirish",
                   prefixicon: Icon(Icons.search),
                 ),
@@ -42,14 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SelectableRow(),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CustomCarousel(),
-
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
@@ -60,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-
                   BlocConsumer<GetProductsBloc, GetProductsState>(
                     listener: (context, state) {
                       if (state is GetProductsError) {
@@ -70,66 +81,73 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                     builder: (context, state) {
-                      if (state is GetProductsSuccess) {
-                
+                      if (state is GetProductsSuccess) {          
+  List<Product> filteredProducts = state.products.where((product) {
+                    if (searchQuery.isEmpty) return true; 
+                    return product.nameUz
+                        .toLowerCase()
+                        .contains(searchQuery.toLowerCase());
+                  }).toList();
                         return GridView.builder(
-                          itemCount: state.products.length,
+                          itemCount: filteredProducts.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 0.7,
+  
+                            
                           ),
                           itemBuilder: (context, index) {
-                            state.products[index].variants.length>1?isMore=true:isMore=false;
+                            final product = filteredProducts[index];
+                            final isFavorite =
+                                favoriteProducts.contains(product.id);
+
                             return InkWell(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProductDescriptionPage(
-                                      isAvailable: state.products[index].isAvailable,
-                                      image: state.products[index].image,
-                                      title: state.products[index].nameUz,
-                                      color: state.products[index]
-                                              .variants[0].colorUz ?? "",
-                                        
-                                      size: state.products[index]
-                                              .variants[0].sizeUz ??
-                                          "",
-                                      description: state
-                                              .products[index].descriptionUz ??
-                                          "",
-                                      price: state.products[index]
-                                          .variants[0].price
+                                      productId: product.id.toString(),
+                                      isAvailable:
+                                          product.variants[0].isAvailable,
+                                      images: product.variants.map((e) => e.image).toList(),
+                                      title: product.nameUz,
+                                      color:
+                                          product.variants[0].colorUz ?? "",
+                                      size: product.variants[0].sizeUz ?? "",
+                                      description:
+                                          product.descriptionUz ?? "",
+                                      price: product.variants[0].price
                                           .toString(),
-                                      monthlyPrice3: state.products[index]
+                                      monthlyPrice3: product
                                           .variants[0].monthlyPayment3
                                           .toString(),
-                                      monthlyPrice6: state.products[index]
+                                      monthlyPrice6: product
                                           .variants[0].monthlyPayment6
                                           .toString(),
-                                      monthlyPrice12: state.products[index]
+                                      monthlyPrice12: product
                                           .variants[0].monthlyPayment12
                                           .toString(),
-                                      monthlyPrice24: state.products[index]
+                                      monthlyPrice24: product
                                           .variants[0].monthlyPayment24
-                                          .toString(),
-                                      
-                                       
+                                          .toString(), 
                                     ),
                                   ),
                                 );
                               },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5.w),
+                              child: Padding(
+                                padding:  EdgeInsets.only(left: 15.w),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                 
                                   children: [
                                     Container(
-                                      height: 160.h,
-                                      width: 160.w,
+                                    
+                                      height: 155.h,
+                                      width: 155.w,
                                       decoration: BoxDecoration(
                                         color: AppColors.white,
                                         borderRadius:
@@ -139,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         borderRadius:
                                             BorderRadius.circular(15.r),
                                         child: Image.network(
-                                          "https://backkk.stroybazan1.uz${state.products[index].image}",
+                                          "https://backkk.stroybazan1.uz${product.image}",
                                           width: 100.w,
                                           fit: BoxFit.cover,
                                           loadingBuilder: (ctx, child, prog) {
@@ -154,38 +172,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 5),
                                     Text(
-                                      state.products[index].nameUz,
+                                      product.nameUz,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 14.sp,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                              
                                       children: [
                                         Text(
-                                          "Narxi: ${state.products[index].variants[0].price} UZS",
+                                          "Narxi: ${product.variants[0].price} UZS",
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        SizedBox(width: 10.w),
-                                        ImageIcon(
-                                          const AssetImage(
-                                              "assets/icons/basket.png"),
-                                          size: 16.w,
-                                          color: AppColors.yellow,
-                                        ),
+                                        SizedBox(width: 5),
                                         IconButton(
                                           icon: Icon(
                                             isFavorite
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            size: 16.w,
+                                            size: 18.w,
                                           ),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            setState(() {
+                                              if (isFavorite) {
+                                                favoriteProducts
+                                                    .remove(product.id);
+                                              } else {
+                                                favoriteProducts
+                                                    .add(product.id);
+                                              }
+                                            });
+                                          },
                                           color: isFavorite
                                               ? Colors.red
                                               : AppColors.yellow,
@@ -199,9 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         );
                       } else {
-        
+                        // Loading shimmer
                         return GridView.builder(
-                          itemCount: 4, 
+                          itemCount: 4,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
@@ -228,9 +255,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }
                     },
-              
                   ),
-            
+                  
                   SizedBox(height: 30.h),
                 ],
               ),
