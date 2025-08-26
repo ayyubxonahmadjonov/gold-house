@@ -37,7 +37,7 @@ class _CustomSelectableWidgetState extends State<CustomSelectableWidget> {
                       bottomLeft: Radius.circular(8),
                     ),
                   ),
-                  child: const Center(child: Text('Hozirroq to‘lash')),
+                  child: const Center(child: Text('Hoziroq to‘lash')),
                 ),
               ),
             ),

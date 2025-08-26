@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
 import 'package:gold_house/data/datasources/remote/http_inspector.dart';
 import 'package:gold_house/data/models/http_result.dart';
 import 'package:gold_house/main.dart';
@@ -38,7 +36,6 @@ class ApiService {
 
     return await _post("api/api/login/phone/verify/", body: body);
   }
-
   static Future<HttpResult> registr(
     String phone_number,
   ) async {
@@ -73,7 +70,14 @@ static Future<HttpResult> getCategories() async {
 static Future<HttpResult> getBanners() async {
     return await _get("api/api/banners/");
   }
+static Future<HttpResult> getRegions (){
+return _get("api/api/regions/");
+}
 
+  static Future<HttpResult> getBranches (){
+return _get("api/branches/");
+}
+  
   static Future<bool> refreshAccessToken() async {
      dynamic refreshToken = await SharedPreferencesService.instance.getString("refresh");
     Uri url = Uri.parse('$_baseUrl/api/api/token/refresh/');
@@ -122,27 +126,39 @@ static Future<HttpResult> getMyOrders(
     return await _get("api/api/orders/my/",);
   }
  
- static Future<HttpResult> creatOrder(int productId, int variantId, int quantity, String deliveryAddress, String paymentMethod, bool useCashback, int branchId, int part, String status, String delivery_method) async {
-    return await _post("api/api/order/create/", body: {
- 
-  "cart_items": [
-    {
-      "product_id": productId,
-      "variant_id": variantId,
-      "quantity": quantity,
-    }
-  ],
-  "delivery_address": deliveryAddress,
-  "payment_method": paymentMethod,
-  "use_cashback": useCashback,
-  "branch_id": branchId,
-  "part": part,
-  "status": status,
-  "delivery_method": delivery_method
-
- });
+ static Future<HttpResult> createOrder(
+  List<int> productId,
+  List<int> variantId,
+  List<int> quantity,
+  String deliveryAddress,
+  String paymentMethod,
+  bool useCashback,
+  int branchId,
+  int part,
+  String status,
+  String deliveryMethod,
+) async {
+  
+  List<Map<String, dynamic>> cartItems = [];
+  for (int i = 0; i < productId.length; i++) {
+    cartItems.add({
+      "product_id": productId[i],
+      "variant_id": variantId[i],
+      "quantity": quantity[i],
+    });
   }
-  //=====GET ALL COURSES =====
+
+  return await _post("api/api/order/create/", body: {
+    "cart_items": cartItems,
+    "delivery_address": deliveryAddress,
+    "payment_method": paymentMethod,
+    "use_cashback": useCashback,
+    "branch_id": branchId,
+    "part": part,
+    "status": status,
+    "delivery_method": deliveryMethod,
+  });
+}
 
   static Future<HttpResult> _post(
     String path, {

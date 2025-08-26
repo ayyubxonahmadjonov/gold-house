@@ -1,3 +1,5 @@
+import 'package:gold_house/bloc/branches/branches_bloc.dart';
+
 import '../../../core/constants/app_imports.dart';
 
 class MainScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Theme.of(context).primaryColor.withOpacity(0.05),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

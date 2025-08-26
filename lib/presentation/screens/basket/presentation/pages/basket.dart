@@ -49,6 +49,15 @@ class _BasketPageState extends State<BasketPage> {
       appBar: AppBar(
         title: const Text('Savatcha', style: TextStyle(color: Colors.black)),
         backgroundColor: AppColors.primaryColor,
+        actions: [
+          IconButton(onPressed: (){
+            HiveBoxes.basketData.clear();
+            basketList.clear();
+            selected.clear();
+            quantity.clear();
+            setState(() {});
+          }, icon: const Icon(Icons.delete))
+        ],
       ),
       body:  basketList.isEmpty? Center(child: Text("Savatcha bo'sh"),):  Padding(
         padding: EdgeInsets.all(8.r),
@@ -194,7 +203,7 @@ class _BasketPageState extends State<BasketPage> {
             CustomSelectableWidget(isInstallment: isInstallment),
             SizedBox(height: 20.h),
 
-            // Umumiy va rasmiylashtirish
+    
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -245,6 +254,7 @@ class _BasketPageState extends State<BasketPage> {
                       
                       } 
                       else {
+                
                         Navigator.push(
                           context,
                           MaterialPageRoute(

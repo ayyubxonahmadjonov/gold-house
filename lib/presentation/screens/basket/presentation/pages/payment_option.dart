@@ -31,6 +31,7 @@ class _PaymentSelectorState extends State<PaymentSelector> {
             onTap: () {
               setState(() {
                 selectedPayment = method.title;
+                SharedPreferencesService.instance.saveString("payment_method", method.title);
               });
             },
             child: Container(

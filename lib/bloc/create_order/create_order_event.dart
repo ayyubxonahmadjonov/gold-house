@@ -4,9 +4,9 @@ part of 'create_order_bloc.dart';
 abstract class CreateOrderEvent {}
 
 class GenerateOrderEvent extends CreateOrderEvent {
-  final int productId;
-  final int variantId;
-  final int quantity;
+   List<int> productId;
+   List<int> variantId;
+     List<int> quantity;
   final String deliveryAddress;
   final String paymentMethod;
   final bool useCashback;

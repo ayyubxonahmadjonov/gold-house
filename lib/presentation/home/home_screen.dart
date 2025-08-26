@@ -110,6 +110,7 @@ return Scaffold(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProductDescriptionPage(
+                                      variantId: product.variants[0].id,
                                       productId: product.id.toString(),
                                       isAvailable:
                                           product.variants[0].isAvailable,

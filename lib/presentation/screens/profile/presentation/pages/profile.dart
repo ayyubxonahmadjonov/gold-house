@@ -289,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       IconButton(
                         onPressed: () async {
                           await _launchInstagramUrl(
-                            "https://www.instagram.com",
+                            "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
                           );
                         },
                         icon: ImageIcon(
@@ -298,13 +298,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       IconButton(
                         onPressed: () async {
-                          await _launchInstagramUrl("https://www.youtube.com");
+                          await _launchInstagramUrl("https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_");
                         },
                         icon: ImageIcon(AssetImage("assets/icons/youtube.png")),
                       ),
                       IconButton(
                         onPressed: () async {
-                          await _launchInstagramUrl("https://www.youtube.com");
+                          await _launchInstagramUrl("https://t.me/QurulishMollariStroyBazaN1");
                         },
                         icon: Icon(Icons.telegram),
                       ),

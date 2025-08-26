@@ -12,6 +12,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDescriptionPage extends StatefulWidget {
   final String productId;
+  final int variantId;
   final String title;
   final String color;
   final String size;
@@ -27,6 +28,7 @@ class ProductDescriptionPage extends StatefulWidget {
    ProductDescriptionPage({    
 
     super.key,
+
     required this.productId,
     required this.isAvailable,
     required this.title,
@@ -35,7 +37,7 @@ class ProductDescriptionPage extends StatefulWidget {
     required this.description,
     required this.price,
     required this.images,
-
+required this.variantId,
     required this.monthlyPrice3,
     required this.monthlyPrice6,
     required this.monthlyPrice12,
@@ -291,6 +293,7 @@ MonthlyPaymentWidget(
           onPressed: () {
         BasketModel basketModel = BasketModel(
           productId: widget.productId,
+          variantId: widget.variantId,
           title: widget.title,
           color: widget.color,
           size: widget.size,

@@ -17,6 +17,7 @@ class BasketModelAdapter extends TypeAdapter<BasketModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BasketModel(
+      variantId: fields[13] as int,
       productId: fields[0] as String,
       title: fields[1] as String,
       color: fields[2] as String,
@@ -36,7 +37,7 @@ class BasketModelAdapter extends TypeAdapter<BasketModel> {
   @override
   void write(BinaryWriter writer, BasketModel obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class BasketModelAdapter extends TypeAdapter<BasketModel> {
       ..writeByte(11)
       ..write(obj.isAvailable)
       ..writeByte(12)
-      ..write(obj.quantity);
+      ..write(obj.quantity)
+      ..writeByte(13)
+      ..write(obj.variantId);
   }
 
   @override

@@ -1,7 +1,9 @@
 import 'package:gold_house/bloc/banners/banners_bloc.dart';
+import 'package:gold_house/bloc/branches/branches_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
 import 'package:gold_house/bloc/create_order/create_order_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
+import 'package:gold_house/bloc/regions/regions_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 
 class MyApp extends StatefulWidget {
@@ -59,6 +61,12 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocProvider(
               create: (context) => GetCategoriesBloc(),
+            ),
+            BlocProvider(
+              create: (context) => BranchesBloc(),
+            ),
+            BlocProvider(
+              create: (context) => RegionsBloc(),
             ),
           ],
           child: MaterialApp(

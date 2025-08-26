@@ -43,7 +43,11 @@ class BasketModel extends HiveObject {
     @HiveField(12)
   String? quantity;
 
+    @HiveField(13)
+    final int variantId;
+
   BasketModel({
+    required this.variantId,
     required this.productId,
     required this.title,
     required this.color,
