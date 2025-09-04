@@ -1,4 +1,6 @@
 
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../../core/constants/app_imports.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -37,7 +39,7 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(height: 50.h),
     
               Text(
-                "Tizimga kiring!",
+                "sign_in".tr(),
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w500,
@@ -55,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(height: 30.h),
     
               CustomButton(
-                title: state is AuthLoginLoading ? "Yuklanmoqda..." : "Kirish",
+                title: state is AuthLoginLoading ? "loading".tr() : "login".tr(),
                 bacColor: Colors.yellow,
                 textColor: Colors.black,
                 fontWeight: FontWeight.w600,
@@ -78,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   );
                 },
                 child: Text(
-                  "Akkaunt yo'qmi",
+                  "no_accout".tr(),
                   style: TextStyle(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w500,

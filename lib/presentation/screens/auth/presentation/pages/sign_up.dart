@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart'; 
 import '../../../../../core/constants/app_imports.dart';
 
@@ -41,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: 50.h),
 
               Text(
-                "Xush kelibsiz!",
+                "welcome".tr(),
                 style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 70.h),
@@ -55,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 30.h),
               CustomButton(
-                title:   state is AuthRegisterLoading ? "Yuklanmoqda..." : "Kirish",
+                title:   state is AuthRegisterLoading ? "loading".tr() : "login".tr(),
                 bacColor: Colors.yellow,
                 textColor: Colors.black,
                 fontWeight: FontWeight.w600,
@@ -77,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   );
                 },
                 child: Text(
-                  "Login orqali kirish",
+                  "login_with".tr(),
                   style: TextStyle(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w500,

@@ -6,7 +6,7 @@ part of 'my_orders_bloc.dart';
  class MyOrdersInitial extends MyOrdersState {}
 class MyOrdersLoading extends MyOrdersState {}
 class MyOrdersSuccess extends MyOrdersState {
-  final List<Order> orders;
+  final List<dynamic> orders;
   MyOrdersSuccess({required this.orders});
 }
 class MyOrdersError extends MyOrdersState {

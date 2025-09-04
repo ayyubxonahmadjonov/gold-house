@@ -1,15 +1,28 @@
 import 'package:gold_house/core/constants/app_imports.dart';
 
 class PaymentOption {
-  final String title;
+  final String code;      
+  final String title;     
   final String assetIcon; 
   final bool isCredit;
-  PaymentOption({required this.title, required this.assetIcon, required this.isCredit});
+
+  PaymentOption({
+    required this.code,
+    required this.title,
+    required this.assetIcon,
+    required this.isCredit,
+  });
 }
 
 class PaymentSelector extends StatefulWidget {
   final List<PaymentOption> paymentMethods;
-  const PaymentSelector({super.key, required this.paymentMethods});
+  final ValueChanged<String>? onChanged; // tanlangan kodni tashqariga yuboradi
+
+  const PaymentSelector({
+    super.key,
+    required this.paymentMethods,
+    this.onChanged,
+  });
 
   @override
   State<PaymentSelector> createState() => _PaymentSelectorState();
@@ -29,10 +42,16 @@ class _PaymentSelectorState extends State<PaymentSelector> {
         children: widget.paymentMethods.map((method) {
           return InkWell(
             onTap: () {
-              setState(() {
-                selectedPayment = method.title;
-                SharedPreferencesService.instance.saveString("payment_method", method.title);
-              });
+
+  setState(() {
+    selectedPayment = method.code; // tanlangan optionni belgilash
+  });
+
+  if (widget.onChanged != null) {
+    widget.onChanged!(method.code); 
+  }
+
+
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -48,13 +67,8 @@ class _PaymentSelectorState extends State<PaymentSelector> {
               ),
               child: Row(
                 children: [
-                  // image icon
-                  Image.asset(
-                    "assets/icons/${method.assetIcon}",
-
-                  ),
+                  Image.asset("assets/icons/${method.assetIcon}"),
                   const SizedBox(width: 12),
-                  // title
                   Expanded(
                     child: Text(
                       method.title,
@@ -64,18 +78,17 @@ class _PaymentSelectorState extends State<PaymentSelector> {
                       ),
                     ),
                   ),
-                  // custom radio
                   Container(
                     width: 22,
                     height: 22,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.brown, width: 2),
-                      color: selectedPayment == method.title
+                      color: selectedPayment == method.code
                           ? Colors.brown
                           : Colors.transparent,
                     ),
-                    child: selectedPayment == method.title
+                    child: selectedPayment == method.code
                         ? const Icon(Icons.check,
                             color: Colors.white, size: 16)
                         : null,

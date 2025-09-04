@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/data/models/order_';
+import 'package:gold_house/data/models/my_order.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({super.key});
@@ -10,7 +11,6 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-
   final Map<int, bool> _visibilityMap = {};
 
   @override
@@ -22,10 +22,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryColor,
-        title: const Text("Buyurtmalarim"),
+        title:  Text("my_orders".tr()),
       ),
       body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
         listener: (context, state) {},
@@ -33,20 +34,23 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           if (state is MyOrdersLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is MyOrdersSuccess) {
-            final orders = state.orders;
+              final orders = state.orders.where((order) {
+    final status = order.status ?? "";
+    return status != "pending" && status != "in_payment";
+  }).toList();
 
             if (orders.isEmpty) {
               return const Center(child: Text("Buyurtmalar topilmadi"));
             }
-
             return ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: orders.length,
               separatorBuilder: (_, __) => const Divider(height: 32),
               itemBuilder: (context, index) {
                 final order = orders[index];
-                final isVisible = _visibilityMap[order.id] ?? false;
-                return _buildOrderTile(order, isVisible, index);
+                final key = order.id ?? index;
+                final isVisible = _visibilityMap[key] ?? false;
+                return _buildOrderTile(order, isVisible, key);
               },
             );
           } else if (state is MyOrdersError) {
@@ -63,18 +67,27 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
 
-  Widget _buildOrderTile(Order order, bool isVisible, int index) {
-    // Order statusni text va rangga aylantiramiz
-    final statusText = _getStatusText(order.status);
-    final statusColor = _getStatusColor(order.status);
+  Widget _buildOrderTile(OrderOfBasket order, bool isVisible, int key) {
+    // Status
+    final statusText = _getStatusText(order.status ?? "");
+    final statusColor = _getStatusColor(order.status ?? "");
 
-    // order.items[0] ni asosiy mahsulot sifatida ko‘rsatamiz
+    // Mahsulotlar
     final firstItem = order.items.isNotEmpty ? order.items.first : null;
+
+    // Sana
+    final createdAt = (order.createdAt.isNotEmpty)
+        ? order.createdAt.split("T").first
+        : "-";
+
+    // Umumiy narx
+    final total =
+        int.tryParse(order.totalAmount ?? "") ?? 0; // string bo‘lsa 0 qilamiz
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-    
+        // Buyurtma raqami va status
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -100,57 +113,80 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           children: [
             const Text("Rasmiylashtirish sanasi:",
                 style: TextStyle(fontWeight: FontWeight.w600)),
-            Text(order.createdAt.split("T").first),
+            Text(createdAt),
           ],
         ),
         SizedBox(height: 20.h),
 
-        // Umumiy narx
+        // Umumiy nar
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${order.items.length} dona maxsulot",
+              "${order.items.length} ${'piece'.tr()} ${'product'.tr()}",
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
             ),
             Text(
-              "${order.totalAmount} so‘m",
+              "${order.totalAmount} ${'currency'.tr()}",
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
             ),
           ],
         ),
 
-        if (firstItem != null && isVisible) ...[
+        // Mahsulot rasmlari
+        if (isVisible && order.items.isNotEmpty) ...[
           SizedBox(height: 20.h),
-          Row(
-            children: [
-              Image.network(
-                'https://backkk.stroybazan1.uz${firstItem.productVariant.image}',
-                height: 80.h,
-                width: 80.w,
-                fit: BoxFit.cover,
-              ),
-              SizedBox(width: 15.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Variant ID: ${firstItem.productVariant.id}",
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+          SizedBox(
+            height: 100.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: order.items
+                  .map((e) => e.productVariant.image ?? "")
+                  .toSet()
+                  .length,
+              separatorBuilder: (_, __) => SizedBox(width: 15.w),
+              itemBuilder: (context, i) {
+                final uniqueImages = order.items
+                    .map((e) => e.productVariant.image ?? "")
+                    .toSet()
+                    .toList();
+
+                final img = uniqueImages[i];
+
+                if (img.isEmpty) {
+                  return Container(
+                    height: 80.h,
+                    width: 80.w,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image_not_supported),
+                  );
+                }
+
+                return InkWell(
+                  onTap: () {
+            
+                  },
+                  child: Image.network(
+                    'https://backkk.stroybazan1.uz$img',
+                    height: 80.h,
+                    width: 80.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.broken_image, size: 40),
                   ),
-                  Text("${firstItem.price} so‘m"),
-                ],
-              ),
-            ],
+                );
+              },
+            ),
           ),
         ],
 
+        // "Ko‘rsatish/berkitish" tugmasi
         if (firstItem != null) ...[
           SizedBox(height: 12.h),
           TextButton(
             onPressed: () {
               setState(() {
-                _visibilityMap[order.id] = !isVisible;
+                _visibilityMap[key] = !isVisible;
               });
             },
             child: Text(
@@ -176,7 +212,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       case "cancelled":
         return "Qaytarilgan";
       default:
-        return status;
+        return status.isEmpty ? "-" : status;
     }
   }
 

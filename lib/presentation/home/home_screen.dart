@@ -1,4 +1,6 @@
 
+import 'package:easy_localization/easy_localization.dart';
+import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/data/models/product_model.dart';
 
 import '../../core/constants/app_imports.dart';
@@ -10,16 +12,53 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   final Set<int> favoriteProducts = {};
+    Set<int> favoriteProducts = {};
   bool isMore = false;
   String searchQuery = "";
   TextEditingController searchController = TextEditingController();
+  String selectedBusiness ="";
+  String selectedlanguage ="";
   @override
   void initState() {
     super.initState();
+    selectedlanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
+    selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "Stroy Baza №1";
+    _loadFavorites();
     BlocProvider.of<GetProductsBloc>(context)
         .add(GetProductsByBranchIdEvent(branchId: "0"));
   }
+    Future<void> _loadFavorites() async {
+    final favList = SharedPreferencesService.instance.getStringList("favorites") ?? [];
+    setState(() {
+      favoriteProducts = favList.map((e) => int.parse(e)).toSet();
+    });
+  }
+  Future<void> _toggleFavorite(Product product) async {
+  setState(() {
+    if (favoriteProducts.contains(product.id)) {
+      favoriteProducts.remove(product.id);
+    } else {
+      favoriteProducts.add(product.id);
+    }
+  });
+
+  // SharedPreferences ga yozish
+  await SharedPreferencesService.instance.saveStringList(
+    "favorites",
+    favoriteProducts.map((e) => e.toString()).toList(),
+  );
+
+
+  if (HiveBoxes.favoriteProduct.containsKey(product.id)) {
+
+    HiveBoxes.favoriteProduct.delete(product.id);
+  } else {
+    HiveBoxes.favoriteProduct.put(
+      product.id,
+      FavoriteProductModel.fromProduct(product),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +71,7 @@ return Scaffold(
             child: Column(
               children: [
                 SizedBox(height: 60.h),
-                Image.asset("assets/images/app_logo.png"),
+                Image.asset(selectedBusiness == "Stroy Baza №1" ? "assets/images/app_logo.png" : selectedBusiness == "Giaz Mebel" ? "assets/images/giaz_mebel.png" : "assets/images/gold_klinker.jpg",width: 80.w,height: 80.h,),
                 CustomSearchbar(
 
                   controller: searchController,
@@ -48,7 +87,7 @@ return Scaffold(
                     });
                   },
                 
-                  hintText: "Qidirish",
+                  hintText: "search".tr(),
                   prefixicon: Icon(Icons.search),
                 ),
                 SizedBox(height: 10.h),
@@ -65,7 +104,7 @@ return Scaffold(
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      "Tavsiya etilgan mahsulotlar",
+                      "recommended_products".tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -84,7 +123,11 @@ return Scaffold(
                       if (state is GetProductsSuccess) {          
   List<Product> filteredProducts = state.products.where((product) {
                     if (searchQuery.isEmpty) return true; 
-                    return product.nameUz
+                    return selectedlanguage == "uz" ? product.nameUz
+                        .toLowerCase()
+                        .contains(searchQuery.toLowerCase()) : selectedlanguage == "ru" ? product.nameRu
+                        .toLowerCase()
+                        .contains(searchQuery.toLowerCase()) : product.nameEn
                         .toLowerCase()
                         .contains(searchQuery.toLowerCase());
                   }).toList();
@@ -115,12 +158,12 @@ return Scaffold(
                                       isAvailable:
                                           product.variants[0].isAvailable,
                                       images: product.variants.map((e) => e.image).toList(),
-                                      title: product.nameUz,
+                                      title: selectedlanguage == "uz" ? product.nameUz : selectedlanguage == "ru" ? product.nameRu : product.nameEn,
                                       color:
-                                          product.variants[0].colorUz ?? "",
-                                      size: product.variants[0].sizeUz ?? "",
+                                           selectedlanguage == "uz" ? product.variants[0].colorUz??"" : selectedlanguage == "ru" ? product.variants[0].colorRu??"" : product.variants[0].colorEn??"",
+                                      size: selectedlanguage == "uz" ? product.variants[0].sizeUz??"" : selectedlanguage == "ru" ? product.variants[0].sizeRu??"" : product.variants[0].sizeEn??"",
                                       description:
-                                          product.descriptionUz ?? "",
+                                          selectedlanguage == "uz" ? product.descriptionUz! : selectedlanguage == "ru" ? product.descriptionRu! : product.descriptionEn!,
                                       price: product.variants[0].price
                                           .toString(),
                                       monthlyPrice3: product
@@ -146,7 +189,6 @@ return Scaffold(
                                  
                                   children: [
                                     Container(
-                                    
                                       height: 155.h,
                                       width: 155.w,
                                       decoration: BoxDecoration(
@@ -159,8 +201,7 @@ return Scaffold(
                                             BorderRadius.circular(15.r),
                                         child: Image.network(
                                           "https://backkk.stroybazan1.uz${product.image}",
-                                          width: 100.w,
-                                          fit: BoxFit.cover,
+                    
                                           loadingBuilder: (ctx, child, prog) {
                                             if (prog == null) return child;
                                             return _buildShimmerBox(
@@ -175,7 +216,7 @@ return Scaffold(
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      product.nameUz,
+                                      selectedlanguage == "uz" ? product.nameUz : selectedlanguage == "ru" ? product.nameRu : product.nameEn,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -189,7 +230,7 @@ return Scaffold(
                                                               
                                       children: [
                                         Text(
-                                          "Narxi: ${product.variants[0].price} UZS",
+                                          "price".tr() + ": ${product.variants[0].price} UZS",
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
@@ -203,17 +244,7 @@ return Scaffold(
                                                 : Icons.favorite_border,
                                             size: 18.w,
                                           ),
-                                          onPressed: () {
-                                            setState(() {
-                                              if (isFavorite) {
-                                                favoriteProducts
-                                                    .remove(product.id);
-                                              } else {
-                                                favoriteProducts
-                                                    .add(product.id);
-                                              }
-                                            });
-                                          },
+                                          onPressed: () => _toggleFavorite(product),
                                           color: isFavorite
                                               ? Colors.red
                                               : AppColors.yellow,
@@ -223,9 +254,11 @@ return Scaffold(
                                   ],
                                 ),
                               ),
+                           
                             );
                           },
                         );
+                    
                       } else {
                         // Loading shimmer
                         return GridView.builder(

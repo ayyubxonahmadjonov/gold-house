@@ -1,4 +1,4 @@
-class Order {
+class OrderOfBasket {
   final int id;
   final String totalAmount;
   final String status;
@@ -11,7 +11,7 @@ class Order {
   final Branch branch;
   final int part;
 
-  Order({
+  OrderOfBasket({
     required this.id,
     required this.totalAmount,
     required this.status,
@@ -25,20 +25,21 @@ class Order {
     required this.part,
   });
 
-  factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      id: json['id'],
-      totalAmount: json['total_amount'],
-      status: json['status'],
-      deliveryAddress: json['delivery_address'],
-      paymentMethod: json['payment_method'],
-      cashbackUsed: json['cashback_used'],
-      cashbackEarned: json['cashback_earned'],
-      createdAt: json['created_at'] ?? "",
-      items: (json['items'] as List)
-          .map((e) => OrderItem.fromJson(e))
-          .toList(),
-      branch: Branch.fromJson(json['branch']),
+  factory OrderOfBasket.fromJson(Map<String, dynamic> json) {
+    return OrderOfBasket(
+      id: json['id'] ?? 0,
+      totalAmount: json['total_amount'] ?? '',
+      status: json['status'] ?? '',
+      deliveryAddress: json['delivery_address'] ?? '',
+      paymentMethod: json['payment_method'] ?? '',
+      cashbackUsed: json['cashback_used'] ?? '',
+      cashbackEarned: json['cashback_earned'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      items: (json['items'] as List<dynamic>?)
+              ?.map((e) => OrderItem.fromJson(e))
+              .toList() ??
+          [],
+      branch: Branch.fromJson(json['branch'] ?? {}),
       part: json['part'] ?? 0,
     );
   }
@@ -73,9 +74,9 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      productVariant: ProductVariant.fromJson(json['product_variant']),
-      quantity: json['quantity'],
-      price: json['price'],
+      productVariant: ProductVariant.fromJson(json['product_variant'] ?? {}),
+      quantity: json['quantity'] ?? 0,
+      price: json['price'] ?? '',
     );
   }
 
@@ -90,12 +91,12 @@ class OrderItem {
 
 class ProductVariant {
   final int id;
-  final String? colorUz;
-  final String? colorRu;
-  final String? colorEn;
-  final String? sizeUz;
-  final String? sizeRu;
-  final String? sizeEn;
+  final String colorUz;
+  final String colorRu;
+  final String colorEn;
+  final String sizeUz;
+  final String sizeRu;
+  final String sizeEn;
   final String price;
   final bool isAvailable;
   final String image;
@@ -107,12 +108,12 @@ class ProductVariant {
 
   ProductVariant({
     required this.id,
-    this.colorUz,
-    this.colorRu,
-    this.colorEn,
-    this.sizeUz,
-    this.sizeRu,
-    this.sizeEn,
+    required this.colorUz,
+    required this.colorRu,
+    required this.colorEn,
+    required this.sizeUz,
+    required this.sizeRu,
+    required this.sizeEn,
     required this.price,
     required this.isAvailable,
     required this.image,
@@ -125,21 +126,21 @@ class ProductVariant {
 
   factory ProductVariant.fromJson(Map<String, dynamic> json) {
     return ProductVariant(
-      id: json['id'],
-      colorUz: json['color_uz'],
-      colorRu: json['color_ru'],
-      colorEn: json['color_en'],
-      sizeUz: json['size_uz'],
-      sizeRu: json['size_ru'],
-      sizeEn: json['size_en'],
-      price: json['price'],
-      isAvailable: json['is_available'],
-      image: json['image'],
-      monthlyPayment3: json['monthly_payment_3'],
-      monthlyPayment6: json['monthly_payment_6'],
-      monthlyPayment12: json['monthly_payment_12'],
-      monthlyPayment24: json['monthly_payment_24'],
-      product: json['product'],
+      id: json['id'] ?? 0,
+      colorUz: json['color_uz'] ?? '',
+      colorRu: json['color_ru'] ?? '',
+      colorEn: json['color_en'] ?? '',
+      sizeUz: json['size_uz'] ?? '',
+      sizeRu: json['size_ru'] ?? '',
+      sizeEn: json['size_en'] ?? '',
+      price: json['price'] ?? '',
+      isAvailable: json['is_available'] ?? false,
+      image: json['image'] ?? '',
+      monthlyPayment3: json['monthly_payment_3'] ?? '',
+      monthlyPayment6: json['monthly_payment_6'] ?? '',
+      monthlyPayment12: json['monthly_payment_12'] ?? '',
+      monthlyPayment24: json['monthly_payment_24'] ?? '',
+      product: json['product'] ?? 0,
     );
   }
 
@@ -201,21 +202,21 @@ class Branch {
 
   factory Branch.fromJson(Map<String, dynamic> json) {
     return Branch(
-      id: json['id'],
-      location: Location.fromJson(json['location']),
-      branch: json['branch'],
-      nameUz: json['name_uz'],
-      nameRu: json['name_ru'],
-      nameEn: json['name_en'],
-      addressUz: json['address_uz'],
-      addressRu: json['address_ru'],
-      addressEn: json['address_en'],
-      phone: json['phone'],
-      workingHoursUz: json['working_hours_uz'],
-      workingHoursRu: json['working_hours_ru'],
-      workingHoursEn: json['working_hours_en'],
-      isActive: json['is_active'],
-      order: json['order'],
+      id: json['id'] ?? 0,
+      location: Location.fromJson(json['location'] ?? {}),
+      branch: json['branch'] ?? 0,
+      nameUz: json['name_uz'] ?? '',
+      nameRu: json['name_ru'] ?? '',
+      nameEn: json['name_en'] ?? '',
+      addressUz: json['address_uz'] ?? '',
+      addressRu: json['address_ru'] ?? '',
+      addressEn: json['address_en'] ?? '',
+      phone: json['phone'] ?? '',
+      workingHoursUz: json['working_hours_uz'] ?? '',
+      workingHoursRu: json['working_hours_ru'] ?? '',
+      workingHoursEn: json['working_hours_en'] ?? '',
+      isActive: json['is_active'] ?? false,
+      order: json['order'] ?? 0,
     );
   }
 
@@ -263,14 +264,14 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      id: json['id'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      addressUz: json['address_uz'],
-      addressRu: json['address_ru'],
-      addressEn: json['address_en'],
-      isActive: json['is_active'],
-      isMain: json['is_main'],
+      id: json['id'] ?? 0,
+      latitude: json['latitude'] ?? '',
+      longitude: json['longitude'] ?? '',
+      addressUz: json['address_uz'] ?? '',
+      addressRu: json['address_ru'] ?? '',
+      addressEn: json['address_en'] ?? '',
+      isActive: json['is_active'] ?? false,
+      isMain: json['is_main'] ?? false,
     );
   }
 

@@ -1,4 +1,6 @@
 
+import 'package:easy_localization/easy_localization.dart';
+
 import '../constants/app_imports.dart';
 
 class CustomPhoneForm extends StatefulWidget {
@@ -20,24 +22,21 @@ class CustomPhoneForm extends StatefulWidget {
 class _CustomPhoneFormState extends State<CustomPhoneForm> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: IntlPhoneField(
-        decoration: const InputDecoration(
-          labelText: 'Telefon Raqamingiz',
-          hintText: 'Telefon raqamingizni kiriting',
-          border: OutlineInputBorder(borderSide: BorderSide()),
-        ),
-        initialCountryCode: 'UZ',
-        controller: widget.controller,
-        initialValue: widget.controller.text,
-        onChanged: (phone) {
-          // Callbackni chaqirish
-          if (widget.onPhoneChanged != null) {
-            widget.onPhoneChanged!(phone);
-          }
-        },
+    return IntlPhoneField(
+      decoration:  InputDecoration(
+        labelText: 'your_phone'.tr(),
+        hintText: 'enter_phone'.tr(),
+        border: OutlineInputBorder(borderSide: BorderSide()),
       ),
+      initialCountryCode: 'UZ',
+      controller: widget.controller,
+      initialValue: widget.controller.text,
+      onChanged: (phone) {
+        // Callbackni chaqirish
+        if (widget.onPhoneChanged != null) {
+          widget.onPhoneChanged!(phone);
+        }
+      },
     );
   }
 }

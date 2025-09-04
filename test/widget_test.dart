@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gold_house/app.dart';
+import 'package:gold_house/main.dart';
 
 
 void main() {

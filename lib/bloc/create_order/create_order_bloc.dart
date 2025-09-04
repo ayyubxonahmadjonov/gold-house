@@ -15,7 +15,8 @@ class CreateOrderBloc extends Bloc<CreateOrderEvent, CreateOrderState> {
     print(result.result);
     print(result.statusCode);
     if (result.isSuccess) {
-      emit(CreateOrderSuccess());
+    
+      emit(CreateOrderSuccess(orderId: result.result["order_id"]));
     } else {
       emit(CreateOrderError(message: result.result.toString()));
     }

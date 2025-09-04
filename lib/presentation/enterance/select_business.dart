@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../core/constants/app_imports.dart';
 
 class SelectBusinessScreen extends StatefulWidget {
@@ -8,7 +10,7 @@ class SelectBusinessScreen extends StatefulWidget {
 }
 
 class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
-  String selectedBusiness = "Stroy Baza №1";
+  String selectedBusiness = "";
 
   void _selectBusiness(String title) {
     setState(() {
@@ -27,30 +29,30 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BusinessCard(
-                imagePath: "assets/icons/statistics.svg",
+                imagePath: "assets/images/giaz_mebel.png",
                 title: "Giaz Mebel",
                 isSelected: selectedBusiness == "Giaz Mebel",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/story_baza.svg",
+                imagePath: "assets/images/app_logo.png",
                 title: "Stroy Baza №1",
                 isSelected: selectedBusiness == "Stroy Baza №1",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/aaaa.svg",
-                title: "Gold Klinker",
-                isSelected: selectedBusiness == "Gold Klinker",
+                imagePath: "assets/images/gold_klinker.png",
+                title: "GoldKlinker",
+                isSelected: selectedBusiness == "GoldKlinker",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 60),
               CustomButton(
-                title: "Saqlash",
+                title: "save".tr(),
                 onPressed: () async {
-       SharedPreferencesService.instance.saveString("selected_business", selectedBusiness);
+      await SharedPreferencesService.instance.saveString("selected_business", selectedBusiness);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SelectRgScreen()),
@@ -108,10 +110,10 @@ class _BusinessCardState extends State<BusinessCard> {
         child: Row(
           children: [
             const SizedBox(width: 12),
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: SvgPicture.asset(widget.imagePath, ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(widget.imagePath,height: 40,width: 40,),
+            ),
             const SizedBox(width: 16),
             Text(
               widget.title,

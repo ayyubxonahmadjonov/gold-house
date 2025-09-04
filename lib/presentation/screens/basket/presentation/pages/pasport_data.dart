@@ -1,0 +1,245 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gold_house/core/shared/custom_intel_phone.dart';
+import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
+import 'package:intl/intl.dart';
+import 'package:intl_phone_field/phone_number.dart';
+
+class PassportFormPage extends StatefulWidget {
+  const PassportFormPage({super.key});
+
+  @override
+  State<PassportFormPage> createState() => _PassportFormPageState();
+}
+
+class _PassportFormPageState extends State<PassportFormPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _passportController = TextEditingController();
+  final _dobController = TextEditingController();
+  final _pinflController = TextEditingController();
+  final _phoneController = TextEditingController();
+  String phoneNumber = '';
+
+  DateTime? _selectedDob;
+  String? _e164Phone;
+
+  @override
+  void dispose() {
+    _passportController.dispose();
+    _dobController.dispose();
+    _pinflController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  String _formatDate(DateTime d) => DateFormat('dd/MM/yyyy').format(d);
+
+  Future<void> _pickDob() async {
+    final now = DateTime.now();
+    final initial = DateTime(now.year - 18, now.month, now.day);
+    final first = DateTime(1900, 1, 1);
+    final last = now;
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDob ?? initial,
+      firstDate: first,
+      lastDate: last,
+      helpText: "Tug'ilgan kunni tanlang",
+      cancelText: "Bekor qilish",
+      confirmText: "Tanlash",
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDob = picked;
+        _dobController.text = _formatDate(picked);
+      });
+    }
+  }
+
+  List<TextInputFormatter> get _passportFormatters => [
+        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+        LengthLimitingTextInputFormatter(9),
+        _UpperCaseTextFormatter(),
+      ];
+
+  String? _validatePhone() {
+    if ((_e164Phone ?? '').isEmpty) return "Telefon raqami bo'sh.";
+    return null;
+  }
+
+  String? _validatePassport(String? v) {
+    final value = (v ?? '').trim();
+    if (value.isEmpty) return "Passport raqami bo'sh.";
+    final re = RegExp(r'^[A-Z]{2}\d{7}$');
+    if (!re.hasMatch(value)) return "Format: AA1234567 (2 harf + 7 raqam).";
+    return null;
+  }
+
+  String? _validateDob(String? v) {
+    if ((_selectedDob) == null || (v ?? '').isEmpty) return "Tug'ilgan kun bo'sh.";
+    if (_selectedDob!.isAfter(DateTime.now())) return "Sana kelajakda bo'lmasin.";
+    return null;
+  }
+
+  String? _validatePinfl(String? v) {
+    final value = (v ?? '').trim();
+    if (value.isEmpty) return "PINFL bo'sh.";
+    if (value.length != 14) return "PINFL 14 ta raqam bo'lishi kerak.";
+    if (!RegExp(r'^\d{14}$').hasMatch(value)) return "Faqat raqam kiriting.";
+    return null;
+  }
+
+  void _submit() {
+    final formOk = _formKey.currentState?.validate() ?? false;
+    if (!formOk) return;
+
+    final data = {
+      "phone": _e164Phone,
+      "passportId": _passportController.text.trim(),
+      "dob": _selectedDob?.toIso8601String(),
+      "pinfl": _pinflController.text.trim(),
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Yuborildi ✅\n$data")),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Passport ma'lumotlari"),
+        backgroundColor: Colors.amber.shade300,
+        foregroundColor: Colors.black,
+      ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, c) {
+   
+            final maxW = c.maxWidth;
+            final horizontal = maxW > 560 ? (maxW - 520) / 2 : 16.0;
+
+            return Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 24),
+                children: [
+                  // PHONE
+                  Text("Telefon raqam", style: _labelStyle(context)),
+             CustomPhoneForm(
+                controller: _phoneController,
+                onPhoneChanged: (phone) {
+                  phoneNumber = phone.completeNumber;
+                  print("bu phone $phoneNumber");
+                },
+              ),
+
+                  // PASSPORT
+                  Text("Passport seriya va raqam (ID)", style: _labelStyle(context)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _passportController,
+                    textCapitalization: TextCapitalization.characters,
+                    inputFormatters: _passportFormatters,
+                    keyboardType: TextInputType.text,
+                    decoration: _decoration(context, hint: "AA1234567"),
+                    validator: _validatePassport,
+                  ),
+                  const SizedBox(height: 18),
+
+                  // DOB
+                  Text("Tug'ilgan kun", style: _labelStyle(context)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _dobController,
+                    readOnly: true,
+                    onTap: _pickDob,
+                    decoration: _decoration(
+                      context,
+                      hint: "dd/MM/yyyy (masalan: 01/02/2000)",
+                      suffixIcon: const Icon(Icons.calendar_month),
+                    ),
+                    validator: _validateDob,
+                  ),
+                  const SizedBox(height: 18),
+
+                  // PINFL
+                  Text("PINFL", style: _labelStyle(context)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _pinflController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(14),
+                    ],
+                    decoration: _decoration(context, hint: "12345678901234"),
+                    validator: _validatePinfl,
+                  ),
+
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    height: 52,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: _submit,
+                      child: const Text(
+                        "Davom etish",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      backgroundColor: isDark ? const Color(0xFF0E0E0E) : const Color(0xFFF7F7F7),
+    );
+  }
+
+  InputDecoration _decoration(BuildContext context,
+      {String? hint, Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.amber, width: 1.6),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      suffixIcon: suffixIcon,
+    );
+  }
+
+  TextStyle _labelStyle(BuildContext context) =>
+      const TextStyle(fontWeight: FontWeight.w600, fontSize: 14);
+}
+
+class _UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+      composing: TextRange.empty,
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/data/models/city_model.dart';
 import 'package:gold_house/presentation/widgets/select_city_dialog.dart';
 
@@ -36,7 +37,7 @@ void _showCityDialog() {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              title: const Text("Xatolik"),
+              title:  Text("error".tr()),
               content: Text("Shaharlarni yuklashda muammo yuz berdi.${state.message}"),
               actions: [
                 TextButton(
@@ -102,7 +103,7 @@ void _showCityDialog() {
               const SizedBox(height: 40),
       
               Text(
-                "Siz $selectedCity shahridamisiz ?",
+                "are_you_from_city".tr(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20,
@@ -113,8 +114,8 @@ void _showCityDialog() {
       
               const SizedBox(height: 12),
       
-              const Text(
-                "Tanlangan hududga qarab yetkazib berish\nusuli va mahsulot mavjudligi belgilanadi.",
+               Text(
+                "note_region".tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -146,7 +147,7 @@ void _showCityDialog() {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text("Yo'q, o'zgartirish"),
+                    child: Text("${"no".tr()} ${"change".tr()}"),
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton(
@@ -170,7 +171,7 @@ void _showCityDialog() {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text("Ha"),
+                    child: Text("yes".tr()),
                   ),
                 ],
               ),

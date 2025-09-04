@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gold_house/core/constants/app_colors.dart';
 import 'package:gold_house/data/datasources/local/hive_helper/hive_names.dart';
+import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
 import 'package:gold_house/data/models/basket_model.dart';
 import 'package:gold_house/presentation/home/components/monthly_payment.dart';
 import 'package:gold_house/presentation/screens/basket/presentation/pages/basket.dart';
@@ -50,7 +52,13 @@ required this.variantId,
 }
 
 class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
+  String selectedlanguage = "";
   int activeIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    selectedlanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,7 +194,7 @@ Container(              padding: EdgeInsets.symmetric(
             
             SizedBox(height: 20.h),
             Text(
-              "Tasnif",
+              "category".tr(),
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
@@ -207,7 +215,7 @@ MonthlyPaymentWidget(
 ),
             SizedBox(height: 12.h),
             Text(
-              "Siz buyurtmani 3 oydan 24 oygacha muddatli to‘lov evaziga xarid qilishingiz mumkin.",
+              "installment_info".tr(),
               style: TextStyle(fontSize: 12.sp),
             ),
 
@@ -223,7 +231,7 @@ MonthlyPaymentWidget(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Yetkazib berish 1 kun ichida",
+                    "delivery_1_day".tr(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14.sp,
@@ -231,13 +239,13 @@ MonthlyPaymentWidget(
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    "Agar 5mln so‘mdan ortiq mahsulotga buyurtma bersangiz yetkazib berish VODIY bo‘ylab bepul.",
+                    "free_delivery_note".tr(),
                     style: TextStyle(fontSize: 12.sp),
                   ),
                   SizedBox(height: 6.h),
                   Divider(),
                   Text(
-                    "Muddatli to‘lovni rasmiylashtirayotganingizda bizdan va hamkorlarimizdan eng maqbul takliflarga ega bo‘lishingiz mumkin.",
+                    "best_offer".tr(),
                     style: TextStyle(fontSize: 12.sp),
                   ),
 
@@ -325,7 +333,7 @@ MonthlyPaymentWidget(
             Icon(Icons.check_circle, color: Colors.green, size: 24),
             SizedBox(width: 8),
             Text(
-              "Mahsulot savatga qo'shildi",
+              "product_added".tr(),
               style: TextStyle(
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
@@ -346,7 +354,7 @@ MonthlyPaymentWidget(
             ),
           ),
           icon: Icon(Icons.shopping_cart, size: 12),
-          label: Text("Savatga o'tish"),
+          label: Text("cart".tr()),
         ),
                 ],
           ),
@@ -362,7 +370,7 @@ MonthlyPaymentWidget(
             ),
           ),
           child: Text(
-            "Savatchaga qo‘shish",
+            "add_to_cart".tr(),
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,color: AppColors.white),
           ),
         ),

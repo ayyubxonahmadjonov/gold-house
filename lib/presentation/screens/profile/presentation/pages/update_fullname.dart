@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart' show DialogType;
+import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/core/shared/custom_awesome_dialog.dart';
 import 'package:gold_house/core/shared/custom_textfield.dart';
@@ -14,8 +15,8 @@ class _UpdateFullnameState extends State<UpdateFullname> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
 
-  // ✅ ValueNotifier qo‘shildi
   final ValueNotifier<String> fullnameNotifier = ValueNotifier<String>("");
+  int id = 0;
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _UpdateFullnameState extends State<UpdateFullname> {
 
     fullnameNotifier.value =
         SharedPreferencesService.instance.getString("profilfullname") ?? "";
+    id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
   }
 
   @override
@@ -41,7 +43,9 @@ class _UpdateFullnameState extends State<UpdateFullname> {
                 child: Text(
                   fullname.isEmpty ? "Ism familiya kiritilmagan" : fullname,
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               );
             },
@@ -72,18 +76,10 @@ class _UpdateFullnameState extends State<UpdateFullname> {
             hintText: "Familiyangizni kiriting",
             label: '',
           ),
-    
-          Center(
-            child: CustomButton(
-              onPressed: () async {
-                final newFullname =
-                    "${nameController.text} ${surnameController.text}";
-    
-      
-                SharedPreferencesService.instance
-                    .saveString('profilfullname', newFullname);
-                fullnameNotifier.value = newFullname;
 
+          BlocConsumer<UserUpdateBloc, UserUpdateState>(
+            listener: (context, state) {
+        if(state is UserUpdateSuccess){
                 CustomAwesomeDialog.showInfoDialog(
                   onOkPress: () {
                     Navigator.pop(context);
@@ -93,16 +89,38 @@ class _UpdateFullnameState extends State<UpdateFullname> {
                   title: "O'zgarishlar saqlandi",
                   desc: "Ism va familiyangiz muvaffaqiyatli o'zgartirildi",
                 );
-              },
-              title: "O'zgarishlarni saqlash",
-              bacColor: AppColors.yellow,
-              textColor: AppColors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: 20,
-              borderRadius: 5,
-              width: 350.w,
-              height: 50.h,
-            ),
+            }
+            },
+            builder: (context, state) {
+              return Center(
+                child: CustomButton(
+                  onPressed: () async {
+                    final newFullname =
+                        "${nameController.text} ${surnameController.text}";
+                    BlocProvider.of<UserUpdateBloc>(context).userFullNameUpdate(
+                      UserFullNameUpdateEvent(
+                        firstname: nameController.text,
+                        lastname: surnameController.text,
+                        userid: id.toString(),
+                      ),
+                    );
+                    SharedPreferencesService.instance.saveString(
+                      'profilfullname',
+                      newFullname,
+                    );
+                    fullnameNotifier.value = newFullname;
+                  },
+                  title: "O'zgarishlarni saqlash",
+                  bacColor: AppColors.yellow,
+                  textColor: AppColors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                  borderRadius: 5,
+                  width: 350.w,
+                  height: 50.h,
+                ),
+              );
+            },
           ),
         ],
       ),

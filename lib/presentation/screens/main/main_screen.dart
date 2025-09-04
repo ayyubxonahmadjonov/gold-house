@@ -1,4 +1,5 @@
 import 'package:gold_house/bloc/branches/branches_bloc.dart';
+import 'package:gold_house/data/datasources/remote/api_service.dart';
 
 import '../../../core/constants/app_imports.dart';
 
@@ -19,11 +20,16 @@ class _MainScreenState extends State<MainScreen> {
     const BasketPage(),
     ProfileScreen(),
   ];
-
+String selected_business = "";
+  @override
+  void initState() {
+    super.initState();
+    selected_business = SharedPreferencesService.instance.getString("selected_business") ?? "";
+  }
   @override
   Widget build(BuildContext context) {
+    print(selected_business);
     return Scaffold(
-
       backgroundColor: Theme.of(context).primaryColor.withOpacity(0.05),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

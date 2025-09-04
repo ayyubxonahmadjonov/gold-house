@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../core/constants/app_imports.dart';
 
 class SelectLgScreen extends StatefulWidget {
@@ -19,7 +21,7 @@ class _SelectLgScreenState extends State<SelectLgScreen> {
   void _onLanguageSelect(String langCode) {
     setState(() {
       _selectedLanguage = langCode;
-      // TODO: Local saqlash (SharedPreferences, Hive va h.k.)
+      context.setLocale(Locale(langCode));
     });
   }
 
@@ -33,8 +35,8 @@ class _SelectLgScreenState extends State<SelectLgScreen> {
           children: [
             SizedBox(height: 100),
 
-            const Text(
-              "Tilni tanlang",
+            Text(
+              "select_language".tr(),
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -87,7 +89,7 @@ class _SelectLgScreenState extends State<SelectLgScreen> {
                 );
               },
 
-              title: "Davom etish",
+              title: "continue".tr(),
               bacColor: Colors.yellow,
               textColor: Colors.black,
               fontWeight: FontWeight.w600,

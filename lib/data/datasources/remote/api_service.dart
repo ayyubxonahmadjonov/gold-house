@@ -77,7 +77,9 @@ return _get("api/api/regions/");
   static Future<HttpResult> getBranches (){
 return _get("api/branches/");
 }
-  
+  static Future<HttpResult> getUserData(String id) async {
+    return  _get("api/api/users/$id/");  
+  }
   static Future<bool> refreshAccessToken() async {
      dynamic refreshToken = await SharedPreferencesService.instance.getString("refresh");
     Uri url = Uri.parse('$_baseUrl/api/api/token/refresh/');
@@ -119,13 +121,15 @@ return _get("api/branches/");
       return false;
     }
   }
-
 static Future<HttpResult> getMyOrders(
 
   ) async {
-    return await _get("api/api/orders/my/",);
+  final result = await _get("api/api/orders/my/",);
+  if(result.isSuccess){
+    return result;
   }
- 
+  return result;
+  }
  static Future<HttpResult> createOrder(
   List<int> productId,
   List<int> variantId,
@@ -159,7 +163,33 @@ static Future<HttpResult> getMyOrders(
     "delivery_method": deliveryMethod,
   });
 }
+static Future<http.Response> updatePayment(int orderId, String paymentMethod) async {
+  final url = Uri.parse("${_baseUrl}pay/api/orders/$orderId/payment/");
 
+
+  final response = await http.put(
+    url,
+  headers: _header(),
+    body: jsonEncode({"payment_method": paymentMethod}),
+  );
+
+  return response;
+}
+static Future<http.Response> updateUser(String firstname, String lastname, String userid) async {
+  final url = Uri.parse("${_baseUrl}api/api/users/$userid/update/");
+
+
+  final response = await http.put(
+    url,
+  headers: _header(),
+    body: jsonEncode({
+  "first_name": firstname,
+  "last_name": lastname
+}),
+  );
+
+  return response;
+}
   static Future<HttpResult> _post(
     String path, {
     Object? body,
@@ -269,6 +299,7 @@ static Future<HttpResult> getMyOrders(
       );
     }
   }
+
 }
 
 class AppStrings2 {

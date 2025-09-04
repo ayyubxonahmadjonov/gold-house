@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
 import 'package:gold_house/data/models/city_model.dart';
-import 'package:gold_house/presentation/screens/main/main_screen.dart';
-
 class SelectCityDialog extends StatefulWidget {
   Widget? route;
   final List<City> cities;        
@@ -27,7 +25,6 @@ class _SelectCityDialogState extends State<SelectCityDialog> {
     super.initState();
     tempSelected = widget.initialSelectedCity;
   }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

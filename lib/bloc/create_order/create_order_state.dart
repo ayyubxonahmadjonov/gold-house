@@ -6,8 +6,8 @@ abstract class CreateOrderState {}
  class CreateOrderInitial extends CreateOrderState {}
 class CreateOrderLoading extends CreateOrderState {}
 class CreateOrderSuccess extends CreateOrderState {
-  // final Order order;
-  // CreateOrderSuccess({required this.order});
+   final int orderId;
+  CreateOrderSuccess({required this.orderId});
 }
 class CreateOrderError extends CreateOrderState {
   final String message;

@@ -1,6 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
+import 'package:gold_house/presentation/screens/profile/cashback_screen.dart';
+import 'package:gold_house/presentation/screens/profile/presentation/pages/show_language_bottom.dart';
 import 'package:gold_house/presentation/screens/profile/presentation/pages/update_fullname.dart';
 import 'package:gold_house/presentation/widgets/select_city_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_imports.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,6 +29,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ValueNotifier<String> fullname = ValueNotifier<String>(
     "${SharedPreferencesService.instance.getString("profilfullname")}",
   );
+  int user_id = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    user_id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
+    BlocProvider.of<GetUserDataBloc>(
+      context,
+    ).add(GetUserAllDataEvent(id: user_id.toString()));
+  }
 
   String selectedCity = "";
   @override
@@ -45,10 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey),
               ),
-              child: ValueListenableBuilder(
-                valueListenable: fullname,
-                builder: (context, value, child) {
-                  return ListTile(
+              child: BlocBuilder<GetUserDataBloc, GetUserDataState>(
+                builder: (context, state) {
+
+                  if(state is GetUserDataSuccess){ return ListTile(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -57,18 +70,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return UpdateFullname();
                           },
                         ),
-                      ).then((_) {
-                        fullname.value =
-                            SharedPreferencesService.instance.getString(
-                              "profilfullname",
-                            ) ??
-                            "";
-                      });
+                      );
                     },
                     leading: Icon(Icons.person),
-                    title: Text(fullname.value),
-                    subtitle: Text("+998 88 739 11"),
+                    title: state.user.firstName.isNotEmpty ? Text("${state.user.firstName} ${state.user.lastName}") : Text("Siz ro'yhatdan o'tmagansiz"),
+                    subtitle: state.user.phoneNumber.isNotEmpty ? Text("${state.user.phoneNumber}") : Text("Ro'yhatdan o'tish majburiy"),
                   );
+                  }
+                    else{ 
+                   return ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text("Siz ro'yhatdan o'tmagansiz"),
+                    subtitle: Text("Ro'yhatdan o'tish majburiy"),
+                  );
+                  }
+                
                 },
               ),
             ),
@@ -82,12 +98,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   SizedBox(height: 15.h),
 
-                  _buildCategories("Buyurtmalar", () {
+                  _buildCategories("orders".tr(), () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return const BasketPage();
+                          return const OrderHistoryScreen();
                         },
                       ),
                     );
@@ -95,14 +111,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 10.h),
 
                   _buildCategories(
-                    "Keshbek",
-                    () {},
+                    "cashback".tr(),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const CashbackView();
+                          },
+                        ),
+                      );
+                    },
                     Icons.account_balance_wallet,
                   ),
 
                   SizedBox(height: 10.h),
 
-                  _buildCategories("Sevimlilar", () {}, Icons.favorite),
+                  _buildCategories("favorites".tr(), () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return  FavoritesScreen();
+                        },
+                      ),
+                    );
+                  }, Icons.favorite),
 
                   SizedBox(height: 15.h),
                 ],
@@ -121,28 +155,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   BlocConsumer<GetCitiesBloc, GetCitiesState>(
                     listener: (context, state) {
-    if(state is GetCitiesSuccess){
-      selectedCity = SharedPreferencesService.instance.getString("selected_city") ?? "Andijon";
-              
-               showDialog(context: context, builder: (context) {
-                 return SelectCityDialog(
-      
-                   cities: state.cities,
-                   initialSelectedCity: selectedCity,
-                 );
-               });
+                      if (state is GetCitiesSuccess) {
+                        selectedCity =
+                            SharedPreferencesService.instance.getString(
+                              "selected_city",
+                            ) ??
+                            "Andijon";
+
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SelectCityDialog(
+                              cities: state.cities,
+                              initialSelectedCity: selectedCity,
+                            );
+                          },
+                        );
                       }
                     },
                     builder: (context, state) {
-                      return _buildCategories("Shahar tanlash", () {
-                        BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
-           
+                      return _buildCategories("select_city".tr(), () {
+                        BlocProvider.of<GetCitiesBloc>(
+                          context,
+                        ).add(GetAllCitiesEvent());
                       }, Icons.location_city);
                     },
                   ),
 
                   SizedBox(height: 15.h),
-                  _buildCategories("Til tanlash", () {}, Icons.language),
+                  _buildCategories("select_language".tr(), () {
+                    showLanguageBottomSheet(context);
+                  }, Icons.language),
                   SizedBox(height: 15.h),
                 ],
               ),
@@ -164,11 +207,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   SizedBox(height: 15.h),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      CustomAwesomeDialog.showInfoDialog(
+                        context,
+                        dialogtype: DialogType.info,
+                        title: "logout".tr(),
+                        desc: "logout_confirm".tr(),
+                        onOkPress: () {
+                          SharedPreferencesService.instance.clear();
+                          HiveBoxes.basketData.clear();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainScreen(),
+                            ),
+                          );
+                        },
+                        onCancelPress: () {},
+                      );
+                    },
                     child: ListTile(
                       leading: Icon(Icons.exit_to_app, color: Colors.red),
                       title: Text(
-                        'Chiqish',
+                        'logout'.tr(),
                         style: TextStyle(color: Colors.red, fontSize: 20.sp),
                       ),
                       trailing: Icon(
@@ -262,7 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       "+998 90 762 92 82",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    subtitle: Text("Savolingiz bormi? Qo'ng'iroq qiling"),
+                    subtitle: Text("have_questions".tr()),
                     trailing: IconButton(
                       onPressed: () {},
                       icon: Icon(Icons.phone),
@@ -277,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       "+998 90 123 45 67",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    subtitle: Text("Ishonch telefoni"),
+                    subtitle: Text("hotline".tr()),
                     trailing: IconButton(
                       onPressed: () {},
                       icon: Icon(Icons.phone),
@@ -298,13 +359,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       IconButton(
                         onPressed: () async {
-                          await _launchInstagramUrl("https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_");
+                          await _launchInstagramUrl(
+                            "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
+                          );
                         },
                         icon: ImageIcon(AssetImage("assets/icons/youtube.png")),
                       ),
                       IconButton(
                         onPressed: () async {
-                          await _launchInstagramUrl("https://t.me/QurulishMollariStroyBazaN1");
+                          await _launchInstagramUrl(
+                            "https://t.me/QurulishMollariStroyBazaN1",
+                          );
                         },
                         icon: Icon(Icons.telegram),
                       ),

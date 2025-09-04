@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class MonthlyPaymentWidget extends StatefulWidget {
@@ -20,15 +21,15 @@ class MonthlyPaymentWidget extends StatefulWidget {
 
 class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
   int selectedIndex = 1; // default 24 oy tanlangan
-  final List<String> months = ['3oy', '6oy', '12oy', '24oy'];
+  final List<String> months = ['months_3'.tr(), 'months_6'.tr(), 'months_12'.tr(), 'months_24'.tr()];
 
   @override
   Widget build(BuildContext context) {
     final Map<String, String?> prices = {
-      '3oy': widget.monthlyPrice3,
-      '6oy': widget.monthlyPrice6,
-      '12oy': widget.monthlyPrice12,
-      '24oy': widget.monthlyPrice24,
+      'months_3'.tr(): widget.monthlyPrice3,
+      'months_6'.tr(): widget.monthlyPrice6,
+      'months_12'.tr(): widget.monthlyPrice12,
+      'months_24'.tr(): widget.monthlyPrice24,
     };
 print(widget.monthlyPrice3);
     String currentMonth = months[selectedIndex];
@@ -93,7 +94,7 @@ print(widget.monthlyPrice3);
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  "$price so'm",
+                  "$price ${'currency'.tr()}",
                   style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 17),
                 ),
               ),

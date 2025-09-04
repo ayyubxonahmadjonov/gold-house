@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_up.dart' as widget;
 import 'package:pinput/pinput.dart';
 
@@ -46,7 +47,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   children: [
                     SizedBox(height: 50.h),
                     Text(
-                      "Biz quyidagi telefon raqamga sms yubordik:\n ${widget.phoneNumber}",
+                      "${'sms_sent'.tr()}:\n ${widget.phoneNumber}",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15.sp,
@@ -65,7 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     SizedBox(height: 50.h),
                     CustomButton(
                     
-                      title: "Tasdiqlash",
+                      title: "verify".tr(),
                       onPressed: () {
                         BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: widget.phoneNumber, verification_code: otpController.text));
                       }, bacColor: Colors.yellow, textColor: Colors.black, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 5, width: 330.w, height: 50.h,
@@ -83,7 +84,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         );
                       },
                       child: Text(
-                        "Telefon Raqamni o'zgartirish",
+                        "change_number".tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 15.sp,

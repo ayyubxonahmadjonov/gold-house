@@ -6,12 +6,16 @@ class SelectPickupDialog extends StatefulWidget {
   final Widget? route;
   final List<BranchModel> branches;
   final String? initialSelectedCity;
+  final ValueChanged<BranchModel>? onSelected; 
+  int? selectedId;
 
-  const SelectPickupDialog({
+   SelectPickupDialog({
     Key? key,
     required this.branches,
     this.initialSelectedCity,
     this.route,
+    this.onSelected, 
+    this.selectedId,
   }) : super(key: key);
 
   @override
@@ -20,18 +24,25 @@ class SelectPickupDialog extends StatefulWidget {
 
 class _SelectPickupDialogState extends State<SelectPickupDialog> {
   int? tempSelectedId;
+  String selectedBusiness = "";
+   List<BranchModel> filteredBranches = [];
 
   @override
   void initState() {
     super.initState();
-    // agar initialSelectedCity ID ko‘rinishida kelgan bo‘lsa
+    selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "";
     tempSelectedId = widget.initialSelectedCity != null
         ? int.tryParse(widget.initialSelectedCity!)
         : null;
+        filteredBranches = widget.branches
+        .where((b) => b.nameUz == selectedBusiness)
+        .toList();
   }
-
   @override
   Widget build(BuildContext context) {
+    print(selectedBusiness);
+    print(widget.branches.first.nameUz);
+    print(selectedBusiness == widget.branches.first.nameUz);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -44,9 +55,9 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
         width: double.maxFinite,
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: widget.branches.length,
+          itemCount: filteredBranches.length,
           itemBuilder: (context, index) {
-            final branch = widget.branches[index];
+            final branch = filteredBranches[index];
             return RadioListTile<int>(
               title: Text(
                 branch.addressUz,
@@ -57,7 +68,7 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
                       : Colors.black87,
                 ),
               ),
-              value: branch.id, // har bir filial unique id bo‘lishi kerak
+              value: branch.id,
               groupValue: tempSelectedId,
               activeColor: Colors.amber[800],
               onChanged: (value) {
@@ -84,14 +95,16 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
           ),
           onPressed: tempSelectedId == null
               ? null
-              : () async {
+              : () {
                   final selectedBranch = widget.branches.firstWhere(
                     (b) => b.id == tempSelectedId,
                   );
 
-                  // agar kerak bo‘lsa local saqlab qo‘yish
-                  await SharedPreferencesService.instance
-                      .saveString("selected_branch", selectedBranch.addressUz);
+                  // ✅ callback ishlatish
+                  if (widget.onSelected != null) {
+                    widget.onSelected!(selectedBranch);
+                    widget.selectedId = selectedBranch.id;
+                  }
 
                   if (widget.route != null) {
                     Navigator.pushReplacement(
