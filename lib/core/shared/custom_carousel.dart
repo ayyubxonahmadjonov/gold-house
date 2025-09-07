@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gold_house/bloc/banners/banners_bloc.dart';
-import 'package:shimmer/shimmer.dart';
-import '../constants/app_imports.dart';
+import 'package:gold_house/core/constants/app_imports.dart';
 
 class CustomCarousel extends StatefulWidget {
-  const CustomCarousel({super.key});
+   String branchId; 
+
+   CustomCarousel({super.key, required this.branchId});
 
   @override
   State<CustomCarousel> createState() => _CustomCarouselState();
@@ -27,11 +29,17 @@ class _CustomCarouselState extends State<CustomCarousel> {
       },
       builder: (context, state) {
         if (state is BannersSuccessState) {
-          final images = state.banners
-              .map((e) => "https://backkk.stroybazan1.uz${e.image}")
+          final banners = state.banners
+              .where((e) => e.branch == int.parse(widget.branchId))
               .toList();
 
-          return CarouselSlider(
+     final images = banners
+    .map((e) => "https://backkk.stroybazan1.uz${e.image}")
+    .toList();
+if (images.length == 1) {
+  images.addAll(List.filled(2, images.first));
+}
+        return CarouselSlider(
             options: CarouselOptions(height: 165.h, autoPlay: true),
             items: images.map((url) {
               return Builder(
@@ -41,16 +49,11 @@ class _CustomCarouselState extends State<CustomCarousel> {
                     margin: EdgeInsets.symmetric(horizontal: 5.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.r),
-                      child: Image.network(
-                        url,
+                      child: CachedNetworkImage(
+                        imageUrl: url,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return _buildShimmerPlaceholder();
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildShimmerPlaceholder();
-                        },
+                        placeholder: (context, url) => _buildShimmerPlaceholder(),
+                        errorWidget: (context, url, error) => _buildShimmerPlaceholder(),
                       ),
                     ),
                   );
@@ -59,7 +62,6 @@ class _CustomCarouselState extends State<CustomCarousel> {
             }).toList(),
           );
         } else {
-          // Umumiy loading shimmer
           return _buildShimmerPlaceholder();
         }
       },

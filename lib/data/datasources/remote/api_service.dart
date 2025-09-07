@@ -13,10 +13,8 @@ class ApiService {
 
   static Map<String, String> _header() {
      final token = SharedPreferencesService.instance.getString("access");
-   
    if(token != null){
       return {"Content-Type": "application/json", "Authorization": "Bearer $token"};
-      
   
   }else{
     return {"Content-Type": "application/json"};
@@ -73,7 +71,14 @@ static Future<HttpResult> getBanners() async {
 static Future<HttpResult> getRegions (){
 return _get("api/api/regions/");
 }
-
+static Future<HttpResult> createCreditforUser(String phone_number,String passportId,String birth_date,String pinfl){
+return _post("pay/api/goldhouse/create/", body: {
+  "pinfl": pinfl,
+  "birth_date": birth_date,
+  "pass_data": passportId,
+  "phone": phone_number,
+});
+}
   static Future<HttpResult> getBranches (){
 return _get("api/branches/");
 }
@@ -197,6 +202,8 @@ static Future<http.Response> updateUser(String firstname, String lastname, Strin
   }) async {
     Uri url = Uri.parse('$_baseUrl$path');
     try {
+      print(jsonEncode(body));
+      print(_header());
       http.Response response = await http
           .post(
             url,

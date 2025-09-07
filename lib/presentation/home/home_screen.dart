@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/data/models/product_model.dart';
@@ -18,6 +19,13 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
   String selectedBusiness ="";
   String selectedlanguage ="";
+    Key carouselKey = UniqueKey();
+    int itemsToShow = 20;
+  void _onBusinessChanged() {
+    setState(() {
+      carouselKey = UniqueKey();
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -25,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "Stroy Baza №1";
     _loadFavorites();
     BlocProvider.of<GetProductsBloc>(context)
-        .add(GetProductsByBranchIdEvent(branchId: "0"));
+        .add(GetProductsByBranchIdEvent(branchId: selectedBusiness=="Stroy Baza №1" ? "0" : selectedBusiness=="Giaz Mebel" ? "1" : "2"));
   }
     Future<void> _loadFavorites() async {
     final favList = SharedPreferencesService.instance.getStringList("favorites") ?? [];
@@ -71,9 +79,16 @@ return Scaffold(
             child: Column(
               children: [
                 SizedBox(height: 60.h),
-                Image.asset(selectedBusiness == "Stroy Baza №1" ? "assets/images/app_logo.png" : selectedBusiness == "Giaz Mebel" ? "assets/images/giaz_mebel.png" : "assets/images/gold_klinker.jpg",width: 80.w,height: 80.h,),
+                Image.asset(
+                  selectedBusiness == "Stroy Baza №1"
+                      ? "assets/images/app_logo.png"
+                      : selectedBusiness == "Giaz Mebel"
+                          ? "assets/images/giaz_mebel.png"
+                          : "assets/images/gold_klinker.jpg",
+                  width: 80.w,
+                  height: 80.h,
+                ),
                 CustomSearchbar(
-
                   controller: searchController,
                   onChanged: (value) {
                     setState(() {
@@ -86,7 +101,6 @@ return Scaffold(
                       searchController.clear();
                     });
                   },
-                
                   hintText: "search".tr(),
                   prefixicon: Icon(Icons.search),
                 ),
@@ -94,13 +108,19 @@ return Scaffold(
               ],
             ),
           ),
-          SelectableRow(),
+          SelectableRow(
+            onBusinessChanged: (business) {
+              setState(() {
+                selectedBusiness = business;
+              });
+            },
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CustomCarousel(),
+                   CustomCarousel(branchId: selectedBusiness=="Stroy Baza №1"?"0":selectedBusiness=="Giaz Mebel"?"1":selectedBusiness=="Goldklinker"?"2":"0"),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
@@ -120,153 +140,152 @@ return Scaffold(
                       }
                     },
                     builder: (context, state) {
-                      if (state is GetProductsSuccess) {          
-  List<Product> filteredProducts = state.products.where((product) {
-                    if (searchQuery.isEmpty) return true; 
-                    return selectedlanguage == "uz" ? product.nameUz
-                        .toLowerCase()
-                        .contains(searchQuery.toLowerCase()) : selectedlanguage == "ru" ? product.nameRu
-                        .toLowerCase()
-                        .contains(searchQuery.toLowerCase()) : product.nameEn
-                        .toLowerCase()
-                        .contains(searchQuery.toLowerCase());
-                  }).toList();
-                        return GridView.builder(
-                          itemCount: filteredProducts.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.7,
-  
-                            
-                          ),
-                          itemBuilder: (context, index) {
-                            final product = filteredProducts[index];
-                            final isFavorite =
-                                favoriteProducts.contains(product.id);
+                      if (state is GetProductsSuccess) {
+                        List<Product> filteredProducts = state.products.where((product) {
+                          if (searchQuery.isEmpty) return true;
+                          return selectedlanguage == "uz"
+                              ? product.nameUz.toLowerCase().contains(searchQuery.toLowerCase())
+                              : selectedlanguage == "ru"
+                                  ? product.nameRu.toLowerCase().contains(searchQuery.toLowerCase())
+                                  : product.nameEn.toLowerCase().contains(searchQuery.toLowerCase());
+                        }).toList();
 
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductDescriptionPage(
-                                      variantId: product.variants[0].id,
-                                      productId: product.id.toString(),
-                                      isAvailable:
-                                          product.variants[0].isAvailable,
-                                      images: product.variants.map((e) => e.image).toList(),
-                                      title: selectedlanguage == "uz" ? product.nameUz : selectedlanguage == "ru" ? product.nameRu : product.nameEn,
-                                      color:
-                                           selectedlanguage == "uz" ? product.variants[0].colorUz??"" : selectedlanguage == "ru" ? product.variants[0].colorRu??"" : product.variants[0].colorEn??"",
-                                      size: selectedlanguage == "uz" ? product.variants[0].sizeUz??"" : selectedlanguage == "ru" ? product.variants[0].sizeRu??"" : product.variants[0].sizeEn??"",
-                                      description:
-                                          selectedlanguage == "uz" ? product.descriptionUz! : selectedlanguage == "ru" ? product.descriptionRu! : product.descriptionEn!,
-                                      price: product.variants[0].price
-                                          .toString(),
-                                      monthlyPrice3: product
-                                          .variants[0].monthlyPayment3
-                                          .toString(),
-                                      monthlyPrice6: product
-                                          .variants[0].monthlyPayment6
-                                          .toString(),
-                                      monthlyPrice12: product
-                                          .variants[0].monthlyPayment12
-                                          .toString(),
-                                      monthlyPrice24: product
-                                          .variants[0].monthlyPayment24
-                                          .toString(), 
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding:  EdgeInsets.only(left: 15.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                 
-                                  children: [
-                                    Container(
-                                      height: 155.h,
-                                      width: 155.w,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(15.r),
-                                        child: Image.network(
-                                          "https://backkk.stroybazan1.uz${product.image}",
-                    
-                                          loadingBuilder: (ctx, child, prog) {
-                                            if (prog == null) return child;
-                                            return _buildShimmerBox(
-                                                height: 160.h, width: 160.w);
-                                          },
-                                          errorBuilder: (ctx, err, st) {
-                                            return _buildShimmerBox(
-                                                height: 160.h, width: 160.w);
-                                          },
+                        final productsToDisplay = filteredProducts.take(itemsToShow).toList();
+
+                        return Column(
+                          children: [
+                            GridView.builder(
+                              itemCount: productsToDisplay.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.7,
+                              ),
+                              itemBuilder: (context, index) {
+                                final product = productsToDisplay[index];
+                                final isFavorite = favoriteProducts.contains(product.id);
+
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProductDescriptionPage(
+                                          variantId: product.variants[0].id,
+                                          productId: product.id.toString(),
+                                          isAvailable: product.variants[0].isAvailable,
+                                          images: product.variants.map((e) => e.image).toList(),
+                                          title: selectedlanguage == "uz"
+                                              ? product.nameUz
+                                              : selectedlanguage == "ru"
+                                                  ? product.nameRu
+                                                  : product.nameEn,
+                                          color: selectedlanguage == "uz"
+                                              ? product.variants[0].colorUz ?? ""
+                                              : selectedlanguage == "ru"
+                                                  ? product.variants[0].colorRu ?? ""
+                                                  : product.variants[0].colorEn ?? "",
+                                          size: selectedlanguage == "uz"
+                                              ? product.variants[0].sizeUz ?? ""
+                                              : selectedlanguage == "ru"
+                                                  ? product.variants[0].sizeRu ?? ""
+                                                  : product.variants[0].sizeEn ?? "",
+                                          description: selectedlanguage == "uz"
+                                              ? product.descriptionUz!
+                                              : selectedlanguage == "ru"
+                                                  ? product.descriptionRu!
+                                                  : product.descriptionEn!,
+                                          price: product.variants[0].price.toString(),
+                                          monthlyPrice3: product.variants[0].monthlyPayment3.toString(),
+                                          monthlyPrice6: product.variants[0].monthlyPayment6.toString(),
+                                          monthlyPrice12: product.variants[0].monthlyPayment12.toString(),
+                                          monthlyPrice24: product.variants[0].monthlyPayment24.toString(),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      selectedlanguage == "uz" ? product.nameUz : selectedlanguage == "ru" ? product.nameRu : product.nameEn,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                              
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 15.w),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        Container(
+                                          height: 155.h,
+                                          width: 155.w,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.white,
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(15.r),
+                                            child: CachedNetworkImage( // 🚀 cached network image
+                                              imageUrl: "https://backkk.stroybazan1.uz${product.image}",
+                                              placeholder: (ctx, url) => _buildShimmerBox(height: 160.h, width: 160.w),
+                                              errorWidget: (ctx, url, err) =>
+                                                  _buildShimmerBox(height: 160.h, width: 160.w),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
                                         Text(
-                                          "price".tr() + ": ${product.variants[0].price} UZS",
+                                          selectedlanguage == "uz"
+                                              ? product.nameUz
+                                              : selectedlanguage == "ru"
+                                                  ? product.nameRu
+                                                  : product.nameEn,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        SizedBox(width: 5),
-                                        IconButton(
-                                          icon: Icon(
-                                            isFavorite
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            size: 18.w,
-                                          ),
-                                          onPressed: () => _toggleFavorite(product),
-                                          color: isFavorite
-                                              ? Colors.red
-                                              : AppColors.yellow,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "price".tr() + ": ${product.variants[0].price} UZS",
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            IconButton(
+                                              icon: Icon(
+                                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                                size: 18.w,
+                                              ),
+                                              onPressed: () => _toggleFavorite(product),
+                                              color: isFavorite ? Colors.red : AppColors.yellow,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                );
+                              },
+                            ),
+                            if (itemsToShow < filteredProducts.length)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    itemsToShow += 20;
+                                  });
+                                },
+                                child: Text("Yana 20 ta ko'rish"),
                               ),
-                           
-                            );
-                          },
+                          ],
                         );
-                    
                       } else {
-                        // Loading shimmer
+                        // loading
                         return GridView.builder(
                           itemCount: 4,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 0.7,
                           ),
@@ -276,8 +295,7 @@ return Scaffold(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildShimmerBox(
-                                      height: 160.h, width: 160.w),
+                                  _buildShimmerBox(height: 160.h, width: 160.w),
                                   const SizedBox(height: 10),
                                   _buildShimmerBox(height: 15.h, width: 80.w),
                                   const SizedBox(height: 5),
@@ -290,7 +308,6 @@ return Scaffold(
                       }
                     },
                   ),
-                  
                   SizedBox(height: 30.h),
                 ],
               ),

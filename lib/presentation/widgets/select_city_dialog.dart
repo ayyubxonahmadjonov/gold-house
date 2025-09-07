@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
 import 'package:gold_house/data/models/city_model.dart';
@@ -31,8 +32,8 @@ class _SelectCityDialogState extends State<SelectCityDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      title: const Text(
-        "Shaharni tanlang",
+      title:  Text(
+        "choose_city".tr(),
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ),
       content: SizedBox(
@@ -90,8 +91,8 @@ class _SelectCityDialogState extends State<SelectCityDialog> {
                     ),
                   ): Navigator.pop(context);
                 },
-          child: const Text(
-            "Tasdiqlash",
+          child: Text(
+            "verify".tr(),
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
         ),

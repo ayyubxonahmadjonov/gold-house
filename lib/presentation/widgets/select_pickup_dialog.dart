@@ -118,7 +118,7 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
                   }
                 },
           child: const Text(
-            "Tasdiqlash",
+            "",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
         ),

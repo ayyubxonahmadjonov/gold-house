@@ -66,7 +66,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               },
             ),
             const SizedBox(height: 16),
-            _sectionTitle("Mahsulotlar"),
+            _sectionTitle("products".tr()),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
@@ -185,12 +185,12 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                     size: 28,
                   ),
                   title: Text(
-                    "Yetkazib berish usulini tanlang",
+                    "choose_delivery".tr(),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   subtitle: Text(
                     selectedDelivery.isEmpty
-                        ? "Yaqin filiallardan birini tanlashingiz mumkin"
+                        ? "choose_branch".tr()
                         :deliveryAddress,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -255,7 +255,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             ),
 
             const SizedBox(height: 10),
-            _sectionTitle("To‘lov usuli"),
+            _sectionTitle("payment_method".tr()),
             PaymentSelector(
               paymentMethods: [
                 PaymentOption(
@@ -305,7 +305,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             //     ),
             //   ),
             // )
-            _sectionTitle("Sizning buyurtmangiz"),
+            _sectionTitle("your_order".tr()),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -315,7 +315,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${purchuaseProductList.length} ta mahsulot narxi:",
+                        "${purchuaseProductList.length} ${'product_price'.tr()}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -461,13 +461,13 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Yetkazib berish usulini tanlang",
+                "choose_delivery".tr(),
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: Icon(Icons.delivery_dining, color: Colors.green),
-                title: Text("Yetkazib berish"),
+                title: Text("delivery".tr()),
                 subtitle: Text("Buyurtma manzilingizga yetkaziladi"),
                 onTap: () async {
                   await Navigator.push(
@@ -514,7 +514,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
       BlocProvider.of<BranchesBloc>(context).add(GetBranchesEvent());
     }
 
-    print("Tanlangan usul: $result");
+
   }
 
   Widget _sectionTitle(String title) {

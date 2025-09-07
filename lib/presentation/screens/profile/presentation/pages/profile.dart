@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
 import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
 import 'package:gold_house/presentation/screens/profile/cashback_screen.dart';
 import 'package:gold_house/presentation/screens/profile/presentation/pages/show_language_bottom.dart';
@@ -78,11 +79,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   }
                     else{ 
-                   return ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text("Siz ro'yhatdan o'tmagansiz"),
-                    subtitle: Text("Ro'yhatdan o'tish majburiy"),
-                  );
+                   return CustomButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SignUpScreen();
+                          },
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    title: "register".tr(), bacColor: AppColors.yellow, textColor: AppColors.white, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 10, width: double.infinity, height: 50.h);
+                   
+                   
+              
                   }
                 
                 },

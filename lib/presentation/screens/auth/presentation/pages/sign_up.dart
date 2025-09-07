@@ -65,6 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed:() {
+                  print("bu phone $phoneNumber");
                   context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: phoneNumber));
                 },   
               ),

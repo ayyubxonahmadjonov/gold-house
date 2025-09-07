@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart' show DialogType;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/core/shared/custom_awesome_dialog.dart';
@@ -41,7 +42,7 @@ class _UpdateFullnameState extends State<UpdateFullname> {
             builder: (context, fullname, _) {
               return Center(
                 child: Text(
-                  fullname.isEmpty ? "Ism familiya kiritilmagan" : fullname,
+                   "Ism Familiya kiriting",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -55,7 +56,7 @@ class _UpdateFullnameState extends State<UpdateFullname> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Text(
-              'Ismingiz',
+              'your_name'.tr(),
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
@@ -67,13 +68,13 @@ class _UpdateFullnameState extends State<UpdateFullname> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Text(
-              'Familiyangiz',
+              'your_surname'.tr(),
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
           CustomTextField(
             controller: surnameController,
-            hintText: "Familiyangizni kiriting",
+            hintText: "enter_your_surname".tr(),
             label: '',
           ),
 

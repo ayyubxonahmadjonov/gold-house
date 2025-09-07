@@ -76,7 +76,18 @@
       "general":"Umumiy",
        "enter_phone": "Telefon raqamingizni kiriting",
   "your_phone": "Telefon raqamingiz",
-  "installement_payment": "Muddatli to'lov"
+  "installement_payment": "Muddatli to'lov",
+  "orders_not_found": "Buyurtmalar topilmadi",
+  "load_more_20": "Yana 20 ta qo'shish",
+  "enter_full_name": "Ism Familiya kiriting",
+  "your_name": "Ismingiz",
+  "your_surname": "Familiyangiz",
+  "save_changes": "O'zgarishlarni saqlash",
+  "enter_your_surname": "Familiyangizni kiriting",
+  "no_cashback": "Cashbak mavjud emas",
+  "confirm": "Tasdiqlash",
+  "delivery": "Yetkazib berish",
+  "total": "Jami:"
 
   }
   

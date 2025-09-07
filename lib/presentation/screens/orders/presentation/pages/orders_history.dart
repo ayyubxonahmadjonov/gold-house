@@ -21,6 +21,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -31,14 +32,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
         listener: (context, state) {},
         builder: (context, state) {
+        
           if (state is MyOrdersLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is MyOrdersSuccess) {
+          } else if ( state is MyOrdersSuccess) {
               final orders = state.orders.where((order) {
     final status = order.status ?? "";
     return status != "pending" && status != "in_payment";
   }).toList();
-
             if (orders.isEmpty) {
               return const Center(child: Text("Buyurtmalar topilmadi"));
             }
@@ -141,13 +142,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: order.items
-                  .map((e) => e.productVariant.image ?? "")
+                  .map((e) => e.productVariant.image)
                   .toSet()
                   .length,
               separatorBuilder: (_, __) => SizedBox(width: 15.w),
               itemBuilder: (context, i) {
                 final uniqueImages = order.items
-                    .map((e) => e.productVariant.image ?? "")
+                    .map((e) => e.productVariant.image)
                     .toSet()
                     .toList();
 
@@ -164,7 +165,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
                 return InkWell(
                   onTap: () {
-            
+                    print(order.items[i].productVariant.product.toString());
+            // ProductDescriptionPage(productId:order.items[i].productVariant.product.toString(), isAvailable: order.items[i].productVariant.isAvailable, title: order.items[i].productVariant., color: order.items[i].productVariant.colorUz, size: order.items[i].productVariant.sizeUz, description: order.items[i]., price: order.items[i].productVariant.price, images: order.items[i].productVariant.image, variantId: order.items[i].productVariant.id, monthlyPrice3: order.items[i].productVariant.monthlyPayment3, monthlyPrice6: order.items[i].productVariant.monthlyPayment6, monthlyPrice12: order.items[i].productVariant.monthlyPayment12, monthlyPrice24: order.items[i].productVariant.monthlyPayment24)
                   },
                   child: Image.network(
                     'https://backkk.stroybazan1.uz$img',

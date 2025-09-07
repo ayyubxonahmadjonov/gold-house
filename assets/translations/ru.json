@@ -76,7 +76,18 @@
        "general": "Общий",
        "enter_phone": "Введите ваш номер телефона",
   "your_phone": "Ваш номер телефона",
-  "installement_payment": "Оплата в рассрочку"
+  "installement_payment": "Оплата в рассрочку",
+  "orders_not_found": "Заказы не найдены",
+  "load_more_20": "Показать ещё 20",
+  "enter_full_name": "Введите имя и фамилию",
+  "your_name": "Ваше имя",
+  "your_surname": "Ваша фамилия",
+  "save_changes": "Сохранить изменения",
+  "enter_your_surname": "Введите фамилию",
+  "no_cashback": "Кэшбэка нет",
+  "confirm": "Подтвердить",
+  "delivery": "Доставка",
+  "total": "Итого"
 
 
     }

@@ -76,7 +76,18 @@
       "general": "General",
       "enter_phone": "Enter your phone number",
   "your_phone": "Your phone number",
-  "installement_payment": "Installment Payment"
+  "installement_payment": "Installment Payment",
+  "orders_not_found": "Orders not found",
+  "load_more_20": "Load 20 more",
+  "enter_full_name": "Enter full name",
+  "your_name": "Your name",
+  "your_surname": "Your surname",
+  "save_changes": "Save changes",
+  "enter_your_surname": "Enter surname",
+  "no_cashback": "No cashback available",
+  "confirm": "Confirm",
+  "delivery": "Delivery",
+  "total": "Total"
     }
     
     

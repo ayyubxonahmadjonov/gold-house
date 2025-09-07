@@ -53,6 +53,7 @@ dependencies:
   webview_flutter: ^4.13.0
   flutter_inappwebview: ^6.1.5
   easy_localization: ^3.0.8
+  cached_network_image: ^3.4.1
   
 
 dev_dependencies:

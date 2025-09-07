@@ -26,8 +26,8 @@ class TotalPriceWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "Jami:",
+             Text(
+              "total".tr(),
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
 
