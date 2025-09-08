@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/banners/banners_bloc.dart';
 import 'package:gold_house/bloc/bloc/create_credit_bloc.dart';
 import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
+import 'package:gold_house/bloc/bloc/user_agrrements_dart_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
@@ -70,6 +71,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => UserUpdateBloc()),
             BlocProvider(create: (context) => CreateCreditBloc()),
             BlocProvider(create: (context) => GetProductbyidBloc()),
+            BlocProvider(create: (context) => UserAgrrementsDartBloc()),
+
 
 
           ],

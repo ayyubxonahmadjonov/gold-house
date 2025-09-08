@@ -82,6 +82,9 @@ return _post("pay/api/goldhouse/create/", body: {
   "phone": phone_number,
 });
 }
+static Future<HttpResult> getUserAgreements() {
+return _get("api/api/user-agreements/");
+}
   static Future<HttpResult> getBranches (){
 return _get("api/branches/");
 }

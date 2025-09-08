@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/presentation/screens/basket/presentation/pages/pasport_data.dart';
+import 'package:gold_house/presentation/screens/basket/presentation/pages/user_agreements.dart';
 import 'package:gold_house/presentation/widgets/addres_form.dart';
 
 class FormalizeProduct extends StatefulWidget {
@@ -424,7 +426,37 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 );
               },
             ),
-
+            SizedBox(height: 10.h),
+     RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+          ),
+          children: [
+            const TextSpan(
+              text: "Buyurtmani tasdiqlash orqali men ",
+            ),
+            TextSpan(
+              text: "foydalanuvchi shartnomasi",
+              style: const TextStyle(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+     
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => const UserAgreements()));
+                },
+            ),
+            const TextSpan(
+              text: " shartlarini qabul qilaman.",
+            ),
+          ],
+        ),
+      ),
+    
             const SizedBox(height: 100),
           ],
         ),
