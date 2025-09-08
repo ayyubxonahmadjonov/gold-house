@@ -15,9 +15,6 @@ class AuthRegisterBloc extends Bloc<AuthRegisterEvent, AuthRegisterState> {
     emit(AuthRegisterLoading());
     try {
       final result = await ApiService.registr(event.phone);
-      print('1111111111111111');
-      print('result.statusCode ${result.statusCode}');
-      print(result.result);
       if (result.isSuccess) {
         emit(AuthRegisterSuccess());
       } else {

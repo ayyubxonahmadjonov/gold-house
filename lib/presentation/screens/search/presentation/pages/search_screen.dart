@@ -33,7 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    print("selected_business: $selected_business");
 
     return Scaffold(
       backgroundColor: AppColors.white,

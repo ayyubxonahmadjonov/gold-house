@@ -13,8 +13,6 @@ class GetProductsBloc extends Bloc<GetProductsEvent, GetProductsState> {
   Future<void> _getProductsByBranchId(GetProductsByBranchIdEvent event, Emitter<GetProductsState> emit) async {
     emit(GetProductsLoading());
     final result = await ApiService.getProductsbyBranchId(event.branchId,);
-    print(result.result);
-    print(result.statusCode);
     if (result.isSuccess) {
    final List<Product> products = (result.result as List)
           .map((e) => Product.fromJson(e as Map<String, dynamic>))

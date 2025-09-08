@@ -130,7 +130,6 @@ class _PassportFormPageState extends State<PassportFormPage> {
                       controller: _phoneController,
                       onPhoneChanged: (phone) {
                         phoneNumber = phone.completeNumber;
-                        print("bu phone $phoneNumber");
                       },
                     ),
 
@@ -233,14 +232,7 @@ class _PassportFormPageState extends State<PassportFormPage> {
                               ),
                             ),
                             onPressed: () async {
-                              print("bu phone $phoneNumber");
-                              print(
-                                "bu passportId ${_passportController.text.trim()}",
-                              );
-                              print(
-                                "bu dob ${_selectedDob?.toIso8601String()}",
-                              );
-                              print("bu pinfl ${_pinflController.text.trim()}");
+                 
                               final formOk =
                                   _formKey.currentState?.validate() ?? false;
                               if (!formOk) return;

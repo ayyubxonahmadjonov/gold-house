@@ -14,12 +14,10 @@ class GetCitiesBloc extends Bloc<GetCitiesEvent, GetCitiesState> {
     try {
       final result = await ApiService.getAllCities();
       if(result.isSuccess){
-        print("bu data  ${result.result}");
   List<dynamic> data = result.result;
 
 
   List<City> cities = data.map((e) => City.fromJson(e as Map<String, dynamic>)).toList();
-        print("al thing is good");
      
         
       emit(GetCitiesSuccess(cities: cities));

@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/data/models/my_order.dart';
+import 'package:gold_house/presentation/home/components/product_description_screen.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({super.key});
@@ -12,36 +14,37 @@ class OrderHistoryScreen extends StatefulWidget {
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   final Map<int, bool> _visibilityMap = {};
+  String selected_lg= "";
 
   @override
   void initState() {
     super.initState();
+    selected_lg = SharedPreferencesService.instance.getString("selected_lg") ?? "uz";
     context.read<MyOrdersBloc>().add(GetMyOrdersEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryColor,
-        title:  Text("my_orders".tr()),
+        title: Text("my_orders".tr()),
       ),
       body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
         listener: (context, state) {},
         builder: (context, state) {
-        
           if (state is MyOrdersLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if ( state is MyOrdersSuccess) {
+          } else if (state is MyOrdersSuccess) {
               final orders = state.orders.where((order) {
-    final status = order.status ?? "";
-    return status != "pending" && status != "in_payment";
-  }).toList();
+              final status = order.status ?? "";
+              return status != "pending" && status != "in_payment";
+            }).toList();
+    
             if (orders.isEmpty) {
-              return const Center(child: Text("Buyurtmalar topilmadi"));
+              return Center(child: Text("orders_not_found".tr()));
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -77,9 +80,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     final firstItem = order.items.isNotEmpty ? order.items.first : null;
 
     // Sana
-    final createdAt = (order.createdAt.isNotEmpty)
-        ? order.createdAt.split("T").first
-        : "-";
+    final createdAt =
+        (order.createdAt.isNotEmpty) ? order.createdAt.split("T").first : "-";
 
     // Umumiy narx
     final total =
@@ -93,7 +95,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${order.id}-sonli buyurtma",
+              "${order.id} ${'order_number'.tr()}",
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
             ),
             Text(
@@ -112,8 +114,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Rasmiylashtirish sanasi:",
-                style: TextStyle(fontWeight: FontWeight.w600)),
+             Text(
+              "order_date".tr(),
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             Text(createdAt),
           ],
         ),
@@ -141,16 +145,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             height: 100.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: order.items
-                  .map((e) => e.productVariant.image)
-                  .toSet()
-                  .length,
+              itemCount:
+                  order.items.map((e) => e.productVariant.image).toSet().length,
               separatorBuilder: (_, __) => SizedBox(width: 15.w),
               itemBuilder: (context, i) {
-                final uniqueImages = order.items
-                    .map((e) => e.productVariant.image)
-                    .toSet()
-                    .toList();
+                final uniqueImages =
+                    order.items
+                        .map((e) => e.productVariant.image)
+                        .toSet()
+                        .toList();
 
                 final img = uniqueImages[i];
 
@@ -163,20 +166,26 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   );
                 }
 
-                return InkWell(
-                  onTap: () {
-                    print(order.items[i].productVariant.product.toString());
-            // ProductDescriptionPage(productId:order.items[i].productVariant.product.toString(), isAvailable: order.items[i].productVariant.isAvailable, title: order.items[i].productVariant., color: order.items[i].productVariant.colorUz, size: order.items[i].productVariant.sizeUz, description: order.items[i]., price: order.items[i].productVariant.price, images: order.items[i].productVariant.image, variantId: order.items[i].productVariant.id, monthlyPrice3: order.items[i].productVariant.monthlyPayment3, monthlyPrice6: order.items[i].productVariant.monthlyPayment6, monthlyPrice12: order.items[i].productVariant.monthlyPayment12, monthlyPrice24: order.items[i].productVariant.monthlyPayment24)
-                  },
-                  child: Image.network(
-                    'https://backkk.stroybazan1.uz$img',
-                    height: 80.h,
-                    width: 80.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.broken_image, size: 40),
-                  ),
-                );
+return InkWell(
+    onTap: () {
+    Navigator.push(
+        context,
+       MaterialPageRoute(
+         builder: (_) => ProductDescriptionPage2(productId: order.items[i].productVariant.product.toString())
+       ),
+      );
+    },
+    child: Image.network(
+      'https://backkk.stroybazan1.uz$img',
+      height: 80.h,
+      width: 80.w,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) =>
+          const Icon(Icons.broken_image, size: 40),
+    ),
+  );
+
+                
               },
             ),
           ),
@@ -192,7 +201,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               });
             },
             child: Text(
-              isVisible ? "Maxsulotni berkitish" : "Maxsulotni ko‘rsatish",
+              isVisible ? "hide_product".tr() : "show_product".tr(),
               style: TextStyle(
                 color: AppColors.brown,
                 fontSize: 15.sp,

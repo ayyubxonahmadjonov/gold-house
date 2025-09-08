@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/branches/branches_bloc.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 
@@ -28,7 +29,6 @@ String selected_business = "";
   }
   @override
   Widget build(BuildContext context) {
-    print(selected_business);
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor.withOpacity(0.05),
       body: _pages[_currentIndex],
@@ -46,35 +46,35 @@ String selected_business = "";
           BottomNavigationBarItem(
             backgroundColor: AppColors.navbarColor,
             icon: ImageIcon(AssetImage('assets/icons/home_icon.png')),
-            label: 'Home',
+            label: 'home'.tr(),
           ),
           BottomNavigationBarItem(
             backgroundColor: AppColors.navbarColor,
 
             icon: ImageIcon(AssetImage('assets/icons/search.png')),
 
-            label: 'Search',
+            label: 'search'.tr(),
           ),
           BottomNavigationBarItem(
             backgroundColor: AppColors.navbarColor,
 
             icon: ImageIcon(AssetImage('assets/icons/box.png')),
 
-            label: 'Box',
+            label: 'box'.tr(),
           ),
           BottomNavigationBarItem(
             backgroundColor: AppColors.navbarColor,
 
             icon: ImageIcon(AssetImage('assets/icons/basket.png')),
 
-            label: 'Basket',
+            label: 'basket'.tr(),
           ),
           BottomNavigationBarItem(
             backgroundColor: AppColors.navbarColor,
 
             icon: ImageIcon(AssetImage('assets/icons/profile.png')),
 
-            label: 'Profile',
+            label: 'profile'.tr(),
           ),
         ],
       ),

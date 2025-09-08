@@ -14,7 +14,6 @@ class GetCategoriesBloc extends Bloc<GetCategoriesEvent, GetCategoriesState> {
   Future<void> getAllCategories(GetAllCategoriesEvent event, Emitter<GetCategoriesState> emit) async {
     emit(GetCategoriesLoading());
     final result = await ApiService.getCategories();
-    print(result.result);
     if (result.isSuccess) {
       List<dynamic> data = result.result;
 

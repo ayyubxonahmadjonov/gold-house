@@ -121,8 +121,8 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                                                 product.variants[0].colorUz ??
                                                 "",
                                             size:
-                                                product.variants[0].sizeUz ??
-                                                "",
+                                                [product.variants[0].sizeUz ??
+                                                ""],
                                             description:
                                                 product.descriptionUz ?? "",
                                             price:

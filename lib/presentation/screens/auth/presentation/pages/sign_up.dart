@@ -51,7 +51,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: phoneController,
                 onPhoneChanged: (phone) {
                   phoneNumber = phone.completeNumber;
-                  print("bu phone $phoneNumber");
                 },
               ),
               SizedBox(height: 30.h),
@@ -65,7 +64,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed:() {
-                  print("bu phone $phoneNumber");
                   context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: phoneNumber));
                 },   
               ),

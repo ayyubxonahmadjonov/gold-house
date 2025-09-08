@@ -90,7 +90,7 @@ class _BasketPageState extends State<BasketPage> {
 
                     // Mahsulotlar listi
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.45,
+                      height: MediaQuery.of(context).size.height * 0.52,
                       child: ListView.builder(
                         itemCount: basketList.length,
                         itemBuilder: (context, index) {
@@ -312,7 +312,7 @@ Expanded(
                     ),
 
                     // Payment switch
-                    Spacer(),
+              
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -387,7 +387,6 @@ Expanded(
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.h),
                   ],
                 ),
               ),

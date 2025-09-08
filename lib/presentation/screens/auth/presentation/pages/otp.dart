@@ -126,7 +126,6 @@ class OtpForm extends StatelessWidget {
                   onSaved: (pin) {},
                   onChanged: (pin) {
                     if (pin.isNotEmpty) {
-                      print("bu pin $pin");
                       FocusScope.of(context).nextFocus();
                     }
                   },
@@ -241,10 +240,8 @@ class OtpForm extends StatelessWidget {
                 width: 64,
                 child: TextFormField(
                   onSaved: (pin) {
-                    print("bu pin2 $pin");
                   },
                   onChanged: (pin) {
-                    print("bu pin3 $pin");
                     if (pin.isNotEmpty) {
                       FocusScope.of(context).nextFocus();
                     }

@@ -10,7 +10,6 @@ class CreateCreditBloc extends Bloc<CreateCreditEvent, CreateCreditState> {
   Future<void> passportForm(PassportFormEvent event, Emitter<CreateCreditState> emit) async {
     emit(CreateCreditLoading());
     final result = await ApiService.createCreditforUser(event.phone_number, event.passportId, event.birth_date, event.pinfl);
-    print(result.result);
     if (result.isSuccess) {
       emit(CreateCreditSuccess(message: result.result.toString()));
     } else {

@@ -20,10 +20,6 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
   emit(MyOrdersLoading());
   try {
     final result = await ApiService.getMyOrders();
-    print('Is Success: ${result.isSuccess}');
-    print('Status Code: ${result.statusCode}');
-    debugPrint(jsonEncode(result.result));
-
     if (result.isSuccess) {
       final orders = (result.result as List<dynamic>)
           .map((e) => OrderOfBasket.fromJson(e))
@@ -31,12 +27,10 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
 
       emit(MyOrdersSuccess(orders: orders));
     } else {
-      print('API failed with status code: ${result.statusCode}');
       emit(MyOrdersError(
           message: 'Failed to fetch orders: HTTP ${result.statusCode}'));
     }
   } catch (e, s) {
-    print('Parse error: $e\n$s');
     emit(MyOrdersError(message: 'Error parsing orders: $e'));
   }
 }

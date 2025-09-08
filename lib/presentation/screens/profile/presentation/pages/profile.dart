@@ -213,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   SizedBox(height: 15.h),
 
-                  _buildCategories("Qo'llab-quvvatlash", () {
+                  _buildCategories("support".tr(), () {
                     showProfileBottombSheet(context);
                   }, Icons.info),
 
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Qo'llab quvvatlash xizmati",
+                        "support_service".tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

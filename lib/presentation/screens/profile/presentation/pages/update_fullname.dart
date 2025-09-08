@@ -63,7 +63,7 @@ class _UpdateFullnameState extends State<UpdateFullname> {
           CustomTextField(
             label: "",
             controller: nameController,
-            hintText: "Ismingizni kiriting",
+            hintText: "enter_you_name".tr(),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),

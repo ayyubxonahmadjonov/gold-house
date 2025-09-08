@@ -13,7 +13,6 @@ class RegionsBloc extends Bloc<RegionsEvent, RegionsState> {
   Future<void> getRegions(GetRegionsEvent event, Emitter<RegionsState> emit) async {
     emit(GetRegionsLoading());
     final result = await ApiService.getRegions();
-    print(result.result);
     
     if (result.isSuccess) {
       List<dynamic> data = result.result;

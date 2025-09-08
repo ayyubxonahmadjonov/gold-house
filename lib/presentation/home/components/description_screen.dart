@@ -1,23 +1,13 @@
-import 'package:carousel_slider/carousel_options.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gold_house/core/constants/app_colors.dart';
-import 'package:gold_house/data/datasources/local/hive_helper/hive_names.dart';
-import 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
-import 'package:gold_house/data/models/basket_model.dart';
-import 'package:gold_house/presentation/home/components/monthly_payment.dart';
-import 'package:gold_house/presentation/screens/basket/presentation/pages/basket.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../../core/constants/app_imports.dart';
 
 class ProductDescriptionPage extends StatefulWidget {
   final String productId;
   final int variantId;
   final String title;
   final String color;
-  final String size;
+  List<String?> size;
   final String description;
   final String price;
   final String monthlyPrice3;
@@ -27,8 +17,7 @@ class ProductDescriptionPage extends StatefulWidget {
   List<String> images;
   final bool isAvailable;
 
-   ProductDescriptionPage({    
-
+  ProductDescriptionPage({
     super.key,
 
     required this.productId,
@@ -39,12 +28,11 @@ class ProductDescriptionPage extends StatefulWidget {
     required this.description,
     required this.price,
     required this.images,
-required this.variantId,
+    required this.variantId,
     required this.monthlyPrice3,
     required this.monthlyPrice6,
     required this.monthlyPrice12,
     required this.monthlyPrice24,
-
   });
 
   @override
@@ -54,25 +42,31 @@ required this.variantId,
 class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
   String selectedlanguage = "";
   int activeIndex = 0;
+  String? selectedSize;
   @override
   void initState() {
     super.initState();
-    selectedlanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
+
+    selectedlanguage =
+        SharedPreferencesService.instance.getString("selected_lg") ?? "";
+    if (widget.size.isNotEmpty) {
+      selectedSize = widget.size.first;
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-surfaceTintColor: AppColors.white,
+        surfaceTintColor: AppColors.white,
         backgroundColor: AppColors.white,
         leading: const BackButton(),
         title: Text(widget.title),
-        actions: [IconButton(
-          onPressed: (){
-            
-          },
-          icon: Icon(Icons.favorite_border),), SizedBox(width: 16)],
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border)),
+          SizedBox(width: 16),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -82,54 +76,57 @@ surfaceTintColor: AppColors.white,
             // Image slider
             Center(
               child: Column(
-
                 children: [
-                if(widget.images.length == 1) Image.network('https://backkk.stroybazan1.uz${widget.images.first}', height: 200.h, fit: BoxFit.contain,),
-                
-                if(widget.images.length > 1) ...[
-                  CarouselSlider.builder(
-                    itemCount: widget.images.length,
-                    itemBuilder: (context, index, realIndex) {
-                      return Image.network(
-                      errorBuilder: (context, error, stackTrace) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Container(
-                            height: 200.h,
-                            width: double.infinity,
-                            color: Colors.white,
-                          ),
+                  if (widget.images.length == 1)
+                    Image.network(
+                      'https://backkk.stroybazan1.uz${widget.images.first}',
+                      height: 200.h,
+                      fit: BoxFit.contain,
+                    ),
+
+                  if (widget.images.length > 1) ...[
+                    CarouselSlider.builder(
+                      itemCount: widget.images.length,
+                      itemBuilder: (context, index, realIndex) {
+                        return Image.network(
+                          errorBuilder: (context, error, stackTrace) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                height: 200.h,
+                                width: double.infinity,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
+                          'https://backkk.stroybazan1.uz${widget.images[index]}',
+                          fit: BoxFit.contain,
                         );
                       },
-                        'https://backkk.stroybazan1.uz${widget.images[index]}',
-                        fit: BoxFit.contain,
-                      );
-                    },
-                    options: CarouselOptions(
-                      height: 220.h,
-                      viewportFraction: 1,
-                      enableInfiniteScroll: true,
-                      autoPlay: true,
-                      onPageChanged: (index, reason) {
-                        setState(() => activeIndex = index);
-                      },
+                      options: CarouselOptions(
+                        height: 220.h,
+                        viewportFraction: 1,
+                        enableInfiniteScroll: true,
+                        autoPlay: true,
+                        onPageChanged: (index, reason) {
+                          setState(() => activeIndex = index);
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  AnimatedSmoothIndicator(
-                    activeIndex: activeIndex,
-                    count: widget.images.length,
-                    effect: ExpandingDotsEffect(
-                      dotHeight: 6,
-                      dotWidth: 6,
-                      activeDotColor: Colors.black,
-                      dotColor: Colors.grey,
+                    SizedBox(height: 8.h),
+                    AnimatedSmoothIndicator(
+                      activeIndex: activeIndex,
+                      count: widget.images.length,
+                      effect: ExpandingDotsEffect(
+                        dotHeight: 6,
+                        dotWidth: 6,
+                        activeDotColor: Colors.black,
+                        dotColor: Colors.grey,
+                      ),
                     ),
-                  ),  
-                ],
+                  ],
                   SizedBox(height: 10.h),
-              
                 ],
               ),
             ),
@@ -138,7 +135,11 @@ surfaceTintColor: AppColors.white,
             // Color
             Text(
               widget.isAvailable ? 'Mavjud' : 'Mavjud emas',
-              style: TextStyle(color: Colors.green, fontSize: 15.sp,fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             SizedBox(height: 6.h),
             Text(
@@ -146,10 +147,11 @@ surfaceTintColor: AppColors.white,
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 6.h),
-          if(widget.color.isNotEmpty)  Text("Rang : ${widget.color}", style: TextStyle(fontSize: 14.sp)),
+            if (widget.color.isNotEmpty)
+              Text("Rang : ${widget.color}", style: TextStyle(fontSize: 14.sp)),
 
             SizedBox(height: 12.h),
-    
+
             SizedBox(
               height: 60.h,
               child: ListView.builder(
@@ -177,21 +179,58 @@ surfaceTintColor: AppColors.white,
                 },
               ),
             ),
-            SizedBox(height: 12.h),
-            Text("O‘lchami (Metr²): ${widget.size}"),
-            SizedBox(height: 12.h),
+            SizedBox(height: 15.h),
+            Text("${"size".tr()} (Metr²): ${selectedSize}"),
+            SizedBox(height: 15.h),
             // Sizes
-Container(              padding: EdgeInsets.symmetric(
-                    vertical: 10.h,
-                    horizontal: 14.w,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black26),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(widget.size),
-                ),
-            
+            SizedBox(
+              height: 40.h,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.size.length,
+                itemBuilder: (context, index) {
+                  final size = widget.size[index] ?? "";
+
+                  final isSelected = selectedSize == size;
+
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectedSize = size;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: isSelected ? AppColors.primaryColor : Colors.black26,
+                          width: 2,
+                        ),
+                      ),
+                      margin: EdgeInsets.only(right: 8.w),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 5.w,
+                        vertical: 5.h,
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.size[index] ?? "",
+                          style: TextStyle(
+                            color: isSelected ? AppColors.primaryColor : Colors.black,
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
             SizedBox(height: 20.h),
             Text(
               "category".tr(),
@@ -207,17 +246,14 @@ Container(              padding: EdgeInsets.symmetric(
             ),
 
             SizedBox(height: 12.h),
-MonthlyPaymentWidget(
-  monthlyPrice3: widget.monthlyPrice3,
-  monthlyPrice6: widget.monthlyPrice6,
-  monthlyPrice12: widget.monthlyPrice12,
-  monthlyPrice24: widget.monthlyPrice24,
-),
-            SizedBox(height: 12.h),
-            Text(
-              "installment_info".tr(),
-              style: TextStyle(fontSize: 12.sp),
+            MonthlyPaymentWidget(
+              monthlyPrice3: widget.monthlyPrice3,
+              monthlyPrice6: widget.monthlyPrice6,
+              monthlyPrice12: widget.monthlyPrice12,
+              monthlyPrice24: widget.monthlyPrice24,
             ),
+            SizedBox(height: 12.h),
+            Text("installment_info".tr(), style: TextStyle(fontSize: 12.sp)),
 
             SizedBox(height: 12.h),
             // Delivery Info
@@ -244,10 +280,7 @@ MonthlyPaymentWidget(
                   ),
                   SizedBox(height: 6.h),
                   Divider(),
-                  Text(
-                    "best_offer".tr(),
-                    style: TextStyle(fontSize: 12.sp),
-                  ),
+                  Text("best_offer".tr(), style: TextStyle(fontSize: 12.sp)),
 
                   SizedBox(height: 20.h),
                   // Payment Logos
@@ -292,87 +325,102 @@ MonthlyPaymentWidget(
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-          minimum: EdgeInsets.all(16.h),
-        child: ElevatedButton(
-          onPressed: () {
-        BasketModel basketModel = BasketModel(
-          productId: widget.productId,
-          variantId: widget.variantId,
-          title: widget.title,
-          color: widget.color,
-          size: widget.size,
-          description: widget.description,
-          price: widget.price,
-          monthlyPrice3: widget.monthlyPrice3,
-          monthlyPrice6: widget.monthlyPrice6,
-          monthlyPrice12: widget.monthlyPrice12,
-          monthlyPrice24: widget.monthlyPrice24,
-          image: widget.images.first,
-          isAvailable: widget.isAvailable,
-        );
-        HiveBoxes.basketData.put(widget.productId, basketModel);
-        ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-        
-          backgroundColor: Colors.white,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-          ),
-          margin: EdgeInsets.all(12),
-          duration: Duration(seconds: 1),
-          content: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-        Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 24),
-            SizedBox(width: 8),
-            Text(
-              "product_added".tr(),
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
+            SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () {
+                BasketModel basketModel = BasketModel(
+                  productId: widget.productId,
+                  variantId: widget.variantId,
+                  title: widget.title,
+                  color: widget.color,
+                  size: selectedSize.toString(),
+                  description: widget.description,
+                  price: widget.price,
+                  monthlyPrice3: widget.monthlyPrice3,
+                  monthlyPrice6: widget.monthlyPrice6,
+                  monthlyPrice12: widget.monthlyPrice12,
+                  monthlyPrice24: widget.monthlyPrice24,
+                  image: widget.images.first,
+                  isAvailable: widget.isAvailable,
+                );
+                HiveBoxes.basketData.put(widget.productId, basketModel);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    margin: EdgeInsets.all(12),
+                    duration: Duration(seconds: 1),
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 24,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              "product_added".tr(),
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const BasketPage(),
+                              ),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 6,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: Icon(Icons.shopping_cart, size: 12),
+                          label: Text("cart".tr()),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50.h),
+                backgroundColor: const Color(0xFFDCB04B),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+              child: Text(
+                "add_to_cart".tr(),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
               ),
             ),
+            SizedBox(height: 100),
           ],
-        ),
-        TextButton.icon(
-          onPressed: () {
-           Navigator.push(context, MaterialPageRoute(builder: (context) => const BasketPage()));
-          },
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: Icon(Icons.shopping_cart, size: 12),
-          label: Text("cart".tr()),
-        ),
-                ],
-          ),
-        ),
-                );
-                
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFDCB04B),
-            padding: EdgeInsets.symmetric(vertical: 16.h),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-          ),
-          child: Text(
-            "add_to_cart".tr(),
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,color: AppColors.white),
-          ),
         ),
       ),
     );

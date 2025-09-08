@@ -87,7 +87,16 @@
   "no_cashback": "Кэшбэка нет",
   "confirm": "Подтвердить",
   "delivery": "Доставка",
-  "total": "Итого"
+  "total": "Итого",
+  "home": "Главная",
+  "box": "Коробка",
+  "basket": "Корзина",
+  "profile": "Профиль",
+  "order_date": "Дата оформления:",
+  "hide_product": "Скрыть продукт",
+  "show_product": "Показать продукт",
+  "order_number": "Заказ №-",
+  "enter_your_name": "Введите ваше имя"
 
 
     }

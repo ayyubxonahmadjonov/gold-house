@@ -13,8 +13,7 @@ class BannersBloc extends Bloc<BannersEvent, BannersState> {
   Future<void> getBanners(GetBannersEvent event, Emitter<BannersState> emit) async {
     emit( BannersLoading());
     final result = await ApiService.getBanners();
-    print(result.result);
-    print(result.statusCode);
+
     if (result.isSuccess) {
 
 List<dynamic> data = result.result;

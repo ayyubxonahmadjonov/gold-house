@@ -87,7 +87,16 @@
   "no_cashback": "Cashbak mavjud emas",
   "confirm": "Tasdiqlash",
   "delivery": "Yetkazib berish",
-  "total": "Jami:"
+  "total": "Jami:",
+  "home": "Bosh sahifa",
+  "box": "Quti",
+  "basket": "Savat",
+  "profile": "Profil",
+  "order_date": "Rasmiylashtirish sanasi:",
+  "hide_product": "Maxsulotni berkitish",
+  "show_product": "Maxsulotni ko‘rsatish",
+  "order_number": "-sonli buyurtma",
+  "enter_your_name": "Ismingizni kiriting"
 
   }
   

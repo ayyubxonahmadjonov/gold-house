@@ -62,6 +62,9 @@ class ApiService {
 static Future<HttpResult> getProductsbyBranchId(String branch_id) async {
     return await _get("api/api/products/?branch=$branch_id",);
   }
+static Future<HttpResult> getProductbyId(String product_id) async {
+    return await _get("api/api/products/$product_id/",);
+  }
 static Future<HttpResult> getCategories() async {
     return await _get("api/api/categories/");
   }

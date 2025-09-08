@@ -290,21 +290,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               },
             ),
             const SizedBox(height: 40),
-            // Card(
-            //   color: Colors.grey.shade100,
-            //   child: ListTile(
-            //     leading: const Icon(Icons.account_balance_wallet),
-            //     title: const Text("Muddatli to‘lov turi: Alif"),
-            //     subtitle: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: const [
-            //         Text("Oylik to‘lov: 119,250 so‘m"),
-            //         Text("Muddati: 12 oy"),
-            //         Text("Jami: 1,431,000 so‘m"),
-            //       ],
-            //     ),
-            //   ),
-            // )
             _sectionTitle("your_order".tr()),
             Padding(
               padding: const EdgeInsets.all(12),
@@ -347,7 +332,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             BlocConsumer<CreateOrderBloc, CreateOrderState>(
               listener: (context, state) {
                 if (state is CreateOrderSuccess) {
-                  print("Buyurtma muvaffaqiyatli yaratildi");
                   bool isValid =
                       selectedPayment.isNotEmpty && selectedDelivery.isNotEmpty;
 
@@ -441,7 +425,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 100),
           ],
         ),
       ),

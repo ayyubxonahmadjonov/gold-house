@@ -11,7 +11,6 @@ class BranchesBloc extends Bloc<BranchesEvent, BranchesState> {
   Future<void> getBranches(GetBranchesEvent event, Emitter<BranchesState> emit) async {
     emit(GetBranchesLoading());
     final result = await ApiService.getBranches();
-    print(result.result);
     if (result.isSuccess) {
       List<dynamic> data = result.result;
        List<BranchModel> branches = data.map((e) => BranchModel.fromJson(e as Map<String, dynamic>)).toList();

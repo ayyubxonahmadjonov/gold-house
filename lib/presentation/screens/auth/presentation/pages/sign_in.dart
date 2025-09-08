@@ -51,7 +51,6 @@ class _SignInScreenState extends State<SignInScreen> {
                 controller: phoneController,
                 onPhoneChanged: (phone) {
                   phoneNumber = phone.completeNumber;
-                  print("bu phone $phoneNumber");
                 },
               ),
               SizedBox(height: 30.h),

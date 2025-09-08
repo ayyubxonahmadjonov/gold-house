@@ -40,9 +40,6 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
   }
   @override
   Widget build(BuildContext context) {
-    print(selectedBusiness);
-    print(widget.branches.first.nameUz);
-    print(selectedBusiness == widget.branches.first.nameUz);
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

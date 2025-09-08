@@ -11,7 +11,6 @@ class UserUpdateBloc extends Bloc<UserUpdateEvent, UserUpdateState> {
     emit(UserUpdateLoading());
     try {
       final result = await ApiService.updateUser(event.firstname, event.lastname, event.userid);
-      print(result.body);
 if(result.statusCode == 200){
   emit(UserUpdateSuccess());
 }else {

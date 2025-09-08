@@ -31,7 +31,6 @@ class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
       'months_12'.tr(): widget.monthlyPrice12,
       'months_24'.tr(): widget.monthlyPrice24,
     };
-print(widget.monthlyPrice3);
     String currentMonth = months[selectedIndex];
     String price = prices[currentMonth] ?? "0";
 

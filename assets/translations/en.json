@@ -87,7 +87,16 @@
   "no_cashback": "No cashback available",
   "confirm": "Confirm",
   "delivery": "Delivery",
-  "total": "Total"
+  "total": "Total",
+  "home": "Home",
+    "box": "Box",
+    "basket": "Basket",
+    "profile": "Profile",
+    "order_date": "Order date:",
+    "hide_product": "Hide product",
+    "show_product": "Show product",
+    "order_number": "Order ",
+    "enter_your_name": "Enter your name"
     }
     
     

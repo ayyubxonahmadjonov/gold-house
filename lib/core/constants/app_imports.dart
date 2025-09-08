@@ -12,7 +12,18 @@ export 'package:gold_house/bloc/user_data/get_user_data_bloc.dart';
 export 'package:gold_house/core/constants/app_imports.dart';
 export 'package:gold_house/core/shared/custom_awesome_dialog.dart';
 export 'package:gold_house/presentation/widgets/calculate_total_price.dart';
-
+export 'package:carousel_slider/carousel_options.dart';
+export 'package:carousel_slider/carousel_slider.dart';
+export 'package:flutter/material.dart';
+export 'package:flutter_screenutil/flutter_screenutil.dart';
+export 'package:gold_house/core/constants/app_colors.dart';
+export 'package:gold_house/data/datasources/local/hive_helper/hive_names.dart';
+export 'package:gold_house/data/datasources/local/shared_preferences/shared_service.dart';
+export 'package:gold_house/data/models/basket_model.dart';
+export 'package:gold_house/presentation/home/components/monthly_payment.dart';
+export 'package:gold_house/presentation/screens/basket/presentation/pages/basket.dart';
+export 'package:shimmer/shimmer.dart';
+export 'package:smooth_page_indicator/smooth_page_indicator.dart';
 // External Packages
 export 'package:carousel_slider/carousel_slider.dart';
 export 'package:shared_preferences/shared_preferences.dart';

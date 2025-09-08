@@ -187,10 +187,10 @@ return Scaffold(
                                                   ? product.variants[0].colorRu ?? ""
                                                   : product.variants[0].colorEn ?? "",
                                           size: selectedlanguage == "uz"
-                                              ? product.variants[0].sizeUz ?? ""
+                                              ? product.variants.map((e) => e.sizeUz).toList()!
                                               : selectedlanguage == "ru"
-                                                  ? product.variants[0].sizeRu ?? ""
-                                                  : product.variants[0].sizeEn ?? "",
+                                                  ? product.variants.map((e) => e.sizeRu).toList()!
+                                                  : product.variants.map((e) => e.sizeEn).toList()!,
                                           description: selectedlanguage == "uz"
                                               ? product.descriptionUz!
                                               : selectedlanguage == "ru"

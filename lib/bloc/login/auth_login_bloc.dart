@@ -15,7 +15,6 @@ class AuthLoginBloc extends Bloc<AuthLoginEvent, AuthLoginState> {
     emit(AuthLoginLoading());
     try {
       final result = await ApiService.login(event.phone);
-      print(result.result);
       if (result.isSuccess) {
         emit(AuthLoginSuccess());
       } else {

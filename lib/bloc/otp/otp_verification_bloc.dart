@@ -15,7 +15,6 @@ class OtpVerificationBloc extends Bloc<OtpVerificationEvent, OtpVerificationStat
     emit(OtpVerificationLoading());
     try {
       final result = await ApiService.loginVerify(event.phone_number, event.verification_code);
-      print(result.result);
       if (result.isSuccess) {
     await SharedPreferencesService.instance.saveString("refresh", result.result["refresh"]!);
 await SharedPreferencesService.instance.saveString("access", result.result["access"]!);
