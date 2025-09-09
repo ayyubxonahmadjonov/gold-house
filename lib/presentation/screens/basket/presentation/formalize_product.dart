@@ -151,7 +151,12 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   listener: (context, state) {
 
                     if (state is UpdatePaymentSuccess) {
-                    launchUrl(Uri.parse(state.paymentLink));
+                      print(state.paymentLink);
+                    launchUrl(
+  Uri.parse(state.paymentLink),
+   mode: LaunchMode.inAppBrowserView,
+);
+
                     Future.delayed(Duration(seconds: 5), () {
                      CustomAwesomeDialog.showInfoDialog(
                       dismissOnTouchOutside: false,

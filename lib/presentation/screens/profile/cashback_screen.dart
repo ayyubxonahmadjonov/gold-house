@@ -26,6 +26,8 @@ class _CashbackViewState extends State<CashbackView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         title:  Text("cashback".tr()),
@@ -72,7 +74,7 @@ class _CashbackViewState extends State<CashbackView> {
                     Text(
                       hasCashback
                           ? "Sizning Cashback summangiz"
-                          : "Cashback mavjud emas",
+                          : "You do not have a cashback",
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white70,

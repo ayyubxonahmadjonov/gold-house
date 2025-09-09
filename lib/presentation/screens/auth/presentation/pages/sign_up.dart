@@ -21,7 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: BlocConsumer<AuthRegisterBloc, AuthRegisterState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
-            SharedPreferencesService.instance.saveString("phone", phoneNumber);
+
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OtpScreen(phoneNumber: phoneNumber)),
@@ -47,15 +47,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 70.h),
 
-              CustomPhoneForm(
-                controller: phoneController,
-                onPhoneChanged: (phone) {
-                  phoneNumber = phone.completeNumber;
-                },
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: CustomPhoneForm(
+                  controller: phoneController,
+                  onPhoneChanged: (phone) {
+                    phoneNumber = phone.completeNumber;
+                  },
+                ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 50.h),
               CustomButton(
-                title:   state is AuthRegisterLoading ? "loading".tr() : "login".tr(),
+                title:   state is AuthRegisterLoading ? "loading".tr() : "register".tr(),
                 bacColor: Colors.yellow,
                 textColor: Colors.black,
                 fontWeight: FontWeight.w600,
@@ -64,7 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed:() {
-                  context.read<AuthRegisterBloc>().add(AuthRegisterWithPhone(phone: phoneNumber));
+                  BlocProvider.of<AuthRegisterBloc>(context).add(AuthRegisterWithPhone(phone: phoneNumber));
                 },   
               ),
 
@@ -84,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 80.h),
             ],
           );
         },

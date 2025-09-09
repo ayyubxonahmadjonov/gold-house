@@ -172,6 +172,7 @@ return Scaffold(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProductDescriptionPage(
+                                          branchName: product.branch.toString(),
                                           variantId: product.variants[0].id,
                                           productId: product.id.toString(),
                                           isAvailable: product.variants[0].isAvailable,
@@ -187,10 +188,10 @@ return Scaffold(
                                                   ? product.variants[0].colorRu ?? ""
                                                   : product.variants[0].colorEn ?? "",
                                           size: selectedlanguage == "uz"
-                                              ? product.variants.map((e) => e.sizeUz).toList()!
+                                              ? product.variants.map((e) => e.sizeUz).toList()
                                               : selectedlanguage == "ru"
-                                                  ? product.variants.map((e) => e.sizeRu).toList()!
-                                                  : product.variants.map((e) => e.sizeEn).toList()!,
+                                                  ? product.variants.map((e) => e.sizeRu).toList()
+                                                  : product.variants.map((e) => e.sizeEn).toList(),
                                           description: selectedlanguage == "uz"
                                               ? product.descriptionUz!
                                               : selectedlanguage == "ru"

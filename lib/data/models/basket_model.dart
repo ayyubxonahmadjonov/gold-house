@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'basket_model.g.dart'; 
 
-@HiveType(typeId: 0,adapterName: HiveAdapters.basketAdapter) // har bir model uchun unique typeId bering
+@HiveType(typeId: 0, adapterName: HiveAdapters.basketAdapter) 
 class BasketModel extends HiveObject {
   @HiveField(0)
   final String productId;
@@ -40,11 +40,15 @@ class BasketModel extends HiveObject {
 
   @HiveField(11)
   final bool isAvailable;
-    @HiveField(12)
+
+  @HiveField(12)
   String? quantity;
 
-    @HiveField(13)
-    final int variantId;
+  @HiveField(13)
+  final int variantId;
+
+  @HiveField(14) // yangi qo‘shildi
+  final String? branchName;
 
   BasketModel({
     required this.variantId,
@@ -61,5 +65,6 @@ class BasketModel extends HiveObject {
     required this.image,
     required this.isAvailable,
     this.quantity,
+    this.branchName,
   });
 }

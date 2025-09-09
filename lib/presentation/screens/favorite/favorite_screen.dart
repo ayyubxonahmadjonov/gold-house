@@ -44,7 +44,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             child: products.isEmpty
                 ? Center(
                     child: Text(
-                      "Sevimlilar bo'sh 👀",
+                      "Favorites are empty 👀",
                       style: TextStyle(
                           fontSize: 18.sp, fontWeight: FontWeight.w500),
                     ),

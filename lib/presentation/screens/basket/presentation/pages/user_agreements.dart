@@ -26,7 +26,6 @@ class _UserAgreementsState extends State<UserAgreements> {
          if(state is UserAgrrementsDartSuccess){
           return Column(
             children: [
-
      Text( language == "uz" ? state.userAgreements[0].titleUz : language == "ru" ? state.userAgreements[0].titleRu : state.userAgreements[0].titleEn,style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.w600),),
      Text(language == "uz" ? state.userAgreements[0].contentUz : language == "ru" ? state.userAgreements[0].contentRu : state.userAgreements[0].contentEn,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w500),textAlign: TextAlign.center,),
           ],

@@ -68,30 +68,32 @@ class _OtpScreenState extends State<OtpScreen> {
                     
                       title: "verify".tr(),
                       onPressed: () {
-                        BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: widget.phoneNumber, verification_code: otpController.text));
+                        print(widget.phoneNumber);
+                        BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: "+998901239900", verification_code: otpController.text));
                       }, bacColor: Colors.yellow, textColor: Colors.black, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 5, width: 330.w, height: 50.h,
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.2,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpScreen(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "change_number".tr(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15.sp,
-                          color: Color(0xFF757575),
-                        ),
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => const SignUpScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: Text(
+                    //     "change_number".tr(),
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.w500,
+                    //       fontSize: 15.sp,
+                    //       color: Color(0xFF757575),
+                    //     ),
+                    //   ),
+                    // ),
+                
                   ],
                 );
               },

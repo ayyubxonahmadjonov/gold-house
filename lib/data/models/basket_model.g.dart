@@ -31,13 +31,14 @@ class BasketModelAdapter extends TypeAdapter<BasketModel> {
       image: fields[10] as String,
       isAvailable: fields[11] as bool,
       quantity: fields[12] as String?,
+      branchName: fields[14] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, BasketModel obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)
@@ -65,7 +66,9 @@ class BasketModelAdapter extends TypeAdapter<BasketModel> {
       ..writeByte(12)
       ..write(obj.quantity)
       ..writeByte(13)
-      ..write(obj.variantId);
+      ..write(obj.variantId)
+      ..writeByte(14)
+      ..write(obj.branchName);
   }
 
   @override

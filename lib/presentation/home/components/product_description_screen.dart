@@ -42,10 +42,10 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
         surfaceTintColor: AppColors.white,
         backgroundColor: AppColors.white,
         leading: const BackButton(),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
-          const SizedBox(width: 16),
-        ],
+        // actions: [
+        //   IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
+        //   const SizedBox(width: 16),
+        // ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -277,6 +277,7 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
                     ElevatedButton(
           onPressed: () {
         BasketModel basketModel = BasketModel(
+          branchName: "",
           productId: widget.productId,
           variantId: state.product.variants.first.id,
           title: state.product.nameUz,

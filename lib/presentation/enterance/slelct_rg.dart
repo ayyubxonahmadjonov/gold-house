@@ -70,6 +70,7 @@ void _showCityDialog() {
             }
 
           return SelectCityDialog(
+            route: MainScreen(),
             cities: cities,
             initialSelectedCity: selectedCity,
           );

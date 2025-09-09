@@ -55,6 +55,9 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
           itemCount: filteredBranches.length,
           itemBuilder: (context, index) {
             final branch = filteredBranches[index];
+            if(filteredBranches.length==0){
+              return const Center(child: Text("No branches found"));
+            }
             return RadioListTile<int>(
               title: Text(
                 branch.addressUz,
@@ -122,4 +125,5 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
       ],
     );
   }
+
 }

@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../core/constants/app_imports.dart';
@@ -22,14 +21,18 @@ class _SignInScreenState extends State<SignInScreen> {
         listener: (context, state) {
           if (state is AuthLoginSuccess) {
             SharedPreferencesService.instance.saveString("phone", phoneNumber);
-           Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(phoneNumber: phoneNumber),)) ;
-          }
-          if (state is AuthLoginError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OtpScreen(phoneNumber: phoneNumber),
+              ),
             );
           }
-          
+          if (state is AuthLoginError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
         },
         builder: (context, state) {
           return Column(
@@ -37,26 +40,27 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 50.h),
-    
+
               Text(
                 "sign_in".tr(),
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 70.h),
-    
-              CustomPhoneForm(
-                controller: phoneController,
-                onPhoneChanged: (phone) {
-                  phoneNumber = phone.completeNumber;
-                },
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: CustomPhoneForm(
+                  controller: phoneController,
+                  onPhoneChanged: (phone) {
+                    phoneNumber = phone.completeNumber;
+                  },
+                ),
               ),
-              SizedBox(height: 30.h),
-    
+              SizedBox(height: 50.h),
+
               CustomButton(
-                title: state is AuthLoginLoading ? "loading".tr() : "login".tr(),
+                title:
+                    state is AuthLoginLoading ? "loading".tr() : "login".tr(),
                 bacColor: Colors.yellow,
                 textColor: Colors.black,
                 fontWeight: FontWeight.w600,
@@ -64,12 +68,14 @@ class _SignInScreenState extends State<SignInScreen> {
                 borderRadius: 5,
                 width: 340.w,
                 height: 50.h,
-                onPressed:
-                    () {
-                      context.read<AuthLoginBloc>().add(AuthLoginPhoneEvent(phone: phoneNumber));
-                    }
+                onPressed: () {
+                  print(phoneNumber);
+                  BlocProvider.of<AuthLoginBloc>(
+                    context,
+                  ).add(AuthLoginPhoneEvent(phone: phoneNumber));
+                },
               ),
-    
+
               const Spacer(),
               TextButton(
                 onPressed: () {
@@ -79,14 +85,15 @@ class _SignInScreenState extends State<SignInScreen> {
                   );
                 },
                 child: Text(
-                  "no_accout".tr(),
+                  "no_account".tr(),
                   style: TextStyle(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
+
+              SizedBox(height: 80.h),
             ],
           );
         },

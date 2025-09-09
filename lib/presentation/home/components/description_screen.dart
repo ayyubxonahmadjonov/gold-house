@@ -16,10 +16,11 @@ class ProductDescriptionPage extends StatefulWidget {
   final String monthlyPrice24;
   List<String> images;
   final bool isAvailable;
+  String branchName;
 
   ProductDescriptionPage({
     super.key,
-
+    required this.branchName,
     required this.productId,
     required this.isAvailable,
     required this.title,
@@ -63,10 +64,10 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
         backgroundColor: AppColors.white,
         leading: const BackButton(),
         title: Text(widget.title),
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border)),
-          SizedBox(width: 16),
-        ],
+        // actions: [
+        //   IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border)),
+        //   SizedBox(width: 16),
+        // ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -330,6 +331,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
             ElevatedButton(
               onPressed: () {
                 BasketModel basketModel = BasketModel(
+                  branchName: widget.branchName,
                   productId: widget.productId,
                   variantId: widget.variantId,
                   title: widget.title,
@@ -343,6 +345,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                   monthlyPrice24: widget.monthlyPrice24,
                   image: widget.images.first,
                   isAvailable: widget.isAvailable,
+                  
                 );
                 HiveBoxes.basketData.put(widget.productId, basketModel);
                 ScaffoldMessenger.of(context).showSnackBar(

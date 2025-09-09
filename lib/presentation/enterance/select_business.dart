@@ -10,7 +10,7 @@ class SelectBusinessScreen extends StatefulWidget {
 }
 
 class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
-  String selectedBusiness = "";
+  String selectedBusiness = "Stroy Baza №1";
 
   void _selectBusiness(String title) {
     setState(() {
@@ -43,7 +43,7 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/gold_klinker.png",
+                imagePath: "assets/images/gold_klinker.jpg",
                 title: "GoldKlinker",
                 isSelected: selectedBusiness == "GoldKlinker",
                 onTap: _selectBusiness,

@@ -10,12 +10,12 @@ class SelectLgScreen extends StatefulWidget {
 }
 
 class _SelectLgScreenState extends State<SelectLgScreen> {
-  String _selectedLanguage = "uz"; // default til
+  String _selectedLanguage = "en"; // default til
 
   final Map<String, String> languages = {
     "uz": "O'zbekcha",
-    "en": "Inglizcha",
-    "ru": "Ruscha",
+    "en": "English",
+    "ru": "Русский",
   };
 
   void _onLanguageSelect(String langCode) {

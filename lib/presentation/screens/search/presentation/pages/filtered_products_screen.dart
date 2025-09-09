@@ -108,6 +108,7 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                                     MaterialPageRoute(
                                       builder:
                                           (context) => ProductDescriptionPage(
+                                            branchName: product.branch.toString(),
                                             variantId: product.variants[0].id,
                                             productId: product.id.toString(),
                                             isAvailable:

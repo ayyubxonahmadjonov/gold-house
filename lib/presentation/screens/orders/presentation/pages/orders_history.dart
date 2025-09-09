@@ -43,6 +43,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               return status != "pending" && status != "in_payment";
             }).toList();
     
+    
             if (orders.isEmpty) {
               return Center(child: Text("orders_not_found".tr()));
             }
@@ -60,8 +61,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           } else if (state is MyOrdersError) {
             return Center(
               child: Text(
-                state.message,
-                style: const TextStyle(color: Colors.red),
+                "orders_not_found".tr(),
+                style: const TextStyle(color: Colors.black),
               ),
             );
           }
