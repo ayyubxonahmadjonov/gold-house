@@ -8,6 +8,7 @@ class PassportFormPage extends StatefulWidget {
   @override
   State<PassportFormPage> createState() => _PassportFormPageState();
 }
+
 class _PassportFormPageState extends State<PassportFormPage> {
   final _formKey = GlobalKey<FormState>();
 
@@ -28,7 +29,9 @@ class _PassportFormPageState extends State<PassportFormPage> {
     super.dispose();
   }
 
-  String _formatDate(DateTime d) => DateFormat('dd/MM/yyyy').format(d);
+  /// Sana formatlash -> yyyy-MM-dd
+  String _formatDate(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
+
   Future<void> _pickDob() async {
     final now = DateTime.now();
     final initial = DateTime(now.year - 18, now.month, now.day);
@@ -53,10 +56,10 @@ class _PassportFormPageState extends State<PassportFormPage> {
   }
 
   List<TextInputFormatter> get _passportFormatters => [
-    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-    LengthLimitingTextInputFormatter(9),
-    _UpperCaseTextFormatter(),
-  ];
+        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+        LengthLimitingTextInputFormatter(9),
+        _UpperCaseTextFormatter(),
+      ];
 
   String? _validatePhone() {
     if ((phoneNumber).isEmpty) return "Telefon raqami bo'sh.";
@@ -72,10 +75,12 @@ class _PassportFormPageState extends State<PassportFormPage> {
   }
 
   String? _validateDob(String? v) {
-    if ((_selectedDob) == null || (v ?? '').isEmpty)
+    if ((_selectedDob) == null || (v ?? '').isEmpty) {
       return "Tug'ilgan kun bo'sh.";
-    if (_selectedDob!.isAfter(DateTime.now()))
+    }
+    if (_selectedDob!.isAfter(DateTime.now())) {
       return "Sana kelajakda bo'lmasin.";
+    }
     return null;
   }
 
@@ -84,15 +89,15 @@ class _PassportFormPageState extends State<PassportFormPage> {
     if (!formOk) return;
 
     final data = {
-      "phone": phoneNumber,
+      "phone": phoneNumber.replaceAll(RegExp(r'\D'), ''), // faqat raqamlar
       "passportId": _passportController.text.trim(),
-      "dob": _selectedDob?.toIso8601String(),
+      "dob": _selectedDob != null ? _formatDate(_selectedDob!) : null,
       "pinfl": _pinflController.text.trim(),
     };
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Yuborildi ✅\n$data")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Yuborildi ✅\n$data")),
+    );
   }
 
   @override
@@ -119,24 +124,21 @@ class _PassportFormPageState extends State<PassportFormPage> {
                   shrinkWrap: true,
                   padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 24),
                   children: [
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
 
                     Text("Telefon raqam", style: _labelStyle(context)),
                     const SizedBox(height: 8),
                     CustomPhoneForm(
-                      validator: (p0) {
-                        return _validatePhone();
-                      },
+                      validator: (p0) => _validatePhone(),
                       controller: _phoneController,
                       onPhoneChanged: (phone) {
-                        phoneNumber = phone.completeNumber;
+                        /// + belgisi o‘chiriladi va faqat raqam saqlanadi
+                        phoneNumber = phone.completeNumber.replaceAll('+', '');
                       },
                     ),
 
-                    Text(
-                      "Passport seriya yoki (ID)raqam",
-                      style: _labelStyle(context),
-                    ),
+                    Text("Passport seriya yoki (ID)raqam",
+                        style: _labelStyle(context)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _passportController,
@@ -156,12 +158,13 @@ class _PassportFormPageState extends State<PassportFormPage> {
                       onTap: _pickDob,
                       decoration: _decoration(
                         context,
-                        hint: "dd/MM/yyyy (masalan: 01/02/2000)",
+                        hint: "yyyy-MM-dd (masalan: 2000-02-01)",
                         suffixIcon: const Icon(Icons.calendar_month),
                       ),
                       validator: _validateDob,
                     ),
                     const SizedBox(height: 18),
+
                     Text("PINFL", style: _labelStyle(context)),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -169,17 +172,16 @@ class _PassportFormPageState extends State<PassportFormPage> {
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(
-                          14,
-                        ), // faqat 14 ta raqam kiritiladi
+                        LengthLimitingTextInputFormatter(14),
                       ],
                       decoration: _decoration(context, hint: "12345678900987"),
                       validator: (v) {
                         final value = (v ?? '').trim();
                         if (value.isEmpty) return "PINFL bo'sh.";
                         final re = RegExp(r'^\d{14}$');
-                        if (!re.hasMatch(value))
+                        if (!re.hasMatch(value)) {
                           return "PINFL 14 ta raqamdan iborat bo‘lishi kerak.";
+                        }
                         return null;
                       },
                     ),
@@ -191,14 +193,20 @@ class _PassportFormPageState extends State<PassportFormPage> {
                         if (state is CreateCreditSuccess) {
                           return CustomAwesomeDialog.showInfoDialog(
                             dismissOnTouchOutside: false,
-
                             context,
                             title: "Muvaffaqiyatli yuborildi",
                             desc:
-                                "Tanlovingiz uchun raxmat tez orada opertorlar siz bilan bog’lanishadi!",
+                                "Tanlovingiz uchun raxmat tez,Sizga javob sms tarzida yuboriladi",
                             dialogtype: DialogType.success,
                             onOkPress: () {
-                              Navigator.pop(context);
+                             HiveBoxes.basketData.clear();
+                             Navigator.pushAndRemoveUntil(
+                               context,
+                               MaterialPageRoute(
+                                 builder: (context) => const MainScreen(),
+                               ),
+                               (route) => false,
+                             );
                             },
                           );
                         } else if (state is CreateCreditError) {
@@ -232,27 +240,23 @@ class _PassportFormPageState extends State<PassportFormPage> {
                               ),
                             ),
                             onPressed: () async {
-                 
                               final formOk =
                                   _formKey.currentState?.validate() ?? false;
                               if (!formOk) return;
-                              final data = {
-                                "phone": phoneNumber,
-                                "passportId": _passportController.text.trim(),
-                                "dob": _selectedDob?.toIso8601String(),
-                                "pinfl": _pinflController.text.trim(),
-                              };
 
                               try {
                                 context.read<CreateCreditBloc>().add(
-                                  PassportFormEvent(
-                                    phone_number: phoneNumber,
-                                    passportId: _passportController.text.trim(),
-                                    birth_date:
-                                        _selectedDob?.toIso8601String() ?? "",
-                                    pinfl: _pinflController.text.trim(),
-                                  ),
-                                );
+                                      PassportFormEvent(
+                                        phone_number: phoneNumber
+                                            .replaceAll(RegExp(r'\D'), ''),
+                                        passportId:
+                                            _passportController.text.trim(),
+                                        birth_date: _selectedDob != null
+                                            ? _formatDate(_selectedDob!)
+                                            : "",
+                                        pinfl: _pinflController.text.trim(),
+                                      ),
+                                    );
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text("Xatolik: $e")),

@@ -7,7 +7,12 @@ import 'package:gold_house/presentation/widgets/addres_form.dart';
 
 class FormalizeProduct extends StatefulWidget {
   double total_price;
-  FormalizeProduct({super.key, required this.total_price});
+  List<BasketModel> purchuaseProductList;
+  FormalizeProduct({
+    super.key,
+    required this.total_price,
+    required this.purchuaseProductList,
+  });
   @override
   State<FormalizeProduct> createState() => _FormalizeProductState();
 }
@@ -22,15 +27,14 @@ class _FormalizeProductState extends State<FormalizeProduct> {
   int selectedBranchId = 0;
   bool useCashback = false;
   double cashback = 0;
-  List<BasketModel> purchuaseProductList = HiveBoxes.basketData.values.toList();
-  String selected_business= "";
-  
-  
+  String selected_business = "";
+
   int id = 0;
   @override
   void initState() {
     super.initState();
-    selected_business = SharedPreferencesService.instance.getString("selected_business") ?? "";
+    selected_business =
+        SharedPreferencesService.instance.getString("selected_business") ?? "";
     id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
     BlocProvider.of<GetUserDataBloc>(
       context,
@@ -59,9 +63,11 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   return Card(
                     child: ListTile(
                       leading: const Icon(Icons.person),
-                      title: Text("${state.user.firstName} ${state.user.lastName}"),
-                      subtitle: Text(state.user.phoneNumber),
+                      title: Text(
+                        "${state.user.firstName} ${state.user.lastName}",
                       ),
+                      subtitle: Text(state.user.phoneNumber),
+                    ),
                   );
                 }
                 return const SizedBox();
@@ -76,16 +82,18 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               ),
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: purchuaseProductList.length,
+                itemCount: widget.purchuaseProductList.length,
                 itemBuilder: (context, index) {
                   productIdList.add(
-                    int.parse(purchuaseProductList[index].productId),
+                    int.parse(widget.purchuaseProductList[index].productId),
                   );
-                  variantIdList.add(purchuaseProductList[index].variantId);
+                  variantIdList.add(
+                    widget.purchuaseProductList[index].variantId,
+                  );
                   quantityList.add(
-                    int.parse(purchuaseProductList[index].quantity!),
+                    int.parse(widget.purchuaseProductList[index].quantity!),
                   );
-                  final product = purchuaseProductList[index];
+                  final product = widget.purchuaseProductList[index];
                   return Container(
                     margin: EdgeInsets.all(8),
                     child: ListTile(
@@ -123,7 +131,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 BlocListener<BranchesBloc, BranchesState>(
                   listener: (context, state) {
                     if (state is GetBranchesSuccess) {
-                    
                       showDialog(
                         context: context,
                         builder:
@@ -142,38 +149,35 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 ),
                 BlocListener<RegionsBloc, RegionsState>(
                   listener: (context, state) {
-                    if (state is GetRegionsSucces) {
-
-                    }
+                    if (state is GetRegionsSucces) {}
                   },
                 ),
                 BlocListener<UpdatePaymentBloc, UpdatePaymentState>(
                   listener: (context, state) {
-
                     if (state is UpdatePaymentSuccess) {
-                      print(state.paymentLink);
-                    launchUrl(
-  Uri.parse(state.paymentLink),
-   mode: LaunchMode.inAppBrowserView,
-);
+                      launchUrl(
+                        Uri.parse(state.paymentLink),
+                        mode: LaunchMode.inAppBrowserView,
+                      );
 
-                    Future.delayed(Duration(seconds: 5), () {
-                     CustomAwesomeDialog.showInfoDialog(
-                      dismissOnTouchOutside: false,
-                      context,
-                      dialogtype: DialogType.success,
-                      title: "Buyurtma yaratildi",
-                      desc: "Buyurtmangiz muvaffaqiyatli yaratildi",
-                      onOkPress: () {
-                        HiveBoxes.basketData.clear();
-                        Navigator.pushReplacement(
+                      Future.delayed(Duration(seconds: 5), () {
+                        CustomAwesomeDialog.showInfoDialog(
+                          dismissOnTouchOutside: false,
                           context,
-                          MaterialPageRoute(builder: (_) => const MainScreen()),
+                          dialogtype: DialogType.success,
+                          title: "Buyurtma yaratildi",
+                          desc: "Buyurtmangiz muvaffaqiyatli yaratildi",
+                          onOkPress: () {
+                            HiveBoxes.basketData.clear();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const MainScreen(),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                    });
-              
+                      });
                     }
                   },
                 ),
@@ -181,7 +185,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 15),
                 child: ListTile(
-                
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 10,
@@ -198,9 +201,9 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   subtitle: Text(
                     selectedDelivery.isEmpty
                         ? "choose_branch".tr()
-                        :deliveryAddress,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        : deliveryAddress,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   trailing: Icon(
@@ -307,7 +310,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${purchuaseProductList.length} ${'product_price'.tr()}",
+                        "${widget.purchuaseProductList.length} ${'product_price'.tr()}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -368,12 +371,14 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                         );
                       },
                     );
-                  }
-                  
-                  else if (selectedPayment == "installments_payment") {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => const PassportFormPage())); 
-                  }
-                   else if (selectedPayment == "payme" ||
+                  } else if (selectedPayment == "installments_payment") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PassportFormPage(),
+                      ),
+                    );
+                  } else if (selectedPayment == "payme" ||
                       selectedPayment == "click") {
                     context.read<UpdatePaymentBloc>().add(
                       PaymentEvent(
@@ -419,7 +424,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child:  Text(
+                    child: Text(
                       "complete_purchase".tr(),
                       style: TextStyle(
                         color: Colors.white,
@@ -432,36 +437,34 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               },
             ),
             SizedBox(height: 10.h),
-     RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-          ),
-          children: [
-            const TextSpan(
-              text: "Buyurtmani tasdiqlash orqali men ",
-            ),
-            TextSpan(
-              text: "foydalanuvchi shartnomasi",
-              style: const TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+                children: [
+                  const TextSpan(text: "Buyurtmani tasdiqlash orqali men "),
+                  TextSpan(
+                    text: "foydalanuvchi shartnomasi",
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer:
+                        TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UserAgreements(),
+                              ),
+                            );
+                          },
+                  ),
+                  const TextSpan(text: " shartlarini qabul qilaman."),
+                ],
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-     
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => const UserAgreements()));
-                },
             ),
-            const TextSpan(
-              text: " shartlarini qabul qilaman.",
-            ),
-          ],
-        ),
-      ),
-    
+
             const SizedBox(height: 100),
           ],
         ),
@@ -534,8 +537,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
     } else if (result == "pickup") {
       BlocProvider.of<BranchesBloc>(context).add(GetBranchesEvent());
     }
-
-
   }
 
   Widget _sectionTitle(String title) {

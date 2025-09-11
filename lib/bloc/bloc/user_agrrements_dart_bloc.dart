@@ -13,7 +13,7 @@ class UserAgrrementsDartBloc extends Bloc<UserAgrrementsDartEvent, UserAgrrement
   Future<void> getUserAgreements(GetUserAgreementsDataEvent event, Emitter<UserAgrrementsDartState> emit) async {
     emit(UserAgrrementsDartLoading());
     final result = await ApiService.getUserAgreements();
-    print(result.result);
+    (result.result);
     if (result.isSuccess) {
 
       final userAgreements = (result.result as List).map((e) => Agreement.fromJson(e)).toList();

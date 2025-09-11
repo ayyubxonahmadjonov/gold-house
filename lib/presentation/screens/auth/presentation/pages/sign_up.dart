@@ -21,7 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: BlocConsumer<AuthRegisterBloc, AuthRegisterState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
-
+            SharedPreferencesService.instance.saveString("phone", phoneNumber);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OtpScreen(phoneNumber: phoneNumber)),
@@ -67,6 +67,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed:() {
+                    if (phoneNumber.isEmpty) {
+          
+                    phoneNumber = phoneController.text;
+                  }
                   BlocProvider.of<AuthRegisterBloc>(context).add(AuthRegisterWithPhone(phone: phoneNumber));
                 },   
               ),

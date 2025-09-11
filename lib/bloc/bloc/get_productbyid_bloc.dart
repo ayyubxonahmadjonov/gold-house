@@ -12,7 +12,7 @@ class GetProductbyidBloc extends Bloc<GetProductDataEvent, GetProductbyidState> 
   Future<void> getProductbyid(GetProductDataEvent event, Emitter<GetProductbyidState> emit) async {
     emit(GetProductbyidLoading());
     final result = await ApiService.getProductbyId(event.productId);
-    print(result.result);
+    (result.result);
     if (result.isSuccess) {
    
       final product = Product.fromJson(result.result);

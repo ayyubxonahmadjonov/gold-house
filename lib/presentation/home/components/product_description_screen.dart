@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/presentation/home/components/monthly_payment.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDescriptionPage2 extends StatefulWidget {
   final String productId;
@@ -42,10 +40,7 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
         surfaceTintColor: AppColors.white,
         backgroundColor: AppColors.white,
         leading: const BackButton(),
-        // actions: [
-        //   IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
-        //   const SizedBox(width: 16),
-        // ],
+
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -61,7 +56,7 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
               final product = state.product;
               final variants = product.variants;
 
-              // variantlar bo‘sh emasligini tekshirish
+
               final mainVariant = variants.isNotEmpty ? variants.first : null;
 
               List<String> images = [];

@@ -197,11 +197,11 @@ return Scaffold(
                                               : selectedlanguage == "ru"
                                                   ? product.descriptionRu!
                                                   : product.descriptionEn!,
-                                          price: product.variants[0].price.toString(),
-                                          monthlyPrice3: product.variants[0].monthlyPayment3.toString(),
-                                          monthlyPrice6: product.variants[0].monthlyPayment6.toString(),
-                                          monthlyPrice12: product.variants[0].monthlyPayment12.toString(),
-                                          monthlyPrice24: product.variants[0].monthlyPayment24.toString(),
+                                          price: product.variants.map((e) => e.price.toString()).toList(),
+                                          monthlyPrice3: product.variants.first.monthlyPayment3.toString(),
+                                          monthlyPrice6: product.variants.first.monthlyPayment6.toString(),
+                                          monthlyPrice12: product.variants.first.monthlyPayment12.toString(),
+                                          monthlyPrice24: product.variants.first.monthlyPayment24.toString(),
                                         ),
                                       ),
                                     );

@@ -50,212 +50,214 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text('Profile'),
         backgroundColor: AppColors.primaryColor,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: BlocBuilder<GetUserDataBloc, GetUserDataState>(
-                builder: (context, state) {
-
-                  if(state is GetUserDataSuccess){ return ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return UpdateFullname();
-                          },
-                        ),
-                      );
-                    },
-                    leading: Icon(Icons.person),
-                    title: state.user.firstName.isNotEmpty ? Text("${state.user.firstName} ${state.user.lastName}") : Text("Siz ro'yhatdan o'tmagansiz"),
-                    subtitle: state.user.phoneNumber.isNotEmpty ? Text("${state.user.phoneNumber}") : Text("Ro'yhatdan o'tish majburiy"),
-                  );
-                  }
-                    else{ 
-                   return CustomButton(
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return SignUpScreen();
-                          },
-                        ),
-                        (route) => false,
-                      );
-                    },
-                    title: "register".tr(), bacColor: AppColors.yellow, textColor: AppColors.white, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 10, width: double.infinity, height: 50.h);
-                   
-                   
-              
-                  }
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey),
+                ),
+                child: BlocBuilder<GetUserDataBloc, GetUserDataState>(
+                  builder: (context, state) {
+        
+                    if(state is GetUserDataSuccess){ return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return UpdateFullname();
+                            },
+                          ),
+                        );
+                      },
+                      leading: Icon(Icons.person),
+                      title: state.user.firstName.isNotEmpty ? Text("${state.user.firstName} ${state.user.lastName}") : Text(""),
+                      subtitle: state.user.phoneNumber.isNotEmpty ? Text("${state.user.phoneNumber}") : Text(""),
+                    );
+                    }
+                      else{ 
+                     return CustomButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return SignUpScreen();
+                            },
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      title: "register".tr(), bacColor: AppColors.yellow, textColor: AppColors.white, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 10, width: double.infinity, height: 50.h);
+                     
+                     
                 
-                },
+                    }
+                  
+                  },
+                ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: 15.h),
-
-                  _buildCategories("orders".tr(), () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const OrderHistoryScreen();
-                        },
-                      ),
-                    );
-                  }, Icons.store),
-                  SizedBox(height: 10.h),
-
-                  _buildCategories(
-                    "cashback".tr(),
-                    () {
+              SizedBox(height: 20.h),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 15.h),
+        
+                    _buildCategories("orders".tr(), () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return const CashbackView();
+                            return const OrderHistoryScreen();
                           },
                         ),
                       );
-                    },
-                    Icons.account_balance_wallet,
-                  ),
-
-                  SizedBox(height: 10.h),
-
-                  _buildCategories("favorites".tr(), () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return  FavoritesScreen();
-                        },
-                      ),
-                    );
-                  }, Icons.favorite),
-
-                  SizedBox(height: 15.h),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.h),
-
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: 15.h),
-
-                  BlocConsumer<GetCitiesBloc, GetCitiesState>(
-                    listener: (context, state) {
-                      if (state is GetCitiesSuccess) {
-                        selectedCity =
-                            SharedPreferencesService.instance.getString(
-                              "selected_city",
-                            ) ??
-                            "Andijon";
-
-                        showDialog(
-                          context: context,
+                    }, Icons.store),
+                    SizedBox(height: 10.h),
+        
+                    _buildCategories(
+                      "cashback".tr(),
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const CashbackView();
+                            },
+                          ),
+                        );
+                      },
+                      Icons.account_balance_wallet,
+                    ),
+        
+                    SizedBox(height: 10.h),
+        
+                    _buildCategories("favorites".tr(), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
                           builder: (context) {
-                            return SelectCityDialog(
-                              cities: state.cities,
-                              initialSelectedCity: selectedCity,
+                            return  FavoritesScreen();
+                          },
+                        ),
+                      );
+                    }, Icons.favorite),
+        
+                    SizedBox(height: 15.h),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+        
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 15.h),
+        
+                    BlocConsumer<GetCitiesBloc, GetCitiesState>(
+                      listener: (context, state) {
+                        if (state is GetCitiesSuccess) {
+                          selectedCity =
+                              SharedPreferencesService.instance.getString(
+                                "selected_city",
+                              ) ??
+                              "Andijon";
+        
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SelectCityDialog(
+                                cities: state.cities,
+                                initialSelectedCity: selectedCity,
+                              );
+                            },
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return _buildCategories("select_city".tr(), () {
+                          BlocProvider.of<GetCitiesBloc>(
+                            context,
+                          ).add(GetAllCitiesEvent());
+                        }, Icons.location_city);
+                      },
+                    ),
+        
+                    SizedBox(height: 15.h),
+                    _buildCategories("select_language".tr(), () {
+                      showLanguageBottomSheet(context);
+                    }, Icons.language),
+                    SizedBox(height: 15.h),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+        
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 15.h),
+        
+                    _buildCategories("support".tr(), () {
+                      showProfileBottombSheet(context);
+                    }, Icons.info),
+        
+                    SizedBox(height: 15.h),
+                    InkWell(
+                      onTap: () {
+                        CustomAwesomeDialog.showInfoDialog(
+                          context,
+                          dialogtype: DialogType.info,
+                          title: "logout".tr(),
+                          desc: "logout_confirm".tr(),
+                          onOkPress: () {
+                            SharedPreferencesService.instance.clear();
+                            HiveBoxes.basketData.clear();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MainScreen(),
+                              ),
                             );
                           },
+                          onCancelPress: () {},
                         );
-                      }
-                    },
-                    builder: (context, state) {
-                      return _buildCategories("select_city".tr(), () {
-                        BlocProvider.of<GetCitiesBloc>(
-                          context,
-                        ).add(GetAllCitiesEvent());
-                      }, Icons.location_city);
-                    },
-                  ),
-
-                  SizedBox(height: 15.h),
-                  _buildCategories("select_language".tr(), () {
-                    showLanguageBottomSheet(context);
-                  }, Icons.language),
-                  SizedBox(height: 15.h),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.h),
-
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: 15.h),
-
-                  _buildCategories("support".tr(), () {
-                    showProfileBottombSheet(context);
-                  }, Icons.info),
-
-                  SizedBox(height: 15.h),
-                  InkWell(
-                    onTap: () {
-                      CustomAwesomeDialog.showInfoDialog(
-                        context,
-                        dialogtype: DialogType.info,
-                        title: "logout".tr(),
-                        desc: "logout_confirm".tr(),
-                        onOkPress: () {
-                          SharedPreferencesService.instance.clear();
-                          HiveBoxes.basketData.clear();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MainScreen(),
-                            ),
-                          );
-                        },
-                        onCancelPress: () {},
-                      );
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.exit_to_app, color: Colors.red),
-                      title: Text(
-                        'logout'.tr(),
-                        style: TextStyle(color: Colors.red, fontSize: 20.sp),
-                      ),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: Colors.red,
-                        size: 24.sp,
+                      },
+                      child: ListTile(
+                        leading: Icon(Icons.exit_to_app, color: Colors.red),
+                        title: Text(
+                          'logout'.tr(),
+                          style: TextStyle(color: Colors.red, fontSize: 20.sp),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Colors.red,
+                          size: 24.sp,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15.h),
-                ],
+                    SizedBox(height: 15.h),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -20,7 +20,8 @@ class _SignInScreenState extends State<SignInScreen> {
       body: BlocConsumer<AuthLoginBloc, AuthLoginState>(
         listener: (context, state) {
           if (state is AuthLoginSuccess) {
-            SharedPreferencesService.instance.saveString("phone", phoneNumber);
+             SharedPreferencesService.instance.saveString("phone", phoneNumber);
+            print('phone numbersignin: $phoneNumber');
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -69,7 +70,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 width: 340.w,
                 height: 50.h,
                 onPressed: () {
-                  print(phoneNumber);
+                     if (phoneNumber.isEmpty) {
+                    phoneNumber = phoneController.text;
+                  }
                   BlocProvider.of<AuthLoginBloc>(
                     context,
                   ).add(AuthLoginPhoneEvent(phone: phoneNumber));

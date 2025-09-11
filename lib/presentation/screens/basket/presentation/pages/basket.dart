@@ -51,6 +51,7 @@ class _BasketPageState extends State<BasketPage> {
     }
     return sum;
   }
+
   @override
   Widget build(BuildContext context) {
     final filteredList =
@@ -166,7 +167,7 @@ class _BasketPageState extends State<BasketPage> {
                                       ),
                                       SizedBox(height: 8.h),
                                       Container(
-                                        width: 120.w,
+                                        width: 150.w,
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                             color: Colors.grey.shade300,
@@ -367,18 +368,29 @@ class _BasketPageState extends State<BasketPage> {
                                                     setState(() {
                                                       quantity[index] = result;
                                                     });
-                                                  }else{
+                                                  } else {
                                                     setState(() {
-                                                    HiveBoxes.basketData.delete(basketList[index].productId);
-                                                  });
+                                                      HiveBoxes.basketData
+                                                          .delete(
+                                                            basketList[index]
+                                                                .productId,
+                                                          );
+                                                    });
                                                   }
                                                 },
-                                                child: Text(
-                                                  quantity[index].toString(),
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 2,
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
+                                                child: Container(
+                                                  width: 110.w,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    quantity[index].toString(),
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                    style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -472,12 +484,38 @@ class _BasketPageState extends State<BasketPage> {
                               },
                             );
                           } else {
+                            // ✅ faqat select qilingan productlarni yig‘ib olish
+                            final selectedProducts = <BasketModel>[];
+                            for (int i = 0; i < basketList.length; i++) {
+                              if (selected[i]) {
+                                basketList[i].quantity =
+                                    quantity[i]
+                                        .toString(); // quantity yangilash
+                                selectedProducts.add(basketList[i]);
+                              }
+                            }
+
+                            if (selectedProducts.isEmpty) {
+                              // hech narsa tanlanmasa error ko‘rsatamiz
+                              CustomAwesomeDialog.showInfoDialog(
+                                context,
+                                title: "error".tr(),
+                                desc: "please_select_product".tr(),
+                                dialogtype: DialogType.error,
+                              );
+                              return;
+                            }
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) =>
-                                        FormalizeProduct(total_price: total),
+                                    (context) => FormalizeProduct(
+                                      total_price:
+                                          total, // bunda ham selectedlarga asoslangan total chiqadi
+                                      purchuaseProductList:
+                                          selectedProducts, // ✅ tanlangan productlar yuboriladi
+                                    ),
                               ),
                             );
                           }

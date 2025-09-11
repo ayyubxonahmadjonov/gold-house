@@ -99,14 +99,10 @@ return _get("api/branches/");
           .post(url, body: {"refresh": refreshToken})
           .timeout(const Duration(seconds: 30));
       if (response.statusCode == 200) {
-        print('result is succes in refreshAccessToken');
         final decoded = jsonDecode(response.body);
 
-        print(decoded);
         final newAccess = decoded["access"];
-        // final newRefresh = decoded["refresh"] ;
         SharedPreferencesService.instance.saveString("access", newAccess);
-        // SharedPreferencesService.instance.saveString("refresh", newRefresh);
         return true;
 
       } else {
@@ -208,8 +204,6 @@ static Future<http.Response> updateUser(String firstname, String lastname, Strin
   }) async {
     Uri url = Uri.parse('$_baseUrl$path');
     try {
-      print(jsonEncode(body));
-      print(_header());
       http.Response response = await http
           .post(
             url,
@@ -219,7 +213,6 @@ static Future<http.Response> updateUser(String firstname, String lastname, Strin
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 401) {
-        print("result is 401 in _post");
         final isRefreshed = await refreshAccessToken();
         if (isRefreshed) {
           return await _post(path, body: body,);
@@ -249,7 +242,6 @@ static Future<http.Response> updateUser(String firstname, String lastname, Strin
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 401) {
-        print("result is 401 in _get");
         final isRefreshed = await refreshAccessToken();
         if (isRefreshed) {
           return await _get(path);

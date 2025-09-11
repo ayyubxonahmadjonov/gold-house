@@ -9,7 +9,7 @@ class ProductDescriptionPage extends StatefulWidget {
   final String color;
   List<String?> size;
   final String description;
-  final String price;
+  final List<String> price;
   final String monthlyPrice3;
   final String monthlyPrice6;
   final String monthlyPrice12;
@@ -44,6 +44,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
   String selectedlanguage = "";
   int activeIndex = 0;
   String? selectedSize;
+  int selectedPriceIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -52,6 +53,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
         SharedPreferencesService.instance.getString("selected_lg") ?? "";
     if (widget.size.isNotEmpty) {
       selectedSize = widget.size.first;
+      selectedPriceIndex = 0;
     }
   }
 
@@ -192,12 +194,12 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                 itemCount: widget.size.length,
                 itemBuilder: (context, index) {
                   final size = widget.size[index] ?? "";
-
                   final isSelected = selectedSize == size;
 
                   return InkWell(
                     onTap: () {
                       setState(() {
+                        selectedPriceIndex = index;
                         selectedSize = size;
                       });
                     },
@@ -242,7 +244,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
 
             SizedBox(height: 16.h),
             Text(
-              "${widget.price} so’m",
+              "${widget.price[selectedPriceIndex]} so’m",
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
 
@@ -338,14 +340,13 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                   color: widget.color,
                   size: selectedSize.toString(),
                   description: widget.description,
-                  price: widget.price,
+                  price: widget.price[selectedPriceIndex],
                   monthlyPrice3: widget.monthlyPrice3,
                   monthlyPrice6: widget.monthlyPrice6,
                   monthlyPrice12: widget.monthlyPrice12,
                   monthlyPrice24: widget.monthlyPrice24,
                   image: widget.images.first,
                   isAvailable: widget.isAvailable,
-                  
                 );
                 HiveBoxes.basketData.put(widget.productId, basketModel);
                 ScaffoldMessenger.of(context).showSnackBar(

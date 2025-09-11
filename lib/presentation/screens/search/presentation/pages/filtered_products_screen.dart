@@ -127,8 +127,7 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                                             description:
                                                 product.descriptionUz ?? "",
                                             price:
-                                                product.variants[0].price
-                                                    .toString(),
+                                                product.variants.map((e) => e.price.toString()).toList(),
                                             monthlyPrice3:
                                                 product
                                                     .variants[0]

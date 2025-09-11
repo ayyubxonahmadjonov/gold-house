@@ -96,7 +96,9 @@
   "hide_product": "Скрыть продукт",
   "show_product": "Показать продукт",
   "order_number": "Заказ №-",
-  "enter_your_name": "Введите ваше имя"
+  "enter_your_name": "Введите ваше имя",
+  "register":"Регистрация"
+
 
 
     }

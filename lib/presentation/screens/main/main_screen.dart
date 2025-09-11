@@ -74,7 +74,7 @@ String selected_business = "";
 
             icon: ImageIcon(AssetImage('assets/icons/profile.png')),
 
-            label: 'profile'.tr(),
+            label: "",
           ),
         ],
       ),
