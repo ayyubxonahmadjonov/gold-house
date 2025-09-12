@@ -6,15 +6,15 @@ class SelectPickupDialog extends StatefulWidget {
   final Widget? route;
   final List<BranchModel> branches;
   final String? initialSelectedCity;
-  final ValueChanged<BranchModel>? onSelected; 
+  final ValueChanged<BranchModel>? onSelected;
   int? selectedId;
 
-   SelectPickupDialog({
+  SelectPickupDialog({
     Key? key,
     required this.branches,
     this.initialSelectedCity,
     this.route,
-    this.onSelected, 
+    this.onSelected,
     this.selectedId,
   }) : super(key: key);
 
@@ -25,19 +25,36 @@ class SelectPickupDialog extends StatefulWidget {
 class _SelectPickupDialogState extends State<SelectPickupDialog> {
   int? tempSelectedId;
   String selectedBusiness = "";
-   List<BranchModel> filteredBranches = [];
+  List<BranchModel> filteredBranches = [];
 
   @override
   void initState() {
     super.initState();
-    selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "";
+    selectedBusiness =
+        SharedPreferencesService.instance.getString("selected_business") ?? "";
+
+    // biznes -> branch mapping
+    final businessBranchMap = {
+      "Stroy Baza №1": 0,
+      "Giaz Mebel": 1,
+      "Goldklinker": 2,
+    };
+
+    final selectedBranchIndex = businessBranchMap[selectedBusiness];
+
+    if (selectedBranchIndex != null) {
+      filteredBranches = widget.branches
+          .where((b) => b.branch == selectedBranchIndex)
+          .toList();
+    } else {
+      filteredBranches = widget.branches; // fallback: hammasini ko‘rsatish
+    }
+
     tempSelectedId = widget.initialSelectedCity != null
         ? int.tryParse(widget.initialSelectedCity!)
-        : null;
-        filteredBranches = widget.branches
-        .where((b) => b.nameUz == selectedBusiness)
-        .toList();
+        : (filteredBranches.isNotEmpty ? filteredBranches.first.id : null);
   }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -50,14 +67,13 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
       ),
       content: SizedBox(
         width: double.maxFinite,
-        child: ListView.builder(
+        child: filteredBranches.isEmpty
+            ? const Center(child: Text("No branches found"))
+            : ListView.builder(
           shrinkWrap: true,
           itemCount: filteredBranches.length,
           itemBuilder: (context, index) {
             final branch = filteredBranches[index];
-            if(filteredBranches.length==0){
-              return const Center(child: Text("No branches found"));
-            }
             return RadioListTile<int>(
               title: Text(
                 branch.addressUz,
@@ -96,34 +112,32 @@ class _SelectPickupDialogState extends State<SelectPickupDialog> {
           onPressed: tempSelectedId == null
               ? null
               : () {
-                  final selectedBranch = widget.branches.firstWhere(
-                    (b) => b.id == tempSelectedId,
-                  );
+            final selectedBranch = widget.branches.firstWhere(
+                  (b) => b.id == tempSelectedId,
+            );
 
-                  // ✅ callback ishlatish
-                  if (widget.onSelected != null) {
-                    widget.onSelected!(selectedBranch);
-                    widget.selectedId = selectedBranch.id;
-                  }
+            if (widget.onSelected != null) {
+              widget.onSelected!(selectedBranch);
+              widget.selectedId = selectedBranch.id;
+            }
 
-                  if (widget.route != null) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => widget.route!,
-                      ),
-                    );
-                  } else {
-                    Navigator.pop(context, selectedBranch);
-                  }
-                },
+            if (widget.route != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => widget.route!,
+                ),
+              );
+            } else {
+              Navigator.pop(context, selectedBranch);
+            }
+          },
           child: const Text(
-            "",
+            "Tanlash",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
         ),
       ],
     );
   }
-
 }

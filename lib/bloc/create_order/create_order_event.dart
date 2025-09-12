@@ -10,7 +10,7 @@ class GenerateOrderEvent extends CreateOrderEvent {
   final String deliveryAddress;
   final String paymentMethod;
   final bool useCashback;
-  final int branchId;
+  final int? branchId;
   final int part;
   final String status;
   final String delivery_method;
@@ -21,7 +21,7 @@ class GenerateOrderEvent extends CreateOrderEvent {
     required this.deliveryAddress,
     required this.paymentMethod,
     required this.useCashback,
-    required this.branchId,
+    this.branchId,
     required this.part,
     required this.status,
     required this.delivery_method,

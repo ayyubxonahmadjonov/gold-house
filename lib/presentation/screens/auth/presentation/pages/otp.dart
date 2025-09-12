@@ -23,7 +23,6 @@ String phone_number = '';
   }
   @override
   Widget build(BuildContext context) {
-    print('phone numberotpscreen: $phone_number');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(backgroundColor: Colors.white),
@@ -76,9 +75,6 @@ String phone_number = '';
                     
                       title: "verify".tr(),
                       onPressed: () {
-                        print('123456789876543212345678976543');
-                        print('phone number: $phone_number}');
-                        print('otp: ${otpController.text}');
                         BlocProvider.of<OtpVerificationBloc>(context).add(OtpVerificationWithPhone(phone_number: phone_number, verification_code: otpController.text));
                       }, bacColor: Colors.yellow, textColor: Colors.black, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 5, width: 330.w, height: 50.h,
                     ),

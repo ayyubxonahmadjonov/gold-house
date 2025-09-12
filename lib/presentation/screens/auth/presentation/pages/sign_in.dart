@@ -21,7 +21,6 @@ class _SignInScreenState extends State<SignInScreen> {
         listener: (context, state) {
           if (state is AuthLoginSuccess) {
              SharedPreferencesService.instance.saveString("phone", phoneNumber);
-            print('phone numbersignin: $phoneNumber');
             Navigator.push(
               context,
               MaterialPageRoute(

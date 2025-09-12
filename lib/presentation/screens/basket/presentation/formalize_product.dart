@@ -24,21 +24,41 @@ class _FormalizeProductState extends State<FormalizeProduct> {
   String selectedDelivery = "";
   String selectedPayment = "";
   String deliveryAddress = "";
-  int selectedBranchId = 0;
+  int? selectedBranchId;
+
+  int selectedBusinessId = 0;
   bool useCashback = false;
   double cashback = 0;
   String selected_business = "";
+  String paymentType = "";
 
   int id = 0;
   @override
   void initState() {
     super.initState();
+
     selected_business =
         SharedPreferencesService.instance.getString("selected_business") ?? "";
     id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
+
     BlocProvider.of<GetUserDataBloc>(
       context,
     ).add(GetUserAllDataEvent(id: id.toString()));
+
+    for (var product in widget.purchuaseProductList) {
+      productIdList.add(int.parse(product.productId));
+      variantIdList.add(product.variantId);
+      quantityList.add(int.parse(product.quantity!));
+    }
+    if (selected_business == "Stroy Baza №1") {
+      selectedBusinessId = 0;
+    } else if (selected_business == "Giaz Mebel") {
+      selectedBusinessId = 1;
+    } else if (selected_business == "Goldklinker") {
+      selectedBusinessId = 2;
+    } else {
+      selectedBusinessId = 0;
+    }
   }
 
   @override
@@ -84,15 +104,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 shrinkWrap: true,
                 itemCount: widget.purchuaseProductList.length,
                 itemBuilder: (context, index) {
-                  productIdList.add(
-                    int.parse(widget.purchuaseProductList[index].productId),
-                  );
-                  variantIdList.add(
-                    widget.purchuaseProductList[index].variantId,
-                  );
-                  quantityList.add(
-                    int.parse(widget.purchuaseProductList[index].quantity!),
-                  );
                   final product = widget.purchuaseProductList[index];
                   return Container(
                     margin: EdgeInsets.all(8),
@@ -306,27 +317,6 @@ class _FormalizeProductState extends State<FormalizeProduct> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${widget.purchuaseProductList.length} ${'product_price'.tr()}",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        "${widget.total_price} so‘m",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(),
                   const SizedBox(height: 15),
                   TotalPriceWidget(
                     totalPrice: widget.total_price,
@@ -357,6 +347,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   }
 
                   if (selectedPayment == "cash") {
+
                     CustomAwesomeDialog.showInfoDialog(
                       dismissOnTouchOutside: false,
                       context,
@@ -403,6 +394,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   height: 55,
                   child: ElevatedButton(
                     onPressed: () {
+                
                       context.read<CreateOrderBloc>().add(
                         GenerateOrderEvent(
                           productId: productIdList,
@@ -412,8 +404,11 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                           paymentMethod: selectedPayment,
                           useCashback: useCashback,
                           branchId: selectedBranchId,
-                          part: 1,
-                          status: 'in_payment',
+                          part: selectedBusinessId,
+                          status:
+                              selectedPayment == "cash"
+                                  ? "processing"
+                                  : 'in_payment',
                           delivery_method: selectedDelivery,
                         ),
                       );
