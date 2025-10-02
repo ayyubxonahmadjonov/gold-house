@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 
-import '../../core/constants/app_imports.dart';
 
 class HttpResult {
   bool isSuccess;

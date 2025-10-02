@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/data/models/my_order.dart';
@@ -38,7 +37,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           if (state is MyOrdersLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is MyOrdersSuccess) {
-       
+
               final orders = state.orders.where((order) {
               final status = order.status ?? "";
               return status != "pending" && status != "in_payment";
@@ -75,8 +74,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Widget _buildOrderTile(OrderOfBasket order, bool isVisible, int key) {
     // Status
-    final statusText = _getStatusText(order.status ?? "");
-    final statusColor = _getStatusColor(order.status ?? "");
+    final statusText = _getStatusText(order.status);
+    final statusColor = _getStatusColor(order.status);
 
     // Mahsulotlar
     final firstItem = order.items.isNotEmpty ? order.items.first : null;
@@ -216,29 +215,55 @@ return InkWell(
     );
   }
 
-  String _getStatusText(String status) {
-    switch (status) {
-      case "pending":
-        return "Jarayonda";
-      case "delivered":
-        return "Xaridorga berilgan";
-      case "cancelled":
-        return "Qaytarilgan";
-      default:
-        return status.isEmpty ? "-" : status;
-    }
-  }
+String _getStatusText(String? status) {
+  if (status == null || status.isEmpty) return "-";
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case "pending":
-        return AppColors.yellow;
-      case "delivered":
-        return Colors.green;
-      case "cancelled":
-        return AppColors.red;
-      default:
-        return Colors.grey;
-    }
+  switch (status) {
+    case "processing":
+      return selected_lg == "uz"
+          ? "Jarayonda"
+          : selected_lg == "ru"
+              ? "В процессе"
+              : "Processing";
+
+    case "shipped":
+      return selected_lg == "uz"
+          ? "Yuborilgan"
+          : selected_lg == "ru"
+              ? "Отправлено"
+              : "Shipped";
+
+    case "delivered":
+      return selected_lg == "uz"
+          ? "Xaridorga yetkazilgan"
+          : selected_lg == "ru"
+              ? "Доставлено"
+              : "Delivered";
+
+    case "cancelled":
+      return selected_lg == "uz"
+          ? "Bekor qilingan"
+          : selected_lg == "ru"
+              ? "Отменено"
+              : "Cancelled";
+
+    default:
+      return status;
   }
+}
+
+Color _getStatusColor(String? status) {
+  switch (status) {
+    case "processing":
+    case "shipped":
+      return Colors.orange;
+    case "delivered":
+      return Colors.green;
+    case "cancelled":
+      return AppColors.red;
+    default:
+      return Colors.grey;
+  }
+}
+
 }

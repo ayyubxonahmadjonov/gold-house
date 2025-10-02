@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 import 'package:gold_house/data/models/region_model.dart';
-import 'package:meta/meta.dart';
 
 part 'regions_event.dart';
 part 'regions_state.dart';

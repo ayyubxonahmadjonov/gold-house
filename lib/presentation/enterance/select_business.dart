@@ -29,21 +29,21 @@ class _SelectBusinessScreenState extends State<SelectBusinessScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BusinessCard(
-                imagePath: "assets/images/giaz_mebel.png",
+                imagePath: "assets/images/giazmebel.jpg",
                 title: "Giaz Mebel",
                 isSelected: selectedBusiness == "Giaz Mebel",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/app_logo.png",
+                imagePath: "assets/images/applogo.jpg",
                 title: "Stroy Baza №1",
                 isSelected: selectedBusiness == "Stroy Baza №1",
                 onTap: _selectBusiness,
               ),
               const SizedBox(height: 16),
               BusinessCard(
-                imagePath: "assets/images/gold_klinker.jpg",
+                imagePath: "assets/images/goldklinker.jpg",
                 title: "GoldKlinker",
                 isSelected: selectedBusiness == "GoldKlinker",
                 onTap: _selectBusiness,

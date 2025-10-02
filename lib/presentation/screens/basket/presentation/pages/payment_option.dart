@@ -67,7 +67,10 @@ class _PaymentSelectorState extends State<PaymentSelector> {
               ),
               child: Row(
                 children: [
-                  Image.asset("assets/icons/${method.assetIcon}"),
+                  Image.asset("assets/images/${method.assetIcon}",
+                  width: 30,
+                  height: 30,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

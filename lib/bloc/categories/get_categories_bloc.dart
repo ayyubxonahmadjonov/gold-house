@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 import 'package:gold_house/data/models/category_model.dart';
-import 'package:meta/meta.dart';
 
 part 'get_categories_event.dart';
 part 'get_categories_state.dart';

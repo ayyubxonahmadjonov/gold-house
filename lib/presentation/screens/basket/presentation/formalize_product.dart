@@ -36,7 +36,10 @@ class _FormalizeProductState extends State<FormalizeProduct> {
   @override
   void initState() {
     super.initState();
-
+    deliveryAddress =
+        SharedPreferencesService.instance.getString("delivery_address") ?? "";
+    selectedDelivery =
+        SharedPreferencesService.instance.getString("selected_delivery") ?? "";
     selected_business =
         SharedPreferencesService.instance.getString("selected_business") ?? "";
     id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
@@ -63,6 +66,20 @@ class _FormalizeProductState extends State<FormalizeProduct> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculating monthly payments for installments based on total_price
+    final monthlyPrice3 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.19 / 3).toStringAsFixed(2)
+        : '';
+    final monthlyPrice6 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.26 / 6).toStringAsFixed(2)
+        : '';
+    final monthlyPrice12 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.42 / 12).toStringAsFixed(2)
+        : '';
+    final monthlyPrice24 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.75 / 24).toStringAsFixed(2)
+        : '';
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -144,24 +161,30 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                     if (state is GetBranchesSuccess) {
                       showDialog(
                         context: context,
-                        builder:
-                            (context) => SelectPickupDialog(
-                              branches: state.branches,
-                              onSelected: (value) {
-                                setState(() {
-                                  deliveryAddress = value.addressUz;
-                                  selectedBranchId = value.id;
-                                });
-                              },
-                            ),
+                        builder: (context) => SelectPickupDialog(
+                          branches: state.branches,
+                          onSelected: (value) {
+                            setState(() {
+                              deliveryAddress = value.addressUz;
+                              selectedBranchId = value.id;
+                              selectedDelivery = "pickup";
+                              SharedPreferencesService.instance.saveString(
+                                "delivery_address",
+                                value.addressUz,
+                              );
+                              SharedPreferencesService.instance.saveString(
+                                "selected_delivery",
+                                "pickup",
+                              );
+                            });
+                          },
+                        ),
                       );
                     }
                   },
                 ),
                 BlocListener<RegionsBloc, RegionsState>(
-                  listener: (context, state) {
-                    if (state is GetRegionsSucces) {}
-                  },
+                  listener: (context, state) {},
                 ),
                 BlocListener<UpdatePaymentBloc, UpdatePaymentState>(
                   listener: (context, state) {
@@ -210,9 +233,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   subtitle: Text(
-                    selectedDelivery.isEmpty
-                        ? "choose_branch".tr()
-                        : deliveryAddress,
+                    _getSubtitleText(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
@@ -230,51 +251,52 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            cashback == 0.00
-                ? const SizedBox()
-                : _sectionTitle("Keshbekni ishlatish"),
+            const SizedBox(height: 16),
+            BlocConsumer<GetUserDataBloc, GetUserDataState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                if (state is GetUserDataSuccess) {
+                  final user = state.user;
+                  cashback = double.parse(user.cashbackBalance ?? "0");
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: BlocConsumer<GetUserDataBloc, GetUserDataState>(
-                listener: (context, state) {},
-                builder: (context, state) {
-                  if (state is GetUserDataSuccess) {
-                    final user = state.user;
-                    cashback = double.parse(user.cashbackBalance);
+                  if (cashback <= 0.00) return const SizedBox();
 
-                    if (cashback == 0.00) return const SizedBox();
-
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Keshbek: $cashback ${'currency'.tr()}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle("Keshbekni ishlatish"),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Keshbek: $cashback ${'currency'.tr()}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Checkbox(
+                              value: useCashback,
+                              onChanged: (value) {
+                                setState(() {
+                                  useCashback = value!;
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                        Checkbox(
-                          value: useCashback,
-                          onChanged: (value) {
-                            setState(() {
-                              useCashback = value!;
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  } else if (state is GetUserDataError) {
-                    return Text(state.message);
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              ),
+                      ),
+                    ],
+                  );
+                } else if (state is GetUserDataError) {
+                  return Text(state.message);
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
-
             const SizedBox(height: 10),
             _sectionTitle("payment_method".tr()),
             PaymentSelector(
@@ -282,25 +304,25 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 PaymentOption(
                   code: "click",
                   title: "Click",
-                  assetIcon: "click.png",
+                  assetIcon: "click.jpg",
                   isCredit: false,
                 ),
                 PaymentOption(
                   code: "payme",
                   title: "Payme",
-                  assetIcon: "payme.png",
+                  assetIcon: "payme.jpg",
                   isCredit: false,
                 ),
                 PaymentOption(
                   code: "cash",
                   title: "pay_on_delivery".tr(),
-                  assetIcon: "bring.png",
+                  assetIcon: "payondeliver.jpg",
                   isCredit: false,
                 ),
                 PaymentOption(
                   code: "installments_payment",
                   title: "Muddatli to‘lov",
-                  assetIcon: "delivery.png",
+                  assetIcon: "credit.jpg",
                   isCredit: true,
                 ),
               ],
@@ -310,6 +332,14 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 });
               },
             ),
+            SizedBox(height: 20),
+            if (selectedPayment == "installments_payment")
+              MonthlyPaymentWidget(
+                monthlyPrice3: monthlyPrice3,
+                monthlyPrice6: monthlyPrice6,
+                monthlyPrice12: monthlyPrice12,
+                monthlyPrice24: monthlyPrice24,
+              ),
             const SizedBox(height: 40),
             _sectionTitle("your_order".tr()),
             Padding(
@@ -327,27 +357,26 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 ],
               ),
             ),
-
-            // Tugma
             BlocConsumer<CreateOrderBloc, CreateOrderState>(
               listener: (context, state) {
                 if (state is CreateOrderSuccess) {
                   bool isValid =
-                      selectedPayment.isNotEmpty && selectedDelivery.isNotEmpty;
+                      selectedPayment.isNotEmpty &&
+                      selectedDelivery.isNotEmpty &&
+                      deliveryAddress.isNotEmpty;
 
                   if (!isValid) {
                     CustomAwesomeDialog.showInfoDialog(
                       context,
                       dialogtype: DialogType.error,
                       title: "error".tr(),
-                      desc: "Iltimos, to‘lov turi va yetkazib berishni tanlang",
+                      desc: "Iltimos, to‘lov turi, yetkazib berish usuli va manzilni tanlang",
                       onOkPress: () {},
                     );
                     return;
                   }
 
                   if (selectedPayment == "cash") {
-
                     CustomAwesomeDialog.showInfoDialog(
                       dismissOnTouchOutside: false,
                       context,
@@ -372,11 +401,11 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   } else if (selectedPayment == "payme" ||
                       selectedPayment == "click") {
                     context.read<UpdatePaymentBloc>().add(
-                      PaymentEvent(
-                        orderId: state.orderId,
-                        paymentMethod: selectedPayment,
-                      ),
-                    );
+                          PaymentEvent(
+                            orderId: state.orderId,
+                            paymentMethod: selectedPayment,
+                          ),
+                        );
                   } else {
                     CustomAwesomeDialog.showInfoDialog(
                       context,
@@ -394,24 +423,22 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                   height: 55,
                   child: ElevatedButton(
                     onPressed: () {
-                
                       context.read<CreateOrderBloc>().add(
-                        GenerateOrderEvent(
-                          productId: productIdList,
-                          variantId: variantIdList,
-                          quantity: quantityList,
-                          deliveryAddress: deliveryAddress,
-                          paymentMethod: selectedPayment,
-                          useCashback: useCashback,
-                          branchId: selectedBranchId,
-                          part: selectedBusinessId,
-                          status:
-                              selectedPayment == "cash"
+                            GenerateOrderEvent(
+                              productId: productIdList,
+                              variantId: variantIdList,
+                              quantity: quantityList,
+                              deliveryAddress: deliveryAddress,
+                              paymentMethod: selectedPayment,
+                              useCashback: useCashback,
+                              branchId: selectedBranchId,
+                              part: selectedBusinessId,
+                              status: selectedPayment == "cash"
                                   ? "processing"
                                   : 'in_payment',
-                          delivery_method: selectedDelivery,
-                        ),
-                      );
+                              delivery_method: selectedDelivery,
+                            ),
+                          );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFD8BB6C),
@@ -444,22 +471,20 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                       color: Colors.blue,
                       decoration: TextDecoration.underline,
                     ),
-                    recognizer:
-                        TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const UserAgreements(),
-                              ),
-                            );
-                          },
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UserAgreements(),
+                          ),
+                        );
+                      },
                   ),
                   const TextSpan(text: " shartlarini qabul qilaman."),
                 ],
               ),
             ),
-
             const SizedBox(height: 100),
           ],
         ),
@@ -467,7 +492,26 @@ class _FormalizeProductState extends State<FormalizeProduct> {
     );
   }
 
+  String _getSubtitleText() {
+    if (deliveryAddress.isNotEmpty) {
+      return deliveryAddress;
+    } else if (selectedDelivery == "delivery") {
+      return "choose_delivery_address".tr();
+    } else if (selectedDelivery == "pickup") {
+      return "choose_branch".tr();
+    }
+    return "choose_delivery".tr();
+  }
+
   Future<void> _chooseDeliveryMethod(BuildContext context) async {
+    setState(() {
+      if (selectedDelivery != "") {
+        deliveryAddress = "";
+        selectedBranchId = null;
+        SharedPreferencesService.instance.remove("delivery_address");
+      }
+    });
+
     final result = await showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -476,59 +520,62 @@ class _FormalizeProductState extends State<FormalizeProduct> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "choose_delivery".tr(),
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: Icon(Icons.delivery_dining, color: Colors.green),
-                title: Text("delivery".tr()),
-                subtitle: Text("Buyurtma manzilingizga yetkaziladi"),
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => AddressForm(
-                            onAddressSelected: (address) {
-                              setState(() {
-                                deliveryAddress =
-                                    "${address.region.nameUz}, ${address.city.nameUz}, ${address.street}";
-                              });
-                            },
-                          ),
-                    ),
-                  );
-
-                  setState(() {
-                    selectedDelivery = "delivery";
-                  });
-
-                  Navigator.pop(context, "delivery");
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.storefront, color: Colors.blue),
-                title: Text("pickup".tr()),
-                subtitle: Text("Do‘kondan o‘zingiz olib ketasiz"),
-                onTap: () {
-                  Navigator.pop(context, "pickup");
-                  setState(() {
-                    selectedDelivery = "pickup";
-                  });
-                },
-              ),
-            ],
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Column(
+              children: [
+                Text(
+                  "choose_delivery".tr(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                ListTile(
+                  leading: Icon(Icons.delivery_dining, color: Colors.green),
+                  title: Text("delivery".tr()),
+                  subtitle: Text("Buyurtma manzilingizga yetkaziladi"),
+                  onTap: () async {
+                    BlocProvider.of<RegionsBloc>(context).add(GetRegionsEvent());
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddressForm(
+                          onAddressSelected: (address) {
+                            setState(() {
+                              deliveryAddress =
+                                  "${address.region.nameUz}, ${address.city.nameUz}, ${address.street}";
+                              selectedDelivery = "delivery";
+                              SharedPreferencesService.instance.saveString(
+                                "delivery_address",
+                                deliveryAddress,
+                              );
+                              SharedPreferencesService.instance.saveString(
+                                "selected_delivery",
+                                selectedDelivery,
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                    Navigator.pop(context, "delivery");
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.storefront, color: Colors.blue),
+                  title: Text("pickup".tr()),
+                  subtitle: Text("Do‘kondan o‘zingiz olib ketasiz"),
+                  onTap: () {
+                    Navigator.pop(context, "pickup");
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         );
       },
     );
     if (result == "delivery") {
-      BlocProvider.of<RegionsBloc>(context).add(GetRegionsEvent());
     } else if (result == "pickup") {
       BlocProvider.of<BranchesBloc>(context).add(GetBranchesEvent());
     }

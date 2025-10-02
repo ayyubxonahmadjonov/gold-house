@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.white, // splash fon rangi
       body: Center(
         child: Image.asset(
-          "assets/images/app_logo.png", // logoni assetdan oladi
+          "assets/images/applogo.jpg", // logoni assetdan oladi
      
           fit: BoxFit.cover,
         ),

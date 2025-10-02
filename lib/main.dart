@@ -4,6 +4,7 @@ import 'package:gold_house/bloc/bloc/create_credit_bloc.dart';
 import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
 import 'package:gold_house/bloc/bloc/user_agrrements_dart_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
+import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
 import 'package:gold_house/presentation/screens/splash/splash_screen.dart';
@@ -73,9 +74,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => CreateCreditBloc()),
             BlocProvider(create: (context) => GetProductbyidBloc()),
             BlocProvider(create: (context) => UserAgrrementsDartBloc()),
-
-
-
+            BlocProvider(create: (context) => GetPhoneNumberBloc()),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',
@@ -87,8 +86,7 @@ class _MyAppState extends State<MyApp> {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-             home: selected_lg != null ? MainScreen() : SplashScreen(),
-   
+            home: selected_lg != null ? MainScreen() : SplashScreen(),
           ),
         );
       },

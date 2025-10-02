@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_up.dart' as widget;
 import 'package:pinput/pinput.dart';
 
 import '../../../../../core/constants/app_imports.dart';
@@ -34,11 +33,15 @@ String phone_number = '';
             child: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
               listener: (context, state) {
             if(state is OtpVerificationSuccess){
-              Navigator.push(
+              Navigator.pushAndRemoveUntil(
+
                 context,
                 MaterialPageRoute(
                   builder: (context) => const  MainScreen(),
+                  
                 ),
+                (route) => false,
+              
               );
             }
             if(state is OtpVerificationError){

@@ -66,10 +66,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
         backgroundColor: AppColors.white,
         leading: const BackButton(),
         title: Text(widget.title),
-        // actions: [
-        //   IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border)),
-        //   SizedBox(width: 16),
-        // ],
+
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -84,7 +81,8 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                     Image.network(
                       'https://backkk.stroybazan1.uz${widget.images.first}',
                       height: 200.h,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
+                  
                     ),
 
                   if (widget.images.length > 1) ...[
@@ -96,15 +94,16 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                             return Shimmer.fromColors(
                               baseColor: Colors.grey[300]!,
                               highlightColor: Colors.grey[100]!,
-                              child: Container(
-                                height: 200.h,
+                              child: SizedBox(
+                                
+                                height: 350.h,
                                 width: double.infinity,
-                                color: Colors.white,
+                       
                               ),
                             );
                           },
                           'https://backkk.stroybazan1.uz${widget.images[index]}',
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                         );
                       },
                       options: CarouselOptions(
@@ -309,7 +308,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                         borderRadius: BorderRadius.circular(15),
 
                         child: Image.network(
-                          'https://tse4.mm.bing.net/th?id=OIP.tDvvuWpJKpafO_tOMB-Y6QAAAA&pid=Api&P=0&h=220',
+                          'https://jet-back.bank.uz/uploads/avatars/513eefc4c64061c628c080655b8f54cd.png',
                           height: 50.h,
                         ),
                       ),
@@ -317,7 +316,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                         borderRadius: BorderRadius.circular(15),
 
                         child: Image.network(
-                          'https://play-lh.googleusercontent.com/9nfyAySpxZMk01BxNNSMfir6UUW5PJ3aLlYx_ysmCtTwTpRQrMCJwfyFuHA5-Sf4fw',
+                          'https://tafreklama-2024.marketing.uz/uploads/cases/f286c95659c8.jpg',
                           height: 50.h,
                         ),
                       ),
@@ -351,6 +350,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                 HiveBoxes.basketData.put(widget.productId, basketModel);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+          
                     backgroundColor: Colors.white,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
@@ -405,6 +405,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                     ),
                   ),
                 );
+            
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50.h),

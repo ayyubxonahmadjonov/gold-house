@@ -1,11 +1,9 @@
 
-import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 import 'package:gold_house/data/models/my_order.dart';
-import 'package:meta/meta.dart';
 
 part 'my_orders_event.dart';
 part 'my_orders_state.dart';
@@ -30,7 +28,7 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
       emit(MyOrdersError(
           message: 'Failed to fetch orders: HTTP ${result.statusCode}'));
     }
-  } catch (e, s) {
+  } catch (e) {
     emit(MyOrdersError(message: 'Error parsing orders: $e'));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
+import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
 import 'package:gold_house/presentation/screens/profile/cashback_screen.dart';
 import 'package:gold_house/presentation/screens/profile/presentation/pages/show_language_bottom.dart';
@@ -30,11 +30,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ValueNotifier<String> fullname = ValueNotifier<String>(
     "${SharedPreferencesService.instance.getString("profilfullname")}",
   );
+  String selectedBusiness = "";
   int user_id = 0;
+    int selectedIndex = 0;
+    String selectedLanguage = "";
+
   @override
   void initState() {
     super.initState();
-
+    selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "";
     user_id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
     BlocProvider.of<GetUserDataBloc>(
       context,
@@ -44,6 +48,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String selectedCity = "";
   @override
   Widget build(BuildContext context) {
+    selectedLanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
+
+if (selectedBusiness == "Stroy Baza №1") {
+  selectedIndex = 0;
+} else if (selectedBusiness == "Giaz Mebel") {
+  selectedIndex = 1;
+} else if (selectedBusiness == "Goldklinker") {
+  selectedIndex = 2;
+}
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -62,42 +76,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: BlocBuilder<GetUserDataBloc, GetUserDataState>(
                   builder: (context, state) {
-        
-                    if(state is GetUserDataSuccess){ return ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return UpdateFullname();
-                            },
-                          ),
-                        );
-                      },
-                      leading: Icon(Icons.person),
-                      title: state.user.firstName.isNotEmpty ? Text("${state.user.firstName} ${state.user.lastName}") : Text(""),
-                      subtitle: state.user.phoneNumber.isNotEmpty ? Text("${state.user.phoneNumber}") : Text(""),
-                    );
+                    if (state is GetUserDataSuccess) {
+                      return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return UpdateFullname();
+                              },
+                            ),
+                          );
+                        },
+                        leading: Icon(Icons.person),
+                        title:
+                            state.user.firstName.isNotEmpty
+                                ? Text(
+                                  "${state.user.firstName} ${state.user.lastName}",
+                                )
+                                : Text(""),
+                        subtitle:
+                            state.user.phoneNumber.isNotEmpty
+                                ? Text("${state.user.phoneNumber}")
+                                : Text(""),
+                      );
+                    } else {
+                      return CustomButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return SignUpScreen();
+                              },
+                            ),
+                            (route) => false,
+                          );
+                        },
+                        title: "register".tr(),
+                        bacColor: AppColors.yellow,
+                        textColor: AppColors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        borderRadius: 10,
+                        width: double.infinity,
+                        height: 50.h,
+                      );
                     }
-                      else{ 
-                     return CustomButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SignUpScreen();
-                            },
-                          ),
-                          (route) => false,
-                        );
-                      },
-                      title: "register".tr(), bacColor: AppColors.yellow, textColor: AppColors.white, fontWeight: FontWeight.w600, fontSize: 20, borderRadius: 10, width: double.infinity, height: 50.h);
-                     
-                     
-                
-                    }
-                  
                   },
                 ),
               ),
@@ -110,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-        
+
                     _buildCategories("orders".tr(), () {
                       Navigator.push(
                         context,
@@ -122,41 +147,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }, Icons.store),
                     SizedBox(height: 10.h),
-        
-                    _buildCategories(
-                      "cashback".tr(),
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const CashbackView();
-                            },
-                          ),
-                        );
-                      },
-                      Icons.account_balance_wallet,
-                    ),
-        
+
+                    _buildCategories("cashback".tr(), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const CashbackView();
+                          },
+                        ),
+                      );
+                    }, Icons.account_balance_wallet),
+
                     SizedBox(height: 10.h),
-        
+
                     _buildCategories("favorites".tr(), () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return  FavoritesScreen();
+                            return FavoritesScreen();
                           },
                         ),
                       );
                     }, Icons.favorite),
-        
+
                     SizedBox(height: 15.h),
                   ],
                 ),
               ),
               SizedBox(height: 20.h),
-        
+
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -165,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-        
+
                     BlocConsumer<GetCitiesBloc, GetCitiesState>(
                       listener: (context, state) {
                         if (state is GetCitiesSuccess) {
@@ -174,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 "selected_city",
                               ) ??
                               "Andijon";
-        
+
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -194,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }, Icons.location_city);
                       },
                     ),
-        
+
                     SizedBox(height: 15.h),
                     _buildCategories("select_language".tr(), () {
                       showLanguageBottomSheet(context);
@@ -204,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               SizedBox(height: 20.h),
-        
+
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -213,11 +234,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-        
+
                     _buildCategories("support".tr(), () {
+
+                      context.read<GetPhoneNumberBloc>().add(GetPAllhoneNumbersEvent());
                       showProfileBottombSheet(context);
                     }, Icons.info),
-        
+
                     SizedBox(height: 15.h),
                     InkWell(
                       onTap: () {
@@ -289,108 +312,121 @@ class _ProfileScreenState extends State<ProfileScreen> {
           minChildSize: 0.2,
           maxChildSize: 0.9,
           builder: (_, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            return BlocBuilder<GetPhoneNumberBloc, GetPhoneNumberState>(
+              builder: (context, state) {
+                if(state is GetPhoneNumberError){
+                  return Center(
+                    child: Text(state.error),
+                  );
+                }
+              if (state is GetPhoneNumberSuccess) {
+  // filter qilingan list
+  final filteredList = state.response
+      .where((e) => e.branch == selectedIndex)
+      .toList();
+
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    padding: EdgeInsets.all(16),
+    child: ListView(
+      controller: scrollController,
+      children: [
+        Center(
+          child: Container(
+            width: 40,
+            height: 4,
+            margin: EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "support_service".tr(),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              padding: EdgeInsets.all(16),
-              child: ListView(
-                controller: scrollController,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "support_service".tr(),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(Icons.cancel),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  ListTile(
-                    onTap: () {
-                      launchPhoneCall("+998907629282");
-                    },
-                    title: Text(
-                      "+998 90 762 92 82",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text("have_questions".tr()),
-                    trailing: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.phone),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  ListTile(
-                    onTap: () {
-                      launchPhoneCall("+998901234567");
-                    },
-                    title: Text(
-                      "+998 90 123 45 67",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text("hotline".tr()),
-                    trailing: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.phone),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          await _launchInstagramUrl(
-                            "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
-                          );
-                        },
-                        icon: ImageIcon(
-                          AssetImage("assets/icons/instagram.png"),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          await _launchInstagramUrl(
-                            "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
-                          );
-                        },
-                        icon: ImageIcon(AssetImage("assets/icons/youtube.png")),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          await _launchInstagramUrl(
-                            "https://t.me/QurulishMollariStroyBazaN1",
-                          );
-                        },
-                        icon: Icon(Icons.telegram),
-                      ),
-                    ],
-                  ),
-                ],
+              textAlign: TextAlign.center,
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.cancel),
+            ),
+          ],
+        ),
+        SizedBox(height: 12),
+
+        // Telefon raqamlarini chiqarish
+        ...filteredList.map((item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                onTap: () => launchPhoneCall(item.phoneNumber),
+                title: Text(
+                  item.phoneNumber,
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(selectedLanguage == "uz" ? item.titleUz : selectedLanguage == "ru" ? item.titleRu : item.titleEn), 
+                trailing: IconButton(
+                  onPressed: () => launchPhoneCall(item.phoneNumber),
+                  icon: Icon(Icons.phone),
+                ),
               ),
+            )),
+
+        // ijtimoiy tarmoqlar (o‘zgarishsiz qoladi)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () async {
+                await _launchInstagramUrl(
+                  "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
+                );
+              },
+              icon: ImageIcon(
+                AssetImage("assets/icons/instagram.png"),
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await _launchInstagramUrl(
+                  "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
+                );
+              },
+              icon: ImageIcon(
+                AssetImage("assets/icons/youtube.png"),
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await _launchInstagramUrl(
+                  "https://t.me/QurulishMollariStroyBazaN1",
+                );
+              },
+              icon: Icon(Icons.telegram),
+            ),  
+          ],
+        ),
+      ],
+    ),
+  );
+} else {
+  return const Center(child: CircularProgressIndicator());
+}
+
+              
+       
+              },
             );
           },
         );

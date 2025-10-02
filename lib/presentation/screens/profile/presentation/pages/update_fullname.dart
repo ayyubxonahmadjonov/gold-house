@@ -1,8 +1,6 @@
-import 'package:awesome_dialog/awesome_dialog.dart' show DialogType;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/core/shared/custom_awesome_dialog.dart';
 import 'package:gold_house/core/shared/custom_textfield.dart';
 
 class UpdateFullname extends StatefulWidget {

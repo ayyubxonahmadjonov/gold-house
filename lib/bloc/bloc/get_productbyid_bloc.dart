@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:gold_house/data/all_static_lists.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 import 'package:gold_house/data/models/product_model.dart';
 part 'get_productbyid_event.dart';

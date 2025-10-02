@@ -33,7 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.white,
       body: BlocConsumer<GetCategoriesBloc, GetCategoriesState>(
@@ -43,7 +42,6 @@ class _SearchScreenState extends State<SearchScreen> {
             if(state is GetCategoriesSuccess) {
 
          List<Category> filteredCategories = state.categories.where((category) {
-
   if (category.branch != selectedBranch) {
     return false;
   }
@@ -93,7 +91,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemBuilder: (context, index) {
                   
                     return _buildCategories(selectedlanguage == "uz" ? filteredCategories[index].nameUz : filteredCategories[index].nameRu, () {
-Navigator.push(context, MaterialPageRoute(builder: (context) => FilteredProductsScreen(branchId: filteredCategories[index].branch.toString(),),),);                      
+Navigator.push(context, MaterialPageRoute(builder: (context) => FilteredProductsScreen(branchId: filteredCategories[index].branch.toString(), categoryId: filteredCategories[index].id.toString(),),),);                      
                     });
                   },
                 ),

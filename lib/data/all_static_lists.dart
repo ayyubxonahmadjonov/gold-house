@@ -1,4 +1,3 @@
-import 'package:gold_house/data/models/basket_product_model.dart';
 import 'package:gold_house/data/models/order_model.dart';
 class ProductModel {
   final String name;

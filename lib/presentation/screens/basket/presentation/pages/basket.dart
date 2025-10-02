@@ -1,5 +1,4 @@
   import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/presentation/screens/auth/presentation/pages/sign_in.dart';
 import 'package:gold_house/presentation/screens/basket/presentation/formalize_product.dart';
 
 import '../../../../../core/constants/app_imports.dart';
@@ -110,7 +109,8 @@ double get total {
                   SizedBox(height: 12.h),
 
                   // Mahsulotlar listi
-                  Expanded(
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.52,
                     child: ListView.builder(
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
@@ -178,16 +178,23 @@ double get total {
                                       ),
                                       child: Row(
                                         children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.remove),
-                                            onPressed: () {
-                                              setState(() {
-                                                if (quantity[index] > 1) {
-                                                  quantity[index]--;
-                                                }
-                                              });
-                                            },
-                                          ),
+                             IconButton(
+  icon: const Icon(Icons.remove),
+  onPressed: () {
+    setState(() {
+      if (quantity[index] > 1) {
+        quantity[index]--;
+      } else {
+        final product = filteredList[index];
+        HiveBoxes.basketData.delete(product.productId);
+        basketList.removeWhere((e) => e.productId == product.productId);
+        quantity.removeAt(index);
+        selected.removeAt(index);
+      }
+    });
+  },
+),
+
                                           Expanded(
                                             child: InkWell(
                                               onTap: () async {
@@ -358,23 +365,25 @@ double get total {
                                                   },
                                                 );
 
-                                                if (result != null &&
-                                                    result > 0) {
-                                                  setState(() {
-                                                    quantity[index] = result;
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    HiveBoxes.basketData.delete(
-                                                      basketList[index]
-                                                          .productId,
-                                                    );
-                                                  });
-                                                }
+                                          if (result != null && result > 0) {
+  setState(() {
+    quantity[index] = result;
+  });
+} else {
+  setState(() {
+    final product = filteredList[index];
+    HiveBoxes.basketData.delete(product.productId);
+    basketList.removeWhere((e) => e.productId == product.productId);
+    quantity.removeAt(index);
+    selected.removeAt(index);
+  });
+}
+
                                               },
                                               child: Container(
                                                 width: 110.w,
                                                 height: 40,
+                                                color: Colors.white,
                                                 alignment: Alignment.center,
                                                 child: Text(
                                                   quantity[index].toString(),
@@ -423,11 +432,12 @@ double get total {
                     ),
                   ),
 
-                  // Payment info & checkout
+    
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '${'general'.tr()}:',
@@ -474,7 +484,7 @@ double get total {
       },
     );
   } else {
-    // ✅ faqat filterlangan ro‘yxatdan tanlangan productlarni yig‘amiz
+  
     final filteredList = basketList
         .where((product) => product.branchName == selectedBranch.toString())
         .toList();

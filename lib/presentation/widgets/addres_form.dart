@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 import 'package:gold_house/data/models/address_model.dart';
 import 'package:gold_house/data/models/city_model.dart';

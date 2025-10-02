@@ -1,6 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/bloc/branches/branches_bloc.dart';
-import 'package:gold_house/data/datasources/remote/api_service.dart';
 
 import '../../../core/constants/app_imports.dart';
 

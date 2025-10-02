@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:gold_house/data/datasources/remote/api_service.dart';
 import 'package:gold_house/data/models/product_model.dart';
-import 'package:meta/meta.dart';
 
 part 'get_products_event.dart';
 part 'get_products_state.dart';
