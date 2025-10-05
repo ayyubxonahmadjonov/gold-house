@@ -66,15 +66,17 @@ class _FormalizeProductState extends State<FormalizeProduct> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculating monthly payments for installments based on total_price
-    final monthlyPrice3 = selectedPayment == "installments_payment"
-        ? (widget.total_price * 1.19 / 3).toStringAsFixed(2)
-        : '';
     final monthlyPrice6 = selectedPayment == "installments_payment"
         ? (widget.total_price * 1.26 / 6).toStringAsFixed(2)
         : '';
     final monthlyPrice12 = selectedPayment == "installments_payment"
         ? (widget.total_price * 1.42 / 12).toStringAsFixed(2)
+        : '';
+    final monthlyPrice15 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.50 / 15).toStringAsFixed(2)
+        : '';
+    final monthlyPrice18 = selectedPayment == "installments_payment"
+        ? (widget.total_price * 1.56 / 18).toStringAsFixed(2)
         : '';
     final monthlyPrice24 = selectedPayment == "installments_payment"
         ? (widget.total_price * 1.75 / 24).toStringAsFixed(2)
@@ -335,9 +337,10 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             SizedBox(height: 20),
             if (selectedPayment == "installments_payment")
               MonthlyPaymentWidget(
-                monthlyPrice3: monthlyPrice3,
                 monthlyPrice6: monthlyPrice6,
                 monthlyPrice12: monthlyPrice12,
+                monthlyPrice15: monthlyPrice15,
+                monthlyPrice18: monthlyPrice18,
                 monthlyPrice24: monthlyPrice24,
               ),
             const SizedBox(height: 40),

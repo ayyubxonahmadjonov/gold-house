@@ -78,7 +78,7 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                 },
                 builder: (context, state) {
                   if (state is GetProductsSuccess) {
-                    // 🔥 Kategoriya bo‘yicha filter
+                 
                     final filteredProducts = state.products.where((p) {
                       return p.category.toString() == widget.categoryId;
                     }).toList();
@@ -121,6 +121,7 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
 
                           return InkWell(
                             onTap: () {
+                              if(product.isAvailable){
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -134,8 +135,8 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                                         .map((e) => e.image)
                                         .toList(),
                                     title: product.nameUz,
-                                    color: product.variants[0].colorUz ?? "",
-                                    size: [product.variants[0].sizeUz ?? ""],
+                                    color: product.variants.map((e) => e.colorUz).toList(),
+                                    size: product.variants.map((e) => e.sizeUz).toList(),
                                     description: product.descriptionUz ?? "",
                                     price: product.variants
                                         .map((e) => e.price.toString())
@@ -155,6 +156,9 @@ class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
                                   ),
                                 ),
                               );
+                           }else{
+                            CustomAwesomeDialog.showInfoDialog(context,title: "Mahsulot mavjud emas",desc: "Afsuski bu mahsulot Omborda qolmadi. Tez orada biz uni olib kelamiz"); 
+                            }
                             },
                             child: Container(
                               decoration: BoxDecoration(

@@ -80,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       searchQuery = value;
                     });
                   },
-                  hintText: "search".tr(),
+                  hintText: "catalog".tr(),
                   prefixicon: Icon(Icons.search),
                 ),
               ),

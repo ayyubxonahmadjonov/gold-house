@@ -30,6 +30,8 @@
     "months_3": "3 oy",
     "months_6": "6 oy",
     "months_12": "12 oy",
+    "months_15":"15 oy",
+    "months_18":"18 oy",
     "months_24": "24 oy",
     "installment_info": "Siz buyurtmani 3 oydan 24 oygacha muddatli to‘lov asosida xarid qilishingiz mumkin.",
     "delivery_1_day": "Yetkazib berish 1 kun ichida",
@@ -89,7 +91,7 @@
   "delivery": "Yetkazib berish",
   "total": "Jami:",
   "home": "Bosh sahifa",
-  "box": "Quti",
+  "box": "Buyurtmalarim",
   "basket": "Savat",
   "profile": "Profil",
   "order_date": "Rasmiylashtirish sanasi:",
@@ -97,7 +99,9 @@
   "show_product": "Maxsulotni ko‘rsatish",
   "order_number": "-sonli buyurtma",
   "enter_your_name": "Ismingizni kiriting",
-  "register":"Ro'yhatdan o'tish"
+  "register":"Ro'yhatdan o'tish",
+  "catalog":"Katalog"
+
   
 
   }

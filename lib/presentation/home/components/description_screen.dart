@@ -1,18 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
-
+import 'package:gold_house/core/basket_notifier.dart';
 import '../../../core/constants/app_imports.dart';
 
 class ProductDescriptionPage extends StatefulWidget {
   final String productId;
   final int variantId;
   final String title;
-  final String color;
+  List<String?> color;
   List<String?> size;
   final String description;
   final List<String> price;
   final String monthlyPrice3;
   final String monthlyPrice6;
   final String monthlyPrice12;
+
   final String monthlyPrice24;
   List<String> images;
   final bool isAvailable;
@@ -33,6 +34,7 @@ class ProductDescriptionPage extends StatefulWidget {
     required this.monthlyPrice3,
     required this.monthlyPrice6,
     required this.monthlyPrice12,
+
     required this.monthlyPrice24,
   });
 
@@ -42,23 +44,35 @@ class ProductDescriptionPage extends StatefulWidget {
 
 class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
   String selectedlanguage = "";
+  String selectedColor = "";
   int activeIndex = 0;
   String? selectedSize;
   int selectedPriceIndex = 0;
+  int productCount = 0;
+
   @override
   void initState() {
     super.initState();
-
-    selectedlanguage =
-        SharedPreferencesService.instance.getString("selected_lg") ?? "";
+    selectedlanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
+     widget.size = widget.size.toSet().toList();
     if (widget.size.isNotEmpty) {
       selectedSize = widget.size.first;
       selectedPriceIndex = 0;
     }
+
+    productCount = int.tryParse(SharedPreferencesService.instance.getString("basketProductCount") ?? "0") ?? 0;
   }
 
   @override
   Widget build(BuildContext context) {
+    final price = double.tryParse(widget.price[selectedPriceIndex]) ?? 0.0;
+    final monthlyPrice3 = price > 0 ? (price * 1.19 / 3).toStringAsFixed(2) : '';
+    final monthlyPrice6 = price > 0 ? (price * 1.26 / 6).toStringAsFixed(2) : '';
+    final monthlyPrice12 = price > 0 ? (price * 1.42 / 12).toStringAsFixed(2) : '';
+    final monthlyPrice15 = price > 0 ? (price * 1.50 / 15).toStringAsFixed(2) : '';
+    final monthlyPrice18 = price > 0 ? (price * 1.56 / 18).toStringAsFixed(2) : '';
+    final monthlyPrice24 = price > 0 ? (price * 1.75 / 24).toStringAsFixed(2) : '';
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -66,7 +80,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
         backgroundColor: AppColors.white,
         leading: const BackButton(),
         title: Text(widget.title),
-
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h),
@@ -82,9 +95,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                       'https://backkk.stroybazan1.uz${widget.images.first}',
                       height: 200.h,
                       fit: BoxFit.cover,
-                  
                     ),
-
                   if (widget.images.length > 1) ...[
                     CarouselSlider.builder(
                       itemCount: widget.images.length,
@@ -95,10 +106,8 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                               baseColor: Colors.grey[300]!,
                               highlightColor: Colors.grey[100]!,
                               child: SizedBox(
-                                
                                 height: 350.h,
                                 width: double.infinity,
-                       
                               ),
                             );
                           },
@@ -148,9 +157,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
               widget.title,
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 6.h),
-            if (widget.color.isNotEmpty)
-              Text("Rang : ${widget.color}", style: TextStyle(fontSize: 14.sp)),
+          
 
             SizedBox(height: 12.h),
 
@@ -220,10 +227,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                           widget.size[index] ?? "",
                           style: TextStyle(
                             color: isSelected ? AppColors.primaryColor : Colors.black,
-                            fontWeight:
-                                isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -234,6 +238,60 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
             ),
 
             SizedBox(height: 20.h),
+          // Agar color list bo‘sh emas bo‘lsa ko‘rsatamiz
+if (widget.color.isNotEmpty && widget.color.first != null) ...[
+  Text(
+    "Rang:",
+    style: TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  SizedBox(height: 8.h),
+
+  SizedBox(
+    height: 40.h,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: widget.color.length,
+      itemBuilder: (context, index) {
+        final colorName = widget.color[index] ?? '';
+        final isSelected = selectedColor == colorName;
+
+        return InkWell(
+          onTap: () {
+            setState(() {
+              selectedColor = colorName;
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(right: 8.w),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(
+                color: isSelected ? AppColors.primaryColor : Colors.black26,
+                width: 2,
+              ),
+              color: isSelected ? AppColors.primaryColor.withOpacity(0.1) : Colors.white,
+            ),
+            child: Center(
+              child: Text(
+                colorName,
+                style: TextStyle(
+                  color: isSelected ? AppColors.primaryColor : Colors.black,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  ),
+  SizedBox(height: 15.h),
+],
+
             Text(
               "category".tr(),
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
@@ -249,10 +307,11 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
 
             SizedBox(height: 12.h),
             MonthlyPaymentWidget(
-              monthlyPrice3: widget.monthlyPrice3,
-              monthlyPrice6: widget.monthlyPrice6,
-              monthlyPrice12: widget.monthlyPrice12,
-              monthlyPrice24: widget.monthlyPrice24,
+              monthlyPrice6: monthlyPrice6,
+              monthlyPrice12: monthlyPrice12,
+              monthlyPrice15: monthlyPrice15,
+              monthlyPrice18: monthlyPrice18,
+              monthlyPrice24: monthlyPrice24,
             ),
             SizedBox(height: 12.h),
             Text("installment_info".tr(), style: TextStyle(fontSize: 12.sp)),
@@ -298,7 +357,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-
                         child: Image.network(
                           'https://play-lh.googleusercontent.com/gpCCxx5cQuXcYP10PgmXUlbtBWPGRqmrjIjZEUsgexAvJLpvJgS-WrihNlEi4FFOgaY',
                           height: 50.h,
@@ -306,7 +364,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-
                         child: Image.network(
                           'https://jet-back.bank.uz/uploads/avatars/513eefc4c64061c628c080655b8f54cd.png',
                           height: 50.h,
@@ -314,7 +371,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-
                         child: Image.network(
                           'https://tafreklama-2024.marketing.uz/uploads/cases/f286c95659c8.jpg',
                           height: 50.h,
@@ -331,26 +387,43 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
 
             ElevatedButton(
               onPressed: () {
+                
                 BasketModel basketModel = BasketModel(
                   branchName: widget.branchName,
                   productId: widget.productId,
                   variantId: widget.variantId,
                   title: widget.title,
-                  color: widget.color,
+                  color: selectedColor,
                   size: selectedSize.toString(),
                   description: widget.description,
                   price: widget.price[selectedPriceIndex],
-                  monthlyPrice3: widget.monthlyPrice3,
-                  monthlyPrice6: widget.monthlyPrice6,
-                  monthlyPrice12: widget.monthlyPrice12,
-                  monthlyPrice24: widget.monthlyPrice24,
+                  monthlyPrice3: monthlyPrice3,
+                  monthlyPrice6: monthlyPrice6,
+                  monthlyPrice12: monthlyPrice12,
+      
+                  monthlyPrice24: monthlyPrice24,
                   image: widget.images.first,
                   isAvailable: widget.isAvailable,
                 );
-                HiveBoxes.basketData.put(widget.productId, basketModel);
+
+                // Savatga qo'shish
+       // Savatga qo‘shish
+HiveBoxes.basketData.put(widget.productId, basketModel);
+
+// productCount ni oshirish
+setState(() {
+  productCount++;
+  SharedPreferencesService.instance.saveString(
+    'basketProductCount',
+    productCount.toString(),
+  );
+  BasketNotifier.productCount.value = productCount; // 🔥 shu yer muhim
+});
+
+// SnackBar ko‘rsatish
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-          
                     backgroundColor: Colors.white,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
@@ -405,7 +478,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                     ),
                   ),
                 );
-            
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50.h),
@@ -426,7 +498,7 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
             ),
             SizedBox(height: 100),
           ],
-        ),
+        ), 
       ),
     );
   }

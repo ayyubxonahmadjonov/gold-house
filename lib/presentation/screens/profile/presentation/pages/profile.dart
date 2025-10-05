@@ -27,6 +27,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+Future<void> launchPhoneCall(String phoneNumber) async {
+  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+
+  if (await canLaunchUrl(telUri)) {
+    await launchUrl(
+      telUri,
+      mode: LaunchMode.externalApplication, 
+    );
+  } else {
+    throw 'Telefon raqamni ochib bo‘lmadi: $phoneNumber';
+  }
+}
   ValueNotifier<String> fullname = ValueNotifier<String>(
     "${SharedPreferencesService.instance.getString("profilfullname")}",
   );
@@ -366,7 +378,6 @@ if (selectedBusiness == "Stroy Baza №1") {
         ),
         SizedBox(height: 12),
 
-        // Telefon raqamlarini chiqarish
         ...filteredList.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: ListTile(
@@ -383,7 +394,7 @@ if (selectedBusiness == "Stroy Baza №1") {
               ),
             )),
 
-        // ijtimoiy tarmoqlar (o‘zgarishsiz qoladi)
+    
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -434,12 +445,5 @@ if (selectedBusiness == "Stroy Baza №1") {
     );
   }
 
-  void launchPhoneCall(String phoneNumber) async {
-    final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(telUri)) {
-      await launchUrl(telUri);
-    } else {
-      throw 'Telefon raqamni ochib bo‘lmadi: $phoneNumber';
-    }
-  }
+
 }

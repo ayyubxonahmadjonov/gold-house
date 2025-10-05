@@ -40,7 +40,11 @@ if (images.length == 1) {
   images.addAll(List.filled(2, images.first));
 }
         return CarouselSlider(
-            options: CarouselOptions(height: 165.h, autoPlay: true),
+  options: CarouselOptions(
+    height: MediaQuery.of(context).size.width / 2.2,
+    autoPlay: true,
+    viewportFraction: 0.9, 
+  ),
             items: images.map((url) {
               return Builder(
                 builder: (BuildContext ctx) {

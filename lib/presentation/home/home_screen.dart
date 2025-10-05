@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/data/models/product_model.dart';
+import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
 
 import '../../core/constants/app_imports.dart';
 
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    // SharedPreferences ga yozish
+
     await SharedPreferencesService.instance.saveStringList(
       "favorites",
       favoriteProducts.map((e) => e.toString()).toList(),
@@ -102,23 +103,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 70.w,
                   height: 70.h,
                 ),
-                CustomSearchbar(
-                  controller: searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                    });
-                  },
-                  onClear: () {
-                    setState(() {
-                      searchQuery = "";
-                      searchController.clear();
-                    });
-                  },
-                  hintText: "search".tr(),
-                  prefixicon: Icon(Icons.search),
-                ),
-                // SizedBox(height: 10.h),
+         Row(
+  mainAxisAlignment: MainAxisAlignment.spaceAround,
+  children: [
+    Expanded(
+      child: CustomSearchbar(
+        controller: searchController,
+        onChanged: (value) {
+          setState(() {
+            searchQuery = value;
+          });
+        },
+        onClear: () {
+          setState(() {
+            searchQuery = "";
+            searchController.clear();
+          });
+        },
+        hintText: "search".tr(),
+        prefixicon: Icon(Icons.search),
+      ),
+    ),
+    IconButton(
+      iconSize:30,
+      onPressed: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritesScreen(),));
+      },
+      color: AppColors.red,
+      icon: Icon(Icons.favorite_border),
+    ),
+  ],
+),
               ],
             ),
           ),
@@ -198,14 +213,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                               itemBuilder: (context, index) {
                                 final product = productsToDisplay[index];
+                      
                                 final isFavorite = favoriteProducts.contains(
                                   product.id,
                                 );
 
                                 return InkWell(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
+                                    for(int i = 0; i < product.variants.length; i++){
+                                      print(product.variants[i].colorEn);
+                                    }
+                                    if(product.isAvailable){
+                                    Navigator.of(
+                                      context,rootNavigator: false).push(
                                       MaterialPageRoute(
                                         builder:
                                             (context) => ProductDescriptionPage(
@@ -230,18 +250,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color:
                                                   selectedlanguage == "uz"
                                                       ? product
-                                                              .variants[0]
-                                                              .colorUz ??
-                                                          ""
+                                                              .variants.map((e) => e.colorUz).toList()                                                              
                                                       : selectedlanguage == "ru"
                                                       ? product
-                                                              .variants[0]
-                                                              .colorRu ??
-                                                          ""
+                                                              .variants.map((e) => e.colorRu).toList()                                                              
                                                       : product
-                                                              .variants[0]
-                                                              .colorEn ??
-                                                          "",
+                                                              .variants.map((e) => e.colorEn).toList(),
                                               size:
                                                   selectedlanguage == "uz"
                                                       ? product.variants
@@ -294,6 +308,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                       ),
                                     );
+                                    }else{
+                                     CustomAwesomeDialog.showInfoDialog(context,title: "Mahsulot mavjud emas",desc: "Afsuski bu mahsulot Omborda qolmadi. Tez orada biz uni olib kelamiz"); 
+                                    }
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(left: 15.w),

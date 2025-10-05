@@ -30,6 +30,8 @@
     "months_3": "3 months",
     "months_6": "6 months",
     "months_12": "12 months",
+    "months_15": "15 months",
+    "months_18": "18 months",
     "months_24": "24 months",
     "installment_info": "You can purchase the order with installment from 3 to 24 months.",
     "delivery_1_day": "Delivery within 1 day",
@@ -97,7 +99,8 @@
     "show_product": "Show product",
     "order_number": "Order ",
     "enter_your_name": "Enter your name",
-    "register":"Register"
+    "register":"Register",
+    "catalog":"Catalog"
     }
     
     
