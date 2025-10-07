@@ -3,10 +3,12 @@ import 'package:gold_house/bloc/banners/banners_bloc.dart';
 import 'package:gold_house/bloc/bloc/create_credit_bloc.dart';
 import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
 import 'package:gold_house/bloc/bloc/user_agrrements_dart_bloc.dart';
+import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
 import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
+import 'package:gold_house/core/basket_notifier.dart';
 import 'package:gold_house/presentation/screens/splash/splash_screen.dart';
 import '../../core/constants/app_imports.dart';
 
@@ -16,6 +18,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await SharedPreferencesService.init();
   await HiveService.init();
+  BasketNotifier.init();
 
   runApp(
     EasyLocalization(
@@ -75,6 +78,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => GetProductbyidBloc()),
             BlocProvider(create: (context) => UserAgrrementsDartBloc()),
             BlocProvider(create: (context) => GetPhoneNumberBloc()),
+            BlocProvider(create: (context) => BusinessSelectionBloc()),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',

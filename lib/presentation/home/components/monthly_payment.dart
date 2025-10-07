@@ -22,7 +22,7 @@ class MonthlyPaymentWidget extends StatefulWidget {
 }
 
 class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
-  int selectedIndex = 1; // default 24 oy tanlangan
+  int selectedIndex = 1; 
   final List<String> months = ['months_6'.tr(), 'months_12'.tr(), 'months_15'.tr(), 'months_18'.tr(), 'months_24'.tr()];
 
   @override
@@ -73,6 +73,7 @@ class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
                       child: Text(
                         months[index],
                         style: TextStyle(
+                          fontSize: 12,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),

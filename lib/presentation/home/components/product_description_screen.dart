@@ -337,7 +337,7 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BasketPage()));
+                                                 BasketPage()));
                                   },
                                   style: TextButton.styleFrom(
                                     backgroundColor: Colors.green,

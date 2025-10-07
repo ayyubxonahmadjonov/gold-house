@@ -13,7 +13,6 @@ class ProductDescriptionPage extends StatefulWidget {
   final String monthlyPrice3;
   final String monthlyPrice6;
   final String monthlyPrice12;
-
   final String monthlyPrice24;
   List<String> images;
   final bool isAvailable;
@@ -48,30 +47,44 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
   int activeIndex = 0;
   String? selectedSize;
   int selectedPriceIndex = 0;
-  int productCount = 0;
+  int basketProductCount = 0;
+
+  int quantity = 1;
 
   @override
   void initState() {
     super.initState();
-    selectedlanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
-     widget.size = widget.size.toSet().toList();
+    selectedlanguage =
+        SharedPreferencesService.instance.getString("selected_lg") ?? "";
+    widget.size = widget.size.toSet().toList();
     if (widget.size.isNotEmpty) {
       selectedSize = widget.size.first;
       selectedPriceIndex = 0;
     }
 
-    productCount = int.tryParse(SharedPreferencesService.instance.getString("basketProductCount") ?? "0") ?? 0;
+    basketProductCount =
+        int.tryParse(
+          SharedPreferencesService.instance.getString("newBasketProduct") ??
+              "0",
+        ) ??
+        0;
   }
 
   @override
   Widget build(BuildContext context) {
     final price = double.tryParse(widget.price[selectedPriceIndex]) ?? 0.0;
-    final monthlyPrice3 = price > 0 ? (price * 1.19 / 3).toStringAsFixed(2) : '';
-    final monthlyPrice6 = price > 0 ? (price * 1.26 / 6).toStringAsFixed(2) : '';
-    final monthlyPrice12 = price > 0 ? (price * 1.42 / 12).toStringAsFixed(2) : '';
-    final monthlyPrice15 = price > 0 ? (price * 1.50 / 15).toStringAsFixed(2) : '';
-    final monthlyPrice18 = price > 0 ? (price * 1.56 / 18).toStringAsFixed(2) : '';
-    final monthlyPrice24 = price > 0 ? (price * 1.75 / 24).toStringAsFixed(2) : '';
+    final monthlyPrice3 =
+        price > 0 ? (price * 1.19 / 3).toStringAsFixed(2) : '';
+    final monthlyPrice6 =
+        price > 0 ? (price * 1.26 / 6).toStringAsFixed(2) : '';
+    final monthlyPrice12 =
+        price > 0 ? (price * 1.42 / 12).toStringAsFixed(2) : '';
+    final monthlyPrice15 =
+        price > 0 ? (price * 1.50 / 15).toStringAsFixed(2) : '';
+    final monthlyPrice18 =
+        price > 0 ? (price * 1.56 / 18).toStringAsFixed(2) : '';
+    final monthlyPrice24 =
+        price > 0 ? (price * 1.75 / 24).toStringAsFixed(2) : '';
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -157,7 +170,6 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
               widget.title,
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
-          
 
             SizedBox(height: 12.h),
 
@@ -213,7 +225,10 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: isSelected ? AppColors.primaryColor : Colors.black26,
+                          color:
+                              isSelected
+                                  ? AppColors.primaryColor
+                                  : Colors.black26,
                           width: 2,
                         ),
                       ),
@@ -226,8 +241,14 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
                         child: Text(
                           widget.size[index] ?? "",
                           style: TextStyle(
-                            color: isSelected ? AppColors.primaryColor : Colors.black,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color:
+                                isSelected
+                                    ? AppColors.primaryColor
+                                    : Colors.black,
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -238,59 +259,137 @@ class _ProductDescriptionPageState extends State<ProductDescriptionPage> {
             ),
 
             SizedBox(height: 20.h),
-          // Agar color list bo‘sh emas bo‘lsa ko‘rsatamiz
-if (widget.color.isNotEmpty && widget.color.first != null) ...[
-  Text(
-    "Rang:",
-    style: TextStyle(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-  SizedBox(height: 8.h),
 
-  SizedBox(
-    height: 40.h,
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: widget.color.length,
-      itemBuilder: (context, index) {
-        final colorName = widget.color[index] ?? '';
-        final isSelected = selectedColor == colorName;
-
-        return InkWell(
-          onTap: () {
-            setState(() {
-              selectedColor = colorName;
-            });
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 8.w),
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(
-                color: isSelected ? AppColors.primaryColor : Colors.black26,
-                width: 2,
+            if (widget.color.isNotEmpty && widget.color.first != null) ...[
+              Text(
+                "Rang:",
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
-              color: isSelected ? AppColors.primaryColor.withOpacity(0.1) : Colors.white,
-            ),
-            child: Center(
-              child: Text(
-                colorName,
-                style: TextStyle(
-                  color: isSelected ? AppColors.primaryColor : Colors.black,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              SizedBox(height: 8.h),
+
+              SizedBox(
+                height: 40.h,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.color.length,
+                  itemBuilder: (context, index) {
+                    final colorName = widget.color[index] ?? '';
+                    final isSelected = selectedColor == colorName;
+
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedColor = colorName;
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 8.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(
+                            color:
+                                isSelected
+                                    ? AppColors.primaryColor
+                                    : Colors.black26,
+                            width: 2,
+                          ),
+                          color:
+                              isSelected
+                                  ? AppColors.primaryColor.withOpacity(0.1)
+                                  : Colors.white,
+                        ),
+                        child: Center(
+                          child: Text(
+                            colorName,
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? AppColors.primaryColor
+                                      : Colors.black,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
+              SizedBox(height: 15.h),
+            ],
+            // Quantity selector
+            Text(
+              "quantity".tr(),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
-          ),
-        );
-      },
-    ),
-  ),
-  SizedBox(height: 15.h),
-],
+            SizedBox(height: 8.h),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black26),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (quantity > 1) {
+                        setState(() {
+                          quantity--;
+                        });
+                      }
+                    },
+                    icon: Icon(
+                      Icons.remove,
+                      color:
+                          quantity > 1 ? AppColors.primaryColor : Colors.grey,
+                    ),
+                    style: IconButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8.r),
+                          bottomLeft: Radius.circular(8.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Text(
+                      '$quantity',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        quantity++;
+                      });
+                    },
+                    icon: Icon(Icons.add, color: AppColors.primaryColor),
+                    style: IconButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8.r),
+                          bottomRight: Radius.circular(8.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20.h),
 
             Text(
               "category".tr(),
@@ -301,17 +400,22 @@ if (widget.color.isNotEmpty && widget.color.first != null) ...[
 
             SizedBox(height: 16.h),
             Text(
-              "${widget.price[selectedPriceIndex]} so’m",
+              "${(double.parse(widget.price[selectedPriceIndex]) * quantity).toStringAsFixed(2)} so’m",
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 12.h),
             MonthlyPaymentWidget(
-              monthlyPrice6: monthlyPrice6,
-              monthlyPrice12: monthlyPrice12,
-              monthlyPrice15: monthlyPrice15,
-              monthlyPrice18: monthlyPrice18,
-              monthlyPrice24: monthlyPrice24,
+              monthlyPrice6: (double.parse(monthlyPrice6) * quantity)
+                  .toStringAsFixed(2),
+              monthlyPrice12: (double.parse(monthlyPrice12) * quantity)
+                  .toStringAsFixed(2),
+              monthlyPrice15: (double.parse(monthlyPrice15) * quantity)
+                  .toStringAsFixed(2),
+              monthlyPrice18: (double.parse(monthlyPrice18) * quantity)
+                  .toStringAsFixed(2),
+              monthlyPrice24: (double.parse(monthlyPrice24) * quantity)
+                  .toStringAsFixed(2),
             ),
             SizedBox(height: 12.h),
             Text("installment_info".tr(), style: TextStyle(fontSize: 12.sp)),
@@ -387,41 +491,51 @@ if (widget.color.isNotEmpty && widget.color.first != null) ...[
 
             ElevatedButton(
               onPressed: () {
-                
-                BasketModel basketModel = BasketModel(
-                  branchName: widget.branchName,
-                  productId: widget.productId,
-                  variantId: widget.variantId,
-                  title: widget.title,
-                  color: selectedColor,
-                  size: selectedSize.toString(),
-                  description: widget.description,
-                  price: widget.price[selectedPriceIndex],
-                  monthlyPrice3: monthlyPrice3,
-                  monthlyPrice6: monthlyPrice6,
-                  monthlyPrice12: monthlyPrice12,
-      
-                  monthlyPrice24: monthlyPrice24,
-                  image: widget.images.first,
-                  isAvailable: widget.isAvailable,
+
+                basketProductCount += 1;
+
+                BasketModel? existingBasketModel = HiveBoxes.basketData.get(widget.productId);
+
+                if (existingBasketModel != null) {
+                  // If product exists, increment its quantity
+                  int existingQuantity = int.parse(existingBasketModel.quantity!);
+                  existingBasketModel.quantity = (existingQuantity + quantity).toString();
+                  HiveBoxes.basketData.put(widget.productId, existingBasketModel);
+                } else {
+                  // If product doesn't exist, add it to the basket with the selected quantity
+                  BasketModel basketModel = BasketModel(
+                    branchName: widget.branchName,
+                    productId: widget.productId,
+                    variantId: widget.variantId,
+                    title: widget.title,
+                    color: selectedColor,
+                    size: selectedSize.toString(),
+                    description: widget.description,
+                    price: widget.price[selectedPriceIndex],
+                    monthlyPrice3: monthlyPrice3,
+                    monthlyPrice6: monthlyPrice6,
+                    monthlyPrice12: monthlyPrice12,
+                    monthlyPrice24: monthlyPrice24,
+                    image: widget.images.first,
+                    isAvailable: widget.isAvailable,
+                    quantity: quantity.toString(), // Use the user-selected quantity
+                  );
+                  HiveBoxes.basketData.put(widget.productId, basketModel);
+                }
+
+                // Update BasketNotifier with the new basketProductCount
+                BasketNotifier.updateNewBasketProduct(basketProductCount.toString());
+
+                // Save the updated basketProductCount to SharedPreferences
+                SharedPreferencesService.instance.saveString(
+                  "newBasketProduct",
+                  basketProductCount.toString(),
                 );
 
-                // Savatga qo'shish
-       // Savatga qo‘shish
-HiveBoxes.basketData.put(widget.productId, basketModel);
+                // Update the UI
+                setState(() {});
 
-// productCount ni oshirish
-setState(() {
-  productCount++;
-  SharedPreferencesService.instance.saveString(
-    'basketProductCount',
-    productCount.toString(),
-  );
-  BasketNotifier.productCount.value = productCount; // 🔥 shu yer muhim
-});
-
-// SnackBar ko‘rsatish
-
+                // Show SnackBar
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: Colors.white,
@@ -456,7 +570,7 @@ setState(() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const BasketPage(),
+                                builder: (context) => BasketPage(),
                               ),
                             );
                           },
@@ -498,7 +612,7 @@ setState(() {
             ),
             SizedBox(height: 100),
           ],
-        ), 
+        ),
       ),
     );
   }

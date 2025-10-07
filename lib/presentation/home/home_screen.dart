@@ -22,11 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedlanguage = "";
   Key carouselKey = UniqueKey();
   int itemsToShow = 20;
-  void _onBusinessChanged() {
-    setState(() {
-      carouselKey = UniqueKey();
-    });
-  }
+
 
   @override
   void initState() {
@@ -220,9 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 return InkWell(
                                   onTap: () {
-                                    for(int i = 0; i < product.variants.length; i++){
-                                      print(product.variants[i].colorEn);
-                                    }
+                            
                                     if(product.isAvailable){
                                     Navigator.of(
                                       context,rootNavigator: false).push(

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
 import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
 import 'package:gold_house/presentation/screens/profile/cashback_screen.dart';
@@ -17,58 +18,54 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _launchInstagramUrl(String path) async {
     final Uri url = Uri.parse(path.trim());
-
+try{
     if (await canLaunchUrl(url)) {
+
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("URL ni ochib bo‘lmadi")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("URL ni ochib bo‘lmadi")),
+      );
     }
-  }
-
-Future<void> launchPhoneCall(String phoneNumber) async {
-  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
-
-  if (await canLaunchUrl(telUri)) {
-    await launchUrl(
-      telUri,
-      mode: LaunchMode.externalApplication, 
-    );
-  } else {
-    throw 'Telefon raqamni ochib bo‘lmadi: $phoneNumber';
+  }catch(e){
+    print("Error:$e");
   }
 }
+Future<void> launchPhoneCall(String phoneNumber, BuildContext context) async {
+  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber.trim());
+  try {
+    await launchUrl(
+      telUri,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print("Error launching phone call: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Telefon raqamni ochib bo‘lmadi: $phoneNumber'),
+      ),
+    );
+  }
+}
+  
   ValueNotifier<String> fullname = ValueNotifier<String>(
     "${SharedPreferencesService.instance.getString("profilfullname")}",
   );
-  String selectedBusiness = "";
+  String selectedLanguage = "";
   int user_id = 0;
-    int selectedIndex = 0;
-    String selectedLanguage = "";
 
   @override
   void initState() {
     super.initState();
-    selectedBusiness = SharedPreferencesService.instance.getString("selected_business") ?? "";
     user_id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
-    BlocProvider.of<GetUserDataBloc>(
-      context,
-    ).add(GetUserAllDataEvent(id: user_id.toString()));
+    BlocProvider.of<GetUserDataBloc>(context).add(GetUserAllDataEvent(id: user_id.toString()));
+    // No need to fetch selected business here, as BusinessSelectionBloc handles it
   }
 
   String selectedCity = "";
   @override
   Widget build(BuildContext context) {
     selectedLanguage = SharedPreferencesService.instance.getString("selected_lg") ?? "";
-
-if (selectedBusiness == "Stroy Baza №1") {
-  selectedIndex = 0;
-} else if (selectedBusiness == "Giaz Mebel") {
-  selectedIndex = 1;
-} else if (selectedBusiness == "Goldklinker") {
-  selectedIndex = 2;
-}
 
     return Scaffold(
       appBar: AppBar(
@@ -101,16 +98,12 @@ if (selectedBusiness == "Stroy Baza №1") {
                           );
                         },
                         leading: Icon(Icons.person),
-                        title:
-                            state.user.firstName.isNotEmpty
-                                ? Text(
-                                  "${state.user.firstName} ${state.user.lastName}",
-                                )
-                                : Text(""),
-                        subtitle:
-                            state.user.phoneNumber.isNotEmpty
-                                ? Text("${state.user.phoneNumber}")
-                                : Text(""),
+                        title: state.user.firstName.isNotEmpty
+                            ? Text("${state.user.firstName} ${state.user.lastName}")
+                            : Text(""),
+                        subtitle: state.user.phoneNumber.isNotEmpty
+                            ? Text("${state.user.phoneNumber}")
+                            : Text(""),
                       );
                     } else {
                       return CustomButton(
@@ -147,7 +140,6 @@ if (selectedBusiness == "Stroy Baza №1") {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-
                     _buildCategories("orders".tr(), () {
                       Navigator.push(
                         context,
@@ -159,7 +151,6 @@ if (selectedBusiness == "Stroy Baza №1") {
                       );
                     }, Icons.store),
                     SizedBox(height: 10.h),
-
                     _buildCategories("cashback".tr(), () {
                       Navigator.push(
                         context,
@@ -170,9 +161,7 @@ if (selectedBusiness == "Stroy Baza №1") {
                         ),
                       );
                     }, Icons.account_balance_wallet),
-
                     SizedBox(height: 10.h),
-
                     _buildCategories("favorites".tr(), () {
                       Navigator.push(
                         context,
@@ -183,13 +172,11 @@ if (selectedBusiness == "Stroy Baza №1") {
                         ),
                       );
                     }, Icons.favorite),
-
                     SizedBox(height: 15.h),
                   ],
                 ),
               ),
               SizedBox(height: 20.h),
-
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -198,16 +185,10 @@ if (selectedBusiness == "Stroy Baza №1") {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-
                     BlocConsumer<GetCitiesBloc, GetCitiesState>(
                       listener: (context, state) {
                         if (state is GetCitiesSuccess) {
-                          selectedCity =
-                              SharedPreferencesService.instance.getString(
-                                "selected_city",
-                              ) ??
-                              "Andijon";
-
+                          selectedCity = SharedPreferencesService.instance.getString("selected_city") ?? "Andijon";
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -221,13 +202,10 @@ if (selectedBusiness == "Stroy Baza №1") {
                       },
                       builder: (context, state) {
                         return _buildCategories("select_city".tr(), () {
-                          BlocProvider.of<GetCitiesBloc>(
-                            context,
-                          ).add(GetAllCitiesEvent());
+                          BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
                         }, Icons.location_city);
                       },
                     ),
-
                     SizedBox(height: 15.h),
                     _buildCategories("select_language".tr(), () {
                       showLanguageBottomSheet(context);
@@ -237,7 +215,6 @@ if (selectedBusiness == "Stroy Baza №1") {
                 ),
               ),
               SizedBox(height: 20.h),
-
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -246,13 +223,10 @@ if (selectedBusiness == "Stroy Baza №1") {
                 child: Column(
                   children: [
                     SizedBox(height: 15.h),
-
                     _buildCategories("support".tr(), () {
-
                       context.read<GetPhoneNumberBloc>().add(GetPAllhoneNumbersEvent());
                       showProfileBottombSheet(context);
                     }, Icons.info),
-
                     SizedBox(height: 15.h),
                     InkWell(
                       onTap: () {
@@ -264,11 +238,9 @@ if (selectedBusiness == "Stroy Baza №1") {
                           onOkPress: () {
                             SharedPreferencesService.instance.clear();
                             HiveBoxes.basketData.clear();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MainScreen(),
-                              ),
+                            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => const MainScreen()),
+                              (route) => false,
                             );
                           },
                           onCancelPress: () {},
@@ -307,7 +279,6 @@ if (selectedBusiness == "Stroy Baza №1") {
           title,
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
         ),
-
         trailing: Icon(Icons.chevron_right, size: 24.sp),
       ),
     );
@@ -316,127 +287,136 @@ if (selectedBusiness == "Stroy Baza №1") {
   void showProfileBottombSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-
       backgroundColor: Colors.transparent,
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.63,
+          initialChildSize: 0.7,
           minChildSize: 0.2,
           maxChildSize: 0.9,
           builder: (_, scrollController) {
             return BlocBuilder<GetPhoneNumberBloc, GetPhoneNumberState>(
-              builder: (context, state) {
-                if(state is GetPhoneNumberError){
-                  return Center(
-                    child: Text(state.error),
-                  );
-                }
-              if (state is GetPhoneNumberSuccess) {
-  // filter qilingan list
-  final filteredList = state.response
-      .where((e) => e.branch == selectedIndex)
-      .toList();
+              builder: (context, phoneState) {
+                return BlocBuilder<BusinessSelectionBloc, BusinessSelectionState>(
+                  builder: (context, businessState) {
+                    int selectedIndex = 0;
 
-  return Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    padding: EdgeInsets.all(16),
-    child: ListView(
-      controller: scrollController,
-      children: [
-        Center(
-          child: Container(
-            width: 40,
-            height: 4,
-            margin: EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "support_service".tr(),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.cancel),
-            ),
-          ],
-        ),
-        SizedBox(height: 12),
+                    // Update selectedIndex based on BusinessSelectionBloc state
+                    if (businessState is BusinessSelectedState) {
+                      selectedIndex = businessState.selectedIndex;
+                    } else if (businessState is BusinessSelectionInitial) {
+                      // Fallback to default index if initial state
+                      selectedIndex = 0;
+                    }
 
-        ...filteredList.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                onTap: () => launchPhoneCall(item.phoneNumber),
-                title: Text(
-                  item.phoneNumber,
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text(selectedLanguage == "uz" ? item.titleUz : selectedLanguage == "ru" ? item.titleRu : item.titleEn), 
-                trailing: IconButton(
-                  onPressed: () => launchPhoneCall(item.phoneNumber),
-                  icon: Icon(Icons.phone),
-                ),
-              ),
-            )),
+                    if (phoneState is GetPhoneNumberError) {
+                      return Center(
+                        child: Text(phoneState.error),
+                      );
+                    }
+                    if (phoneState is GetPhoneNumberSuccess) {
+                      // Filter phone numbers based on selectedIndex
+                      final filteredList = phoneState.response.where((e) => e.branch == selectedIndex).toList();
 
-    
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              onPressed: () async {
-                await _launchInstagramUrl(
-                  "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: ListView(
+                          controller: scrollController,
+                          children: [
+                            Center(
+                              child: Container(
+                                width: 40,
+                                height: 4,
+                                margin: EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "support_service".tr(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(Icons.cancel),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            ...filteredList.map((item) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: ListTile(
+                                    onTap: () => launchPhoneCall(item.phoneNumber, context),
+                                    title: Text(
+                                      item.phoneNumber,
+                                      style: TextStyle(fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: Text(selectedLanguage == "uz"
+                                        ? item.titleUz
+                                        : selectedLanguage == "ru"
+                                            ? item.titleRu
+                                            : item.titleEn),
+                                    trailing: IconButton(
+                                      onPressed: () => launchPhoneCall(item.phoneNumber, context),
+                                      icon: Icon(Icons.phone),
+                                    ),
+                                  ),
+                                )),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    await _launchInstagramUrl(
+                                      "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
+                                    );
+                                  },
+                                  icon: ImageIcon(
+                                    AssetImage("assets/icons/instagram.png"),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    await _launchInstagramUrl(
+                                      "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
+                                    );
+                                  },
+                                  icon: ImageIcon(
+                                    AssetImage("assets/icons/youtube.png"),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    await _launchInstagramUrl(
+                                      "https://t.me/QurulishMollariStroyBazaN1",
+                                    );
+                                  },
+                                  icon: Icon(Icons.telegram),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
                 );
-              },
-              icon: ImageIcon(
-                AssetImage("assets/icons/instagram.png"),
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                await _launchInstagramUrl(
-                  "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
-                );
-              },
-              icon: ImageIcon(
-                AssetImage("assets/icons/youtube.png"),
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                await _launchInstagramUrl(
-                  "https://t.me/QurulishMollariStroyBazaN1",
-                );
-              },
-              icon: Icon(Icons.telegram),
-            ),  
-          ],
-        ),
-      ],
-    ),
-  );
-} else {
-  return const Center(child: CircularProgressIndicator());
-}
-
-              
-       
               },
             );
           },
@@ -444,6 +424,5 @@ if (selectedBusiness == "Stroy Baza №1") {
       },
     );
   }
-
-
+  
 }

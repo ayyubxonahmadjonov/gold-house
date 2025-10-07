@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     // 3 sekunddan keyin next screen
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SelectLgScreen()),
@@ -26,10 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // splash fon rangi
+      backgroundColor: Colors.white, 
       body: Center(
+        
         child: Image.asset(
-          "assets/images/applogo.jpg", // logoni assetdan oladi
+          height: 200,
+          "assets/images/applogo.jpg", 
      
           fit: BoxFit.cover,
         ),

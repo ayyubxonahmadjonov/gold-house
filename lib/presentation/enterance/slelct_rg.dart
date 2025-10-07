@@ -153,13 +153,11 @@ void _showCityDialog() {
                   const SizedBox(width: 16),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainScreen(),
-                        ),
-                        (route) => false,
-                      );
+               Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
+
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.yellow[700],

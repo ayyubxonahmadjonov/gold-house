@@ -33,16 +33,11 @@ String phone_number = '';
             child: BlocConsumer<OtpVerificationBloc, OtpVerificationState>(
               listener: (context, state) {
             if(state is OtpVerificationSuccess){
-              Navigator.pushAndRemoveUntil(
+             Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
 
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const  MainScreen(),
-                  
-                ),
-                (route) => false,
-              
-              );
             }
             if(state is OtpVerificationError){
                 ScaffoldMessenger.of(context).showSnackBar(

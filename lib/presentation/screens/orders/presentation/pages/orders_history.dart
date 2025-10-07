@@ -18,7 +18,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    selected_lg = SharedPreferencesService.instance.getString("selected_lg") ?? "uz";
+    selected_lg = SharedPreferencesService.instance.getString("selected_lg") ?? "uz"; 
     context.read<MyOrdersBloc>().add(GetMyOrdersEvent());
   }
 
@@ -86,7 +86,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
     // Umumiy narx
     final total =
-        int.tryParse(order.totalAmount ?? "") ?? 0; // string bo‘lsa 0 qilamiz
+        int.tryParse(order.totalAmount ?? "") ?? 0; 
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

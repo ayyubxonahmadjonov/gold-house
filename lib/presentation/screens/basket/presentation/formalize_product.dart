@@ -205,12 +205,12 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                           desc: "Buyurtmangiz muvaffaqiyatli yaratildi",
                           onOkPress: () {
                             HiveBoxes.basketData.clear();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MainScreen(),
-                              ),
-                            );
+                                       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
+
+
                           },
                         );
                       });
@@ -363,12 +363,13 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             BlocConsumer<CreateOrderBloc, CreateOrderState>(
               listener: (context, state) {
                 if (state is CreateOrderSuccess) {
+                  bool isCredit = selectedPayment == "installments_payment";
                   bool isValid =
                       selectedPayment.isNotEmpty &&
                       selectedDelivery.isNotEmpty &&
-                      deliveryAddress.isNotEmpty;
+                      deliveryAddress.isNotEmpty; 
 
-                  if (!isValid) {
+                  if (!isValid && !isCredit) {
                     CustomAwesomeDialog.showInfoDialog(
                       context,
                       dialogtype: DialogType.error,
@@ -388,10 +389,10 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                       desc: "Buyurtmangiz muvaffaqiyatli yaratildi",
                       onOkPress: () {
                         HiveBoxes.basketData.clear();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const MainScreen()),
-                        );
+                     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
                       },
                     );
                   } else if (selectedPayment == "installments_payment") {
@@ -461,6 +462,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 );
               },
             ),
+          
             SizedBox(height: 10.h),
             RichText(
               textAlign: TextAlign.center,
@@ -488,7 +490,7 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 ],
               ),
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 50),
           ],
         ),
       ),

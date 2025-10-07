@@ -41,7 +41,7 @@ if (images.length == 1) {
 }
         return CarouselSlider(
   options: CarouselOptions(
-    height: MediaQuery.of(context).size.width / 2.2,
+    height: MediaQuery.of(context).size.width / 1.9,
     autoPlay: true,
     viewportFraction: 0.9, 
   ),

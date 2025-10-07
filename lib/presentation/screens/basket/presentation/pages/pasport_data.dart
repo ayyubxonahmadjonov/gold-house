@@ -200,13 +200,11 @@ class _PassportFormPageState extends State<PassportFormPage> {
                             dialogtype: DialogType.success,
                             onOkPress: () {
                              HiveBoxes.basketData.clear();
-                             Navigator.pushAndRemoveUntil(
-                               context,
-                               MaterialPageRoute(
-                                 builder: (context) => const MainScreen(),
-                               ),
-                               (route) => false,
-                             );
+                       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
+
                             },
                           );
                         } else if (state is CreateCreditError) {
@@ -217,13 +215,11 @@ class _PassportFormPageState extends State<PassportFormPage> {
                             dialogtype: DialogType.error,
                             onOkPress: () {
                               HiveBoxes.basketData.clear();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const MainScreen(),
-                                ),
-                                (route) => false,
-                              );
+                       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const MainScreen()),
+  (route) => false,
+);
+
                             },
                           );
                         }
