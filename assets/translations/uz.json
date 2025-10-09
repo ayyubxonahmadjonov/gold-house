@@ -100,7 +100,8 @@
   "order_number": "-sonli buyurtma",
   "enter_your_name": "Ismingizni kiriting",
   "register":"Ro'yhatdan o'tish",
-  "catalog":"Katalog"
+  "catalog":"Katalog",
+  "no_products_found":"Mahsulotlar topilmadi"
 
   
 

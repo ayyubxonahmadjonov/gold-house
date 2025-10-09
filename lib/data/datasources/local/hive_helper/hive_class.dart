@@ -11,7 +11,7 @@ class HiveService {
     Hive.init(dir.path);
     Hive.registerAdapter(BasketModelAdapter());
     Hive.registerAdapter(FavoriteProductModelAdapter());
-
+    
      await Hive.openBox<BasketModel>(HiveBoxNames.basketData);
      await Hive.openBox<FavoriteProductModel>(HiveBoxNames.favoriteProduct);
   }

@@ -100,7 +100,8 @@
   "order_number": "Заказ №-",
   "enter_your_name": "Введите ваше имя",
   "register":"Регистрация",
-  "catalog":"Каталог"
+  "catalog":"Каталог",
+  "no_products_found":"Товары не найдены"
 
 
 

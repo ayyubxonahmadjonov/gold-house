@@ -38,7 +38,7 @@ class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
     String price = prices[currentMonth] ?? "0";
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(10),
@@ -65,7 +65,7 @@ class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.white : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
@@ -73,7 +73,7 @@ class _MonthlyPaymentWidgetState extends State<MonthlyPaymentWidget> {
                       child: Text(
                         months[index],
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),

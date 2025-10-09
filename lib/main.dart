@@ -9,7 +9,9 @@ import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
 import 'package:gold_house/core/basket_notifier.dart';
+import 'package:gold_house/core/langugage_notifier.dart';
 import 'package:gold_house/presentation/screens/splash/splash_screen.dart';
+import 'package:hive/hive.dart';
 import '../../core/constants/app_imports.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -19,6 +21,9 @@ void main() async {
   await SharedPreferencesService.init();
   await HiveService.init();
   BasketNotifier.init();
+
+
+
 
   runApp(
     EasyLocalization(

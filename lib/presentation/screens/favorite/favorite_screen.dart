@@ -67,53 +67,62 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               ? product.nameRu
                               : product.nameEn;
 
-                      return Padding(
-                        padding: EdgeInsets.only(left: 0.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 155.h,
-                              width: 155.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.r),
-                                child: Image.network(
-                                  "https://backkk.stroybazan1.uz${product.image}",
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (ctx, child, prog) {
-                                    if (prog == null) return child;
-                                    return _buildShimmerBox(
-                                        height: 155.h, width: 155.w);
-                                  },
-                                  errorBuilder: (ctx, err, st) {
-                                    return _buildShimmerBox(
-                                        height: 155.h, width: 155.w);
-                                  },
+                      return InkWell(
+                        onTap:  () {
+                    
+                          Navigator.push(context, MaterialPageRoute(builder:(context) {
+                      return   ProductDescriptionPage(branchName: product.branch.toString(), productId: product.id.toString(), isAvailable: product.isAvailable, title: selectedLanguage == "uz" ? product.nameUz : selectedLanguage == "ru" ? product.nameRu : product.nameEn, color:product.color??[], size:product.sizes , description: selectedLanguage =="uz"?product.descriptionUz!:selectedLanguage =="ru"?product.descriptionRu!:product.descriptionEn!, price: product.price, images: product.images, variantId: product.variantId, monthlyPrice3: product.monthlyPayment3.toString(), monthlyPrice6: product.monthlyPayment6.toString(), monthlyPrice12: product.monthlyPayment12.toString(), monthlyPrice24: product.monthlyPayment24.toString());
+                            
+                          }, ));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 0.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 155.h,
+                                width: 155.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  child: Image.network(
+                                    "https://backkk.stroybazan1.uz${product.images.first}",
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (ctx, child, prog) {
+                                      if (prog == null) return child;
+                                      return _buildShimmerBox(
+                                          height: 155.h, width: 155.w);
+                                    },
+                                    errorBuilder: (ctx, err, st) {
+                                      return _buildShimmerBox(
+                                          height: 155.h, width: 155.w);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(height: 5),
+                              Text(
+                                name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "price".tr() + ": ${product.price} UZS",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                "price".tr() + ": ${product.price.first} UZS",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },

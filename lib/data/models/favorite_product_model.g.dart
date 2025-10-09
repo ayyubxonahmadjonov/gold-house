@@ -24,21 +24,24 @@ class FavoriteProductModelAdapter extends TypeAdapter<FavoriteProductModel> {
       descriptionUz: fields[4] as String?,
       descriptionRu: fields[5] as String?,
       descriptionEn: fields[6] as String?,
-      image: fields[7] as String,
-      price: fields[8] as double,
+      images: (fields[7] as List).cast<String>(),
+      price: (fields[8] as List).cast<String>(),
       isAvailable: fields[9] as bool,
       variantId: fields[10] as int,
       monthlyPayment3: fields[11] as double,
       monthlyPayment6: fields[12] as double,
       monthlyPayment12: fields[13] as double,
       monthlyPayment24: fields[14] as double,
+      sizes: (fields[15] as List).cast<String>(),
+      color: (fields[16] as List?)?.cast<String>(),
+      branch: fields[17] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FavoriteProductModel obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -54,7 +57,7 @@ class FavoriteProductModelAdapter extends TypeAdapter<FavoriteProductModel> {
       ..writeByte(6)
       ..write(obj.descriptionEn)
       ..writeByte(7)
-      ..write(obj.image)
+      ..write(obj.images)
       ..writeByte(8)
       ..write(obj.price)
       ..writeByte(9)
@@ -68,7 +71,13 @@ class FavoriteProductModelAdapter extends TypeAdapter<FavoriteProductModel> {
       ..writeByte(13)
       ..write(obj.monthlyPayment12)
       ..writeByte(14)
-      ..write(obj.monthlyPayment24);
+      ..write(obj.monthlyPayment24)
+      ..writeByte(15)
+      ..write(obj.sizes)
+      ..writeByte(16)
+      ..write(obj.color)
+      ..writeByte(17)
+      ..write(obj.branch);
   }
 
   @override

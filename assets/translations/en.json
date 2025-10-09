@@ -100,7 +100,8 @@
     "order_number": "Order ",
     "enter_your_name": "Enter your name",
     "register":"Register",
-    "catalog":"Catalog"
+    "catalog":"Catalog",
+    "no_products_found":"Products not found"
     }
     
     

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
+import 'package:gold_house/core/langugage_notifier.dart';
 import 'package:gold_house/data/models/my_order.dart';
 import 'package:gold_house/presentation/home/components/product_description_screen.dart';
 
@@ -13,62 +14,63 @@ class OrderHistoryScreen extends StatefulWidget {
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   final Map<int, bool> _visibilityMap = {};
-  String selected_lg= "";
 
   @override
   void initState() {
     super.initState();
-    selected_lg = SharedPreferencesService.instance.getString("selected_lg") ?? "uz"; 
     context.read<MyOrdersBloc>().add(GetMyOrdersEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primaryColor,
-        title: Text("my_orders".tr()),
-      ),
-      body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is MyOrdersLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is MyOrdersSuccess) {
+    return ValueListenableBuilder<String>(
+      valueListenable: LanguageNotifier.selectedLanguage,
+      builder: (context, language, child) {
+        return Scaffold(
+          backgroundColor: AppColors.white,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: AppColors.primaryColor,
+            title: Text("my_orders".tr()),
+          ),
+          body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              if (state is MyOrdersLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is MyOrdersSuccess) {
+                final orders = state.orders.where((order) {
+                  final status = order.status ?? "";
+                  return status != "pending" && status != "in_payment";
+                }).toList();
 
-              final orders = state.orders.where((order) {
-              final status = order.status ?? "";
-              return status != "pending" && status != "in_payment";
-            }).toList();
-    
-    
-            if (orders.isEmpty) {
-              return Center(child: Text("orders_not_found".tr()));
-            }
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: orders.length,
-              separatorBuilder: (_, __) => const Divider(height: 32),
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                final key = order.id ?? index;
-                final isVisible = _visibilityMap[key] ?? false;
-                return _buildOrderTile(order, isVisible, key);
-              },
-            );
-          } else if (state is MyOrdersError) {
-            return Center(
-              child: Text(
-                "orders_not_found".tr(),
-                style: const TextStyle(color: Colors.black),
-              ),
-            );
-          }
-          return const SizedBox();
-        },
-      ),
+                if (orders.isEmpty) {
+                  return Center(child: Text("orders_not_found".tr()));
+                }
+                return ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: orders.length,
+                  separatorBuilder: (_, __) => const Divider(height: 32),
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    final key = order.id ?? index;
+                    final isVisible = _visibilityMap[key] ?? false;
+                    return _buildOrderTile(order, isVisible, key);
+                  },
+                );
+              } else if (state is MyOrdersError) {
+                return Center(
+                  child: Text(
+                    "orders_not_found".tr(),
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -85,8 +87,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         (order.createdAt.isNotEmpty) ? order.createdAt.split("T").first : "-";
 
     // Umumiy narx
-    final total =
-        int.tryParse(order.totalAmount ?? "") ?? 0; 
+    final total = int.tryParse(order.totalAmount ?? "") ?? 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,7 +116,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             Text(
+            Text(
               "order_date".tr(),
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
@@ -151,10 +152,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               separatorBuilder: (_, __) => SizedBox(width: 15.w),
               itemBuilder: (context, i) {
                 final uniqueImages =
-                    order.items
-                        .map((e) => e.productVariant.image)
-                        .toSet()
-                        .toList();
+                    order.items.map((e) => e.productVariant.image).toSet().toList();
 
                 final img = uniqueImages[i];
 
@@ -167,26 +165,24 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   );
                 }
 
-return InkWell(
-    onTap: () {
-    Navigator.push(
-        context,
-       MaterialPageRoute(
-         builder: (_) => ProductDescriptionPage2(productId: order.items[i].productVariant.product.toString())
-       ),
-      );
-    },
-    child: Image.network(
-      'https://backkk.stroybazan1.uz$img',
-      height: 80.h,
-      width: 80.w,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) =>
-          const Icon(Icons.broken_image, size: 40),
-    ),
-  );
-
-                
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDescriptionPage2(
+                            productId: order.items[i].productVariant.product.toString()),
+                      ),
+                    );
+                  },
+                  child: Image.network(
+                    'https://backkk.stroybazan1.uz$img',
+                    height: 80.h,
+                    width: 80.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+                  ),
+                );
               },
             ),
           ),
@@ -215,55 +211,54 @@ return InkWell(
     );
   }
 
-String _getStatusText(String? status) {
-  if (status == null || status.isEmpty) return "-";
+  String _getStatusText(String? status) {
+    if (status == null || status.isEmpty) return "-";
 
-  switch (status) {
-    case "processing":
-      return selected_lg == "uz"
-          ? "Jarayonda"
-          : selected_lg == "ru"
-              ? "В процессе"
-              : "Processing";
+    switch (status) {
+      case "processing":
+        return LanguageNotifier.selectedLanguage.value == "uz"
+            ? "Jarayonda"
+            : LanguageNotifier.selectedLanguage.value == "ru"
+                ? "В процессе"
+                : "Processing";
 
-    case "shipped":
-      return selected_lg == "uz"
-          ? "Yuborilgan"
-          : selected_lg == "ru"
-              ? "Отправлено"
-              : "Shipped";
+      case "shipped":
+        return LanguageNotifier.selectedLanguage.value == "uz"
+            ? "Yuborilgan"
+            : LanguageNotifier.selectedLanguage.value == "ru"
+                ? "Отправлено"
+                : "Shipped";
 
-    case "delivered":
-      return selected_lg == "uz"
-          ? "Xaridorga yetkazilgan"
-          : selected_lg == "ru"
-              ? "Доставлено"
-              : "Delivered";
+      case "delivered":
+        return LanguageNotifier.selectedLanguage.value == "uz"
+            ? "Xaridorga yetkazilgan"
+            : LanguageNotifier.selectedLanguage.value == "ru"
+                ? "Доставлено"
+                : "Delivered";
 
-    case "cancelled":
-      return selected_lg == "uz"
-          ? "Bekor qilingan"
-          : selected_lg == "ru"
-              ? "Отменено"
-              : "Cancelled";
+      case "cancelled":
+        return LanguageNotifier.selectedLanguage.value == "uz"
+            ? "Bekor qilingan"
+            : LanguageNotifier.selectedLanguage.value == "ru"
+                ? "Отменено"
+                : "Cancelled";
 
-    default:
-      return status;
+      default:
+        return status;
+    }
   }
-}
 
-Color _getStatusColor(String? status) {
-  switch (status) {
-    case "processing":
-    case "shipped":
-      return Colors.orange;
-    case "delivered":
-      return Colors.green;
-    case "cancelled":
-      return AppColors.red;
-    default:
-      return Colors.grey;
+  Color _getStatusColor(String? status) {
+    switch (status) {
+      case "processing":
+      case "shipped":
+        return Colors.orange;
+      case "delivered":
+        return Colors.green;
+      case "cancelled":
+        return AppColors.red;
+      default:
+        return Colors.grey;
+    }
   }
-}
-
 }

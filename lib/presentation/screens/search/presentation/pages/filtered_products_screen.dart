@@ -1,6 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
+import 'package:gold_house/core/langugage_notifier.dart';
 import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/data/models/product_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class FilteredProductsScreen extends StatefulWidget {
   final String branchId;
@@ -12,341 +18,330 @@ class FilteredProductsScreen extends StatefulWidget {
   });
 
   @override
-  State<FilteredProductsScreen> createState() =>
-      _FilteredProductsScreenState();
+  State<FilteredProductsScreen> createState() => _FilteredProductsScreenState();
 }
 
 class _FilteredProductsScreenState extends State<FilteredProductsScreen> {
-  Set<int> favoriteProducts = {};
-
   @override
   void initState() {
     super.initState();
-    _loadFavorites();
     BlocProvider.of<GetProductsBloc>(context).add(
       GetProductsByBranchIdEvent(branchId: widget.branchId),
     );
   }
 
-  Future<void> _loadFavorites() async {
-    final favList =
-        SharedPreferencesService.instance.getStringList("favorites") ?? [];
-    setState(() {
-      favoriteProducts = favList.map((e) => int.parse(e)).toSet();
-    });
-  }
-
   Future<void> _toggleFavorite(Product product) async {
-    setState(() {
-      if (favoriteProducts.contains(product.id)) {
-        favoriteProducts.remove(product.id);
-      } else {
-        favoriteProducts.add(product.id);
-      }
-    });
-
-    await SharedPreferencesService.instance.saveStringList(
-      "favorites",
-      favoriteProducts.map((e) => e.toString()).toList(),
-    );
-
-    if (HiveBoxes.favoriteProduct.containsKey(product.id)) {
-      HiveBoxes.favoriteProduct.delete(product.id);
+    final key = product.id.toString();
+    if (HiveBoxes.favoriteProduct.containsKey(key)) {
+      await HiveBoxes.favoriteProduct.delete(key);
     } else {
-      HiveBoxes.favoriteProduct.put(
-        product.id,
-        FavoriteProductModel.fromProduct(product),
-      );
+      await HiveBoxes.favoriteProduct.put(key, FavoriteProductModel.fromProduct(product));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: BlocConsumer<GetProductsBloc, GetProductsState>(
-                listener: (context, state) {
-                  if (state is GetProductsError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  if (state is GetProductsSuccess) {
-                 
-                    final filteredProducts = state.products.where((p) {
-                      return p.category.toString() == widget.categoryId;
-                    }).toList();
+    return ValueListenableBuilder<String>(
+      valueListenable: LanguageNotifier.selectedLanguage,
+      builder: (context, language, child) {
+        return Scaffold(
+          backgroundColor: AppColors.white,
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: BlocConsumer<GetProductsBloc, GetProductsState>(
+                    listener: (context, state) {
+                      if (state is GetProductsError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message.tr())),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is GetProductsSuccess) {
+                        final filteredProducts = state.products.where((p) {
+                          return p.category.toString() == widget.categoryId;
+                        }).toList();
 
-                    if (filteredProducts.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 100.h),
-                          child: Text(
-                            "Mahsulot topilmadi",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-
-                    return Padding(
-                      padding: EdgeInsets.only(top: 50.h),
-                      child: GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 8.h,
-                        ),
-                        itemCount: filteredProducts.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.77,
-                        ),
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          final isFavorite = favoriteProducts.contains(product.id);
-
-                          return InkWell(
-                            onTap: () {
-                              if(product.isAvailable){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDescriptionPage(
-                                    branchName: product.branch.toString(),
-                                    variantId: product.variants[0].id,
-                                    productId: product.id.toString(),
-                                    isAvailable:
-                                        product.variants[0].isAvailable,
-                                    images: product.variants
-                                        .map((e) => e.image)
-                                        .toList(),
-                                    title: product.nameUz,
-                                    color: product.variants.map((e) => e.colorUz).toList(),
-                                    size: product.variants.map((e) => e.sizeUz).toList(),
-                                    description: product.descriptionUz ?? "",
-                                    price: product.variants
-                                        .map((e) => e.price.toString())
-                                        .toList(),
-                                    monthlyPrice3: product
-                                        .variants[0].monthlyPayment3
-                                        .toString(),
-                                    monthlyPrice6: product
-                                        .variants[0].monthlyPayment6
-                                        .toString(),
-                                    monthlyPrice12: product
-                                        .variants[0].monthlyPayment12
-                                        .toString(),
-                                    monthlyPrice24: product
-                                        .variants[0].monthlyPayment24
-                                        .toString(),
-                                  ),
+                        if (filteredProducts.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 100.h),
+                              child: Text(
+                                "no_products_found".tr(),
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              );
-                           }else{
-                            CustomAwesomeDialog.showInfoDialog(context,title: "Mahsulot mavjud emas",desc: "Afsuski bu mahsulot Omborda qolmadi. Tez orada biz uni olib kelamiz"); 
-                            }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Rasm
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(16.r),
-                                    ),
-                                    child: Image.network(
-                                      "https://backkk.stroybazan1.uz${product.image}",
-                                      height: 140.h,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (ctx, child, prog) {
-                                        if (prog == null) return child;
-                                        return _buildShimmerBox(
-                                          height: 140.h,
-                                          width: double.infinity,
-                                        );
-                                      },
-                                      errorBuilder: (ctx, err, st) {
-                                        return _buildShimmerBox(
-                                          height: 140.h,
-                                          width: double.infinity,
-                                        );
-                                      },
-                                    ),
-                                  ),
-
-                                  // Nomi
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                      vertical: 10.h,
-                                    ),
-                                    child: Text(
-                                      product.nameUz,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Narx va favorite
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "${product.variants[0].price} UZS",
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.yellow,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: Icon(
-                                            isFavorite
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            size: 18.w,
-                                          ),
-                                          onPressed: () =>
-                                              _toggleFavorite(product),
-                                          color: isFavorite
-                                              ? Colors.red
-                                              : AppColors.yellow,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           );
-                        },
-                      ),
-                    );
-                  } else {
-                    // Shimmer loading
-                    return Padding(
-                      padding: EdgeInsets.only(top: 50.h),
-                      child: GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 8.h,
-                        ),
-                        itemCount: 4,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.72,
-                        ),
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(top: 50.h),
+                          child: GridView.builder(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10.r),
-                                  ),
-                                  child: _buildShimmerBox(
-                                    height: 140.h,
-                                    width: double.infinity,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w,
-                                    vertical: 6.h,
-                                  ),
-                                  child: _buildShimmerBox(
-                                    height: 14.h,
-                                    width: 100.w,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w,
-                                    vertical: 8.h,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _buildShimmerBox(
-                                        height: 12.h,
-                                        width: 60.w,
+                            itemCount: filteredProducts.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.77,
+                            ),
+                            itemBuilder: (context, index) {
+                              final product = filteredProducts[index];
+                              return InkWell(
+                                onTap: () {
+                                  if (product.isAvailable) {
+                                    // Filter color and size lists to exclude null/empty values
+                                    List<String> getFilteredList(List<String?> sourceList) {
+                                      return sourceList
+                                          .where((item) => item != null && item.isNotEmpty)
+                                          .cast<String>()
+                                          .toList();
+                                    }
+
+                                    final colorList = language == "uz"
+                                        ? getFilteredList(product.variants.map((e) => e.colorUz).toList())
+                                        : language == "ru"
+                                            ? getFilteredList(product.variants.map((e) => e.colorRu).toList())
+                                            : getFilteredList(product.variants.map((e) => e.colorEn).toList());
+
+                                    final sizeList = language == "uz"
+                                        ? getFilteredList(product.variants.map((e) => e.sizeUz).toList())
+                                        : language == "ru"
+                                            ? getFilteredList(product.variants.map((e) => e.sizeRu).toList())
+                                            : getFilteredList(product.variants.map((e) => e.sizeEn).toList());
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProductDescriptionPage(
+                                          branchName: product.branch.toString(),
+                                          variantId: product.variants[0].id,
+                                          productId: product.id.toString(),
+                                          isAvailable: product.variants[0].isAvailable,
+                                          images: product.variants.map((e) => e.image).toList(),
+                                          title: language == "uz"
+                                              ? product.nameUz
+                                              : language == "ru"
+                                                  ? product.nameRu
+                                                  : product.nameEn,
+                                          color: colorList,
+                                          size: sizeList,
+                                          description: language == "uz"
+                                              ? product.descriptionUz ?? ""
+                                              : language == "ru"
+                                                  ? product.descriptionRu ?? ""
+                                                  : product.descriptionEn ?? "",
+                                          price: product.variants.map((e) => e.price.toString()).toList(),
+                                          monthlyPrice3: product.variants[0].monthlyPayment3.toString(),
+                                          monthlyPrice6: product.variants[0].monthlyPayment6.toString(),
+                                          monthlyPrice12: product.variants[0].monthlyPayment12.toString(),
+                                          monthlyPrice24: product.variants[0].monthlyPayment24.toString(),
+                                        ),
                                       ),
-                                      _buildShimmerBox(
-                                        height: 12.h,
-                                        width: 20.w,
+                                    );
+                                  } else {
+                                    CustomAwesomeDialog.showInfoDialog(
+                                      context,
+                                      title: "product_not_available".tr(),
+                                      desc: "product_not_in_stock".tr(),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Image
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16.r),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: "https://backkk.stroybazan1.uz${product.image}",
+                                          height: 140.h,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (ctx, url) => _buildShimmerBox(
+                                            height: 140.h,
+                                            width: double.infinity,
+                                          ),
+                                          errorWidget: (ctx, url, err) => _buildShimmerBox(
+                                            height: 140.h,
+                                            width: double.infinity,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Name
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w,
+                                          vertical: 10.h,
+                                        ),
+                                        child: Text(
+                                          language == "uz"
+                                              ? product.nameUz
+                                              : language == "ru"
+                                                  ? product.nameRu
+                                                  : product.nameEn,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Price and favorite
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "${"price".tr()}: ${product.variants[0].price} UZS",
+                                              style: TextStyle(
+                                                fontSize: 11.sp,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.yellow,
+                                              ),
+                                            ),
+                                            ValueListenableBuilder(
+                                              valueListenable: HiveBoxes.favoriteProduct.listenable(),
+                                              builder: (context, Box<FavoriteProductModel> box, _) {
+                                                final isFavorite = box.containsKey(product.id.toString());
+                                                return IconButton(
+                                                  icon: Icon(
+                                                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                                                    size: 18.w,
+                                                    color: isFavorite ? Colors.red : AppColors.yellow,
+                                                  ),
+                                                  onPressed: () => _toggleFavorite(product),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        // Shimmer loading
+                        return Padding(
+                          padding: EdgeInsets.only(top: 50.h),
+                          child: GridView.builder(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  }
-                },
+                            itemCount: 4,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.77,
+                            ),
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(10.r),
+                                      ),
+                                      child: _buildShimmerBox(
+                                        height: 140.h,
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 6.h,
+                                      ),
+                                      child: _buildShimmerBox(
+                                        height: 14.h,
+                                        width: 100.w,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 8.h,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _buildShimmerBox(
+                                            height: 12.h,
+                                            width: 60.w,
+                                          ),
+                                          _buildShimmerBox(
+                                            height: 12.h,
+                                            width: 20.w,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
