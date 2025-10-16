@@ -2,14 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/banners/banners_bloc.dart';
 import 'package:gold_house/bloc/bloc/create_credit_bloc.dart';
 import 'package:gold_house/bloc/bloc/get_productbyid_bloc.dart';
-import 'package:gold_house/bloc/bloc/user_agrrements_dart_bloc.dart';
+import 'package:gold_house/bloc/user_agreement/user_agrrements_dart_bloc.dart';
 import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
 import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/bloc/user_update/user_update_bloc.dart';
-import 'package:gold_house/core/basket_notifier.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/bloc/videos/videos_bloc.dart';
+import 'package:gold_house/core/utils/basket_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/presentation/screens/splash/splash_screen.dart';
 import 'package:hive/hive.dart';
 import '../../core/constants/app_imports.dart';
@@ -84,6 +85,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => UserAgrrementsDartBloc()),
             BlocProvider(create: (context) => GetPhoneNumberBloc()),
             BlocProvider(create: (context) => BusinessSelectionBloc()),
+            BlocProvider(create: (context) => VideosBloc()),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',

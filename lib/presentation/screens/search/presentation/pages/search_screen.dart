@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
 import 'package:gold_house/bloc/categories/get_categories_bloc.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/data/models/category_model.dart';
 import 'package:gold_house/presentation/screens/search/presentation/pages/filtered_products_screen.dart';
 import '../../../../../core/constants/app_imports.dart';
@@ -26,7 +26,7 @@ class SearchScreen extends StatelessWidget {
 
             if (businessState is BusinessSelectedState) {
               selectedBusiness = businessState.selectedBusiness;
-              selectedBranch = businessState.selectedIndex; // Use index from BusinessSelectionBloc
+              selectedBranch = businessState.selectedIndex; 
             }
 
 

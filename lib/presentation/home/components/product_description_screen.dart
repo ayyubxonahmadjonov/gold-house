@@ -136,7 +136,7 @@ class _ProductDescriptionPage2State extends State<ProductDescriptionPage2> {
 
                     // Availability
                     Text(
-                      product.isAvailable ? "Mavjud" : "Mavjud emas",
+                      product.isAvailable ? "available".tr() : "not_available".tr(),
                       style: TextStyle(
                         color: product.isAvailable ? Colors.green : Colors.red,
                         fontSize: 15.sp,

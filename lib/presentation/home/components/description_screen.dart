@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:gold_house/core/basket_notifier.dart';
+import 'package:gold_house/core/utils/basket_notifier.dart';
 import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 
@@ -189,7 +189,7 @@ void _toggleFavorite() {
             ),
             SizedBox(height: 12.h),
             Text(
-              widget.isAvailable ? 'Mavjud' : 'Mavjud emas',
+              widget.isAvailable ? 'available'.tr() : 'not_available'.tr(),
               style: TextStyle(
                 color: Colors.green,
                 fontSize: 15.sp,
@@ -365,7 +365,7 @@ void _toggleFavorite() {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Text(
-                      '$quantity',
+                      '$quantity'.tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,

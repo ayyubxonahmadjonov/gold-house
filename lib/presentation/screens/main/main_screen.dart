@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
-import 'package:gold_house/core/basket_notifier.dart';
+import 'package:gold_house/core/utils/basket_notifier.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 
 class MainScreen extends StatefulWidget {

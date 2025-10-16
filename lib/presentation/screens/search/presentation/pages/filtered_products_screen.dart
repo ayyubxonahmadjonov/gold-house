@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/data/models/favorite_product_model.dart';
 import 'package:gold_house/data/models/product_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';

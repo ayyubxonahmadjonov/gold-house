@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
-import 'package:gold_house/core/basket_notifier.dart';
+import 'package:gold_house/core/utils/basket_notifier.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/presentation/screens/basket/presentation/formalize_product.dart';
 import 'package:hive/hive.dart';
 
@@ -402,14 +402,14 @@ class _BasketPageState extends State<BasketPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "Jami:",
+                                      "total".tr(),
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     Text(
-                                      "Jami ${getTotalItems(filteredList, selected)} ta maxsulot",
+                                      "${getTotalItems(filteredList, selected)} ${'piece'.tr()} ${'product'.tr()}",
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,

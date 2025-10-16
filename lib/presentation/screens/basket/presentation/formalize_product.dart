@@ -30,6 +30,8 @@ class _FormalizeProductState extends State<FormalizeProduct> {
   bool useCashback = false;
   double cashback = 0;
   String selected_business = "";
+            bool _orderHandled = false;
+
   String paymentType = "";
 
   int id = 0;
@@ -362,7 +364,8 @@ class _FormalizeProductState extends State<FormalizeProduct> {
             ),
             BlocConsumer<CreateOrderBloc, CreateOrderState>(
               listener: (context, state) {
-                if (state is CreateOrderSuccess) {
+                if (state is CreateOrderSuccess && !_orderHandled) {
+                    _orderHandled = true;
                   bool isCredit = selectedPayment == "installments_payment";
                   bool isValid =
                       selectedPayment.isNotEmpty &&
@@ -422,44 +425,53 @@ class _FormalizeProductState extends State<FormalizeProduct> {
                 }
               },
               builder: (context, state) {
-                return SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<CreateOrderBloc>().add(
-                            GenerateOrderEvent(
-                              productId: productIdList,
-                              variantId: variantIdList,
-                              quantity: quantityList,
-                              deliveryAddress: deliveryAddress,
-                              paymentMethod: selectedPayment,
-                              useCashback: useCashback,
-                              branchId: selectedBranchId,
-                              part: selectedBusinessId,
-                              status: selectedPayment == "cash"
-                                  ? "processing"
-                                  : 'in_payment',
-                              delivery_method: selectedDelivery,
-                            ),
-                          );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFD8BB6C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+          
+  final isLoading = state is CreateOrderLoading;
+
+  return SizedBox(
+    width: double.infinity,
+    height: 55,
+    child: ElevatedButton(
+      onPressed: isLoading
+          ? null // bloklanadi
+          : () {
+              context.read<CreateOrderBloc>().add(
+                    GenerateOrderEvent(
+                      productId: productIdList,
+                      variantId: variantIdList,
+                      quantity: quantityList,
+                      deliveryAddress: deliveryAddress,
+                      paymentMethod: selectedPayment,
+                      useCashback: useCashback,
+                      branchId: selectedBranchId,
+                      part: selectedBusinessId,
+                      status: selectedPayment == "cash"
+                          ? "processing"
+                          : 'in_payment',
+                      delivery_method: selectedDelivery,
                     ),
-                    child: Text(
-                      "complete_purchase".tr(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
+                  );
+            },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFD8BB6C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: isLoading
+          ? const CircularProgressIndicator(color: Colors.white)
+          : Text(
+              "complete_purchase".tr(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+    ),
+  );
+
+
               },
             ),
           

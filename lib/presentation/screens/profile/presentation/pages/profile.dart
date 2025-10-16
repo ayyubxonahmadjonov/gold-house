@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/business_selection/business_selection_bloc.dart';
 import 'package:gold_house/bloc/get_phone_number_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/presentation/screens/favorite/favorite_screen.dart';
 import 'package:gold_house/presentation/screens/profile/cashback_screen.dart';
 import 'package:gold_house/presentation/screens/profile/presentation/pages/update_fullname.dart';
@@ -22,9 +22,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("URL ni ochib bo‘lmadi")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("URL ni ochib bo‘lmadi")));
       }
     } catch (e) {
       print("Error: $e");
@@ -34,16 +34,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> launchPhoneCall(String phoneNumber, BuildContext context) async {
     final Uri telUri = Uri(scheme: 'tel', path: phoneNumber.trim());
     try {
-      await launchUrl(
-        telUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(telUri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      print("Error launching phone call: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Telefon raqamni ochib bo‘lmadi: $phoneNumber'),
-        ),
+        SnackBar(content: Text('Telefon raqamni ochib bo‘lmadi: $phoneNumber')),
       );
     }
   }
@@ -58,7 +52,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     user_id = SharedPreferencesService.instance.getInt("user_id") ?? 0;
-    BlocProvider.of<GetUserDataBloc>(context).add(GetUserAllDataEvent(id: user_id.toString()));
+    BlocProvider.of<GetUserDataBloc>(
+      context,
+    ).add(GetUserAllDataEvent(id: user_id.toString()));
   }
 
   @override
@@ -101,12 +97,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               );
                             },
                             leading: const Icon(Icons.person),
-                            title: state.user.firstName.isNotEmpty
-                                ? Text("${state.user.firstName} ${state.user.lastName}")
-                                : const Text(""),
-                            subtitle: state.user.phoneNumber.isNotEmpty
-                                ? Text("${state.user.phoneNumber}")
-                                : const Text(""),
+                            title:
+                                state.user.firstName.isNotEmpty
+                                    ? Text(
+                                      "${state.user.firstName} ${state.user.lastName}",
+                                    )
+                                    : const Text(""),
+                            subtitle:
+                                state.user.phoneNumber.isNotEmpty
+                                    ? Text("${state.user.phoneNumber}")
+                                    : const Text(""),
                           );
                         } else {
                           return CustomButton(
@@ -183,7 +183,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         BlocConsumer<GetCitiesBloc, GetCitiesState>(
                           listener: (context, state) {
                             if (state is GetCitiesSuccess) {
-                              selectedCity = SharedPreferencesService.instance.getString("selected_city") ?? "Andijon";
+                              selectedCity =
+                                  SharedPreferencesService.instance.getString(
+                                    "selected_city",
+                                  ) ??
+                                  "Andijon";
                               showDialog(
                                 context: context,
                                 builder: (context) {
@@ -197,7 +201,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           builder: (context, state) {
                             return _buildCategories("select_city".tr(), () {
-                              BlocProvider.of<GetCitiesBloc>(context).add(GetAllCitiesEvent());
+                              BlocProvider.of<GetCitiesBloc>(
+                                context,
+                              ).add(GetAllCitiesEvent());
                             }, Icons.location_city);
                           },
                         ),
@@ -205,14 +211,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _buildCategories("select_language".tr(), () {
                           showModalBottomSheet(
                             context: context,
-                            backgroundColor: Theme.of(context).colorScheme.surface,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.surface,
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
                             ),
                             builder: (context) {
                               final currentLocale = context.locale.languageCode;
                               return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                  horizontal: 16,
+                                ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -227,9 +239,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     const SizedBox(height: 16),
                                     Text(
                                       "select_language".tr(),
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 12),
                                     _buildLanguageTile(
@@ -274,7 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         SizedBox(height: 15.h),
                         _buildCategories("support".tr(), () {
-                          context.read<GetPhoneNumberBloc>().add(GetPAllhoneNumbersEvent());
+                          context.read<GetPhoneNumberBloc>().add(
+                            GetPAllhoneNumbersEvent(),
+                          );
                           showProfileBottombSheet(context);
                         }, Icons.info),
                         SizedBox(height: 15.h),
@@ -288,8 +304,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onOkPress: () {
                                 SharedPreferencesService.instance.clear();
                                 HiveBoxes.basketData.clear();
-                                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                                  MaterialPageRoute(builder: (context) => const MainScreen()),
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (context) => const MainScreen(),
+                                  ),
                                   (route) => false,
                                 );
                               },
@@ -297,10 +318,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                           child: ListTile(
-                            leading: const Icon(Icons.exit_to_app, color: Colors.red),
+                            leading: const Icon(
+                              Icons.exit_to_app,
+                              color: Colors.red,
+                            ),
                             title: Text(
                               'logout'.tr(),
-                              style: TextStyle(color: Colors.red, fontSize: 20.sp),
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20.sp,
+                              ),
                             ),
                             trailing: Icon(
                               Icons.chevron_right,
@@ -319,10 +346,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       },
-      );
-    
+    );
   }
-/////////////////
+
+  /////////////////
   Widget _buildCategories(String title, VoidCallback? onTap, IconData icon) {
     return InkWell(
       onTap: onTap,
@@ -349,7 +376,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (_, scrollController) {
             return BlocBuilder<GetPhoneNumberBloc, GetPhoneNumberState>(
               builder: (context, phoneState) {
-                return BlocBuilder<BusinessSelectionBloc, BusinessSelectionState>(
+                return BlocBuilder<
+                  BusinessSelectionBloc,
+                  BusinessSelectionState
+                >(
                   builder: (context, businessState) {
                     int selectedIndex = 0;
 
@@ -360,17 +390,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
 
                     if (phoneState is GetPhoneNumberError) {
-                      return Center(
-                        child: Text(phoneState.error),
-                      );
+                      return Center(child: Text(phoneState.error));
                     }
                     if (phoneState is GetPhoneNumberSuccess) {
-                      final filteredList = phoneState.response.where((e) => e.branch == selectedIndex).toList();
+                      final filteredList =
+                          phoneState.response
+                              .where((e) => e.branch == selectedIndex)
+                              .toList();
 
                       return Container(
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
                         ),
                         padding: const EdgeInsets.all(16),
                         child: ListView(
@@ -407,27 +440,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            ...filteredList.map((item) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: ListTile(
-                                    onTap: () => launchPhoneCall(item.phoneNumber, context),
-                                    title: Text(
-                                      item.phoneNumber,
-                                      style: const TextStyle(fontWeight: FontWeight.w600),
-                                    ),
-                                    subtitle: Text(
-                                      LanguageNotifier.selectedLanguage.value == "uz"
-                                          ? item.titleUz
-                                          : LanguageNotifier.selectedLanguage.value == "ru"
-                                              ? item.titleRu
-                                              : item.titleEn,
-                                    ),
-                                    trailing: IconButton(
-                                      onPressed: () => launchPhoneCall(item.phoneNumber, context),
-                                      icon: const Icon(Icons.phone),
+                            ...filteredList.map(
+                              (item) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: ListTile(
+                                  onTap:
+                                      () => launchPhoneCall(
+                                        item.phoneNumber,
+                                        context,
+                                      ),
+                                  title: Text(
+                                    item.phoneNumber,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                )),
+                                  subtitle: Text(
+                                    LanguageNotifier.selectedLanguage.value ==
+                                            "uz"
+                                        ? item.titleUz
+                                        : LanguageNotifier
+                                                .selectedLanguage
+                                                .value ==
+                                            "ru"
+                                        ? item.titleRu
+                                        : item.titleEn,
+                                  ),
+                                  trailing: IconButton(
+                                    onPressed:
+                                        () => launchPhoneCall(
+                                          item.phoneNumber,
+                                          context,
+                                        ),
+                                    icon: const Icon(Icons.phone),
+                                  ),
+                                ),
+                              ),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -437,8 +486,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       "https://www.instagram.com/stroy_baza_n1?igsh=N2Jnd2lsZGhsZGtq",
                                     );
                                   },
-                                  icon: const ImageIcon(
-                                    AssetImage("assets/icons/instagram.png"),
+                                  icon: Image.asset(
+                                    "assets/icons/instagram.png",
+                                    width: 30,
+                                    height: 30,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.error,
+                                              color: Colors.red,
+                                              size: 30,
+                                            ),
                                   ),
                                 ),
                                 IconButton(
@@ -447,8 +505,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       "https://youtube.com/@stroy_baza_n1?si=G4tMkWyveG_eiAI_",
                                     );
                                   },
-                                  icon: const ImageIcon(
-                                    AssetImage("assets/icons/youtube.png"),
+                                  icon: Image.asset(
+                                    "assets/icons/youtube.png",
+                                    width: 30,
+                                    height: 30,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.error,
+                                              color: Colors.red,
+                                              size: 30,
+                                            ),
                                   ),
                                 ),
                                 IconButton(
@@ -457,7 +524,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       "https://t.me/QurulishMollariStroyBazaN1",
                                     );
                                   },
-                                  icon: const Icon(Icons.telegram),
+                                  icon: Image.asset(
+                                    "assets/icons/telegram.png",
+                                    width: 30,
+                                    height: 30,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.error,
+                                              color: Colors.red,
+                                              size: 30,
+                                            ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -496,14 +574,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title,
           style: TextStyle(
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).textTheme.bodyLarge?.color,
+            color:
+                isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
-        trailing: isSelected
-            ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
-            : null,
+        trailing:
+            isSelected
+                ? Icon(
+                  Icons.check_circle,
+                  color: Theme.of(context).colorScheme.primary,
+                )
+                : null,
         onTap: () {
           LanguageNotifier.updateLanguage(langCode);
           context.setLocale(Locale(langCode));

@@ -101,7 +101,13 @@
   "enter_your_name": "Ismingizni kiriting",
   "register":"Ro'yhatdan o'tish",
   "catalog":"Katalog",
-  "no_products_found":"Mahsulotlar topilmadi"
+  "no_products_found":"Mahsulotlar topilmadi",
+  "product":"Mahsulot",
+  "final_price":"Yakuniy narx",
+  "quantity":"Soni",
+  "available":"Mavjud",
+  "not_available":"Mavjud Emas"
+
 
   
 

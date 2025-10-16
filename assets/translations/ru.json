@@ -101,7 +101,12 @@
   "enter_your_name": "Введите ваше имя",
   "register":"Регистрация",
   "catalog":"Каталог",
-  "no_products_found":"Товары не найдены"
+  "no_products_found":"Товары не найдены",
+  "product":"Продукт",
+  "final_price":"Итоговая сумма",
+  "quantity":"Количество" ,
+  "available":"Доступно",
+  "not_available":"Недоступно"
 
 
 

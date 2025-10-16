@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gold_house/bloc/my_orders/my_orders_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
-import 'package:gold_house/core/langugage_notifier.dart';
+import 'package:gold_house/core/utils/langugage_notifier.dart';
 import 'package:gold_house/data/models/my_order.dart';
 import 'package:gold_house/presentation/home/components/product_description_screen.dart';
 
@@ -33,7 +33,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             backgroundColor: AppColors.primaryColor,
             title: Text("my_orders".tr()),
           ),
-          body: BlocConsumer<MyOrdersBloc, MyOrdersState>(
+          body: RefreshIndicator(child: 
+          BlocConsumer<MyOrdersBloc, MyOrdersState>(
             listener: (context, state) {},
             builder: (context, state) {
               if (state is MyOrdersLoading) {
@@ -69,6 +70,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               return const SizedBox();
             },
           ),
+       
+          
+           onRefresh: ()async{
+    context.read<MyOrdersBloc>().add(GetMyOrdersEvent());
+
+
+           })
         );
       },
     );

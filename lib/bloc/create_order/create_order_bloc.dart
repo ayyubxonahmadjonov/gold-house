@@ -10,7 +10,7 @@ class CreateOrderBloc extends Bloc<CreateOrderEvent, CreateOrderState> {
     on<GenerateOrderEvent>(_createOrder);
   }
   Future<void> _createOrder(GenerateOrderEvent event, Emitter<CreateOrderState> emit) async {
-    emit(CreateOrderLoading());
+    emit(CreateOrderLoading());    
     final result = await ApiService.createOrder(event.productId, event.variantId, event.quantity, event.deliveryAddress, event.paymentMethod, event.useCashback, event.branchId, event.part, event.status, event.delivery_method);
     if (result.isSuccess) {
     

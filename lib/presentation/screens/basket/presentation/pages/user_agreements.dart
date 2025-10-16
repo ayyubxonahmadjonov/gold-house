@@ -1,5 +1,5 @@
 
-import 'package:gold_house/bloc/bloc/user_agrrements_dart_bloc.dart';
+import 'package:gold_house/bloc/user_agreement/user_agrrements_dart_bloc.dart';
 import 'package:gold_house/core/constants/app_imports.dart';
 
 class UserAgreements extends StatefulWidget {

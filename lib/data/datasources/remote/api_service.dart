@@ -5,47 +5,51 @@ import 'package:gold_house/data/models/http_result.dart';
 import 'package:gold_house/main.dart';
 import 'package:http/http.dart' as http;
 
-
-
 class ApiService {
   ApiService._();
   static const String _baseUrl = "https://backkk.stroybazan1.uz/";
 
   static Map<String, String> _header() {
-     final token = SharedPreferencesService.instance.getString("access");
-   if(token != null){
-      return {"Content-Type": "application/json", "Authorization": "Bearer $token"};
-  
-  }else{
-    return {"Content-Type": "application/json"};
-  }
+    final token = SharedPreferencesService.instance.getString("access");
+    if (token != null) {
+      return {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      };
+    } else {
+      return {"Content-Type": "application/json"};
+    }
   }
 
-
-  
   //=====LOGIN=====
-  static Future<HttpResult> login(String phone_number, ) async {
-    var body = {"phone_number": phone_number,};
+  static Future<HttpResult> login(String phone_number) async {
+    var body = {"phone_number": phone_number};
 
     return await _post("api/api/login/phone/", body: body);
   }
-  static Future<HttpResult> loginVerify(String phone_number,  String verification_code) async {
-    var body = {"phone_number": phone_number, "verification_code": verification_code};
 
-    return await _post("api/api/login/phone/verify/", body: body);
-  }
-  static Future<HttpResult> registr(
+  static Future<HttpResult> loginVerify(
     String phone_number,
+    String verification_code,
   ) async {
     var body = {
       "phone_number": phone_number,
+      "verification_code": verification_code,
     };
+
+    return await _post("api/api/login/phone/verify/", body: body);
+  }
+
+  static Future<HttpResult> registr(String phone_number) async {
+    var body = {"phone_number": phone_number};
 
     return await _post("api/api/register/", body: body);
   }
+
   static Future<HttpResult> getAllCities() async {
     return await _get("api/api/cities/");
   }
+
   static Future<HttpResult> verify_otp(
     String phone_number,
     String otp_code,
@@ -59,40 +63,60 @@ class ApiService {
 
     return await _post("api/api/verify-otp/", body: body);
   }
-static Future<HttpResult> getProductsbyBranchId(String branch_id) async {
-    return await _get("api/api/products/?branch=$branch_id",);
+
+  static Future<HttpResult> getProductsbyBranchId(String branch_id) async {
+    return await _get("api/api/products/?branch=$branch_id");
   }
-static Future<HttpResult> getProductbyId(String product_id) async {
-    return await _get("api/api/products/$product_id/",);
+
+  static Future<HttpResult> getProductbyId(String product_id) async {
+    return await _get("api/api/products/$product_id/");
   }
-static Future<HttpResult> getCategories() async {
+
+  static Future<HttpResult> getCategories() async {
     return await _get("api/api/categories/");
   }
-static Future<HttpResult> getBanners() async {
+
+  static Future<HttpResult> getBanners() async {
     return await _get("api/api/banners/");
   }
-static Future<HttpResult> getRegions (){
-return _get("api/api/regions/");
-}
-static Future<HttpResult> createCreditforUser(String phone_number,String passportId,String birth_date,String pinfl){
-return _post("pay/api/goldhouse/create/", body: {
-  "pinfl": pinfl,
-  "birth_date": birth_date,
-  "pass_data": passportId,
-  "phone": phone_number,
-});
-}
-static Future<HttpResult> getUserAgreements() {
-return _get("api/api/user-agreements/");
-}
-  static Future<HttpResult> getBranches (){
-return _get("api/branches/");
-}
-  static Future<HttpResult> getUserData(String id) async {
-    return  _get("api/api/users/$id/");  
+
+  static Future<HttpResult> getRegions() {
+    return _get("api/api/regions/");
   }
+
+  static Future<HttpResult> createCreditforUser(
+    String phone_number,
+    String passportId,
+    String birth_date,
+    String pinfl,
+  ) {
+    return _post(
+      "pay/api/goldhouse/create/",
+      body: {
+        "pinfl": pinfl,
+        "birth_date": birth_date,
+        "pass_data": passportId,
+        "phone": phone_number,
+      },
+    );
+  }
+
+  static Future<HttpResult> getUserAgreements() {
+    return _get("api/api/user-agreements/");
+  }
+
+  static Future<HttpResult> getBranches() {
+    return _get("api/branches/");
+  }
+
+  static Future<HttpResult> getUserData(String id) async {
+    return _get("api/api/users/$id/");
+  }
+
   static Future<bool> refreshAccessToken() async {
-     dynamic refreshToken = await SharedPreferencesService.instance.getString("refresh");
+    dynamic refreshToken = await SharedPreferencesService.instance.getString(
+      "refresh",
+    );
     Uri url = Uri.parse('$_baseUrl/api/api/token/refresh/');
     try {
       var response = await http
@@ -104,9 +128,7 @@ return _get("api/branches/");
         final newAccess = decoded["access"];
         SharedPreferencesService.instance.saveString("access", newAccess);
         return true;
-
       } else {
-
         await SharedPreferencesService.instance.remove("access");
         await SharedPreferencesService.instance.remove("refresh");
         navigatorKey.currentState?.pushAndRemoveUntil(
@@ -123,102 +145,105 @@ return _get("api/branches/");
       // await SharedPreferencesHelper().remove("user");
 
       /// SplashScreen ga redirect qilamiz
-   
 
       return false;
     }
   }
-static Future<HttpResult> getMyOrders(
 
-  ) async {
-  final result = await _get("api/api/orders/my/",);
-  if(result.isSuccess){
+  static Future<HttpResult> getMyOrders() async {
+    final result = await _get("api/api/orders/my/");
+    if (result.isSuccess) {
+      return result;
+    }
     return result;
   }
-  return result;
-  }
- static Future<HttpResult> getPhoneNumber() async {
-return _get("api/supports/");
-}
- static Future<HttpResult> createOrder(
-  List<int> productId,
-  List<int> variantId,
-  List<int> quantity,
-  String deliveryAddress,
-  String paymentMethod,
-  bool useCashback,
-  int? branchId,
-  int part,
-  String status,
-  String deliveryMethod,
-) async {
-  
-  List<Map<String, dynamic>> cartItems = [];
-  for (int i = 0; i < productId.length; i++) {
-    cartItems.add({
-      "product_id": productId[i],
-      "variant_id": variantId[i],
-      "quantity": quantity[i],
-    });
+
+  static Future<HttpResult> getPhoneNumber() async {
+    return _get("api/supports/");
   }
 
-  return await _post("api/api/order/create/", body: {
-    "cart_items": cartItems,
-    "delivery_address": deliveryAddress,
-    "payment_method": paymentMethod,
-    "use_cashback": useCashback,
-    if(branchId != null) "branch_id": branchId,
-    "part": part,
-    "status": status,
-    "delivery_method": deliveryMethod,
-  });
+  static Future<HttpResult> createOrder(
+    List<int> productId,
+    List<int> variantId,
+    List<int> quantity,
+    String deliveryAddress,
+    String paymentMethod,
+    bool useCashback,
+    int? branchId,
+    int part,
+    String status,
+    String deliveryMethod,
+  ) async {
+    List<Map<String, dynamic>> cartItems = [];
+    for (int i = 0; i < productId.length; i++) {
+      cartItems.add({
+        "product_id": productId[i],
+        "variant_id": variantId[i],
+        "quantity": quantity[i],
+      });
+    }
+
+    return await _post(
+      "api/api/order/create/",
+      body: {
+        "cart_items": cartItems,
+        "delivery_address": deliveryAddress,
+        "payment_method": paymentMethod,
+        "use_cashback": useCashback,
+        if (branchId != null) "branch_id": branchId,
+        "part": part,
+        "status": status,
+        "delivery_method": deliveryMethod,
+      },
+    );
+  }
+
+  static Future<http.Response> updatePayment(
+    int orderId,
+    String paymentMethod,
+  ) async {
+    final url = Uri.parse("${_baseUrl}pay/api/orders/$orderId/payment/");
+
+    final response = await http.put(
+      url,
+      headers: _header(),
+      body: jsonEncode({"payment_method": paymentMethod}),
+    );
+
+    return response;
+  }
+
+  static Future<http.Response> updateUser(
+    String firstname,
+    String lastname,
+    String userid,
+  ) async {
+    final url = Uri.parse("${_baseUrl}api/api/users/$userid/update/");
+
+    final response = await http.put(
+      url,
+      headers: _header(),
+      body: jsonEncode({"first_name": firstname, "last_name": lastname}),
+    );
+
+    return response;
+  }
+static Future<HttpResult> getVideos() async {
+  return _get("api/api/videos/");
 }
-static Future<http.Response> updatePayment(int orderId, String paymentMethod) async {
-  final url = Uri.parse("${_baseUrl}pay/api/orders/$orderId/payment/");
 
-
-  final response = await http.put(
-    url,
-  headers: _header(),
-    body: jsonEncode({"payment_method": paymentMethod}),
-  );
-
-  return response;
-}
-static Future<http.Response> updateUser(String firstname, String lastname, String userid) async {
-  final url = Uri.parse("${_baseUrl}api/api/users/$userid/update/");
-
-
-  final response = await http.put(
-    url,
-  headers: _header(),
-    body: jsonEncode({
-  "first_name": firstname,
-  "last_name": lastname
-}),
-  );
-
-  return response;
-}
-  static Future<HttpResult> _post(
-    String path, {
-    Object? body,
-
-  }) async {
+///////////////////////////////////////////////////////////
+  static Future<HttpResult> _post(String path, {Object? body}) async {
     Uri url = Uri.parse('$_baseUrl$path');
     try {
       http.Response response = await http
-          .post(
-            url,
-            body: jsonEncode(body),
-            headers:  _header(),
-          )
+          .post(url, body: jsonEncode(body), headers: _header())
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 401) {
         final isRefreshed = await refreshAccessToken();
         if (isRefreshed) {
-          return await _post(path, body: body,);
+          return await _post(path, body: body);
         }
       }
 
@@ -307,7 +332,6 @@ static Future<http.Response> updateUser(String firstname, String lastname, Strin
       );
     }
   }
-
 }
 
 class AppStrings2 {

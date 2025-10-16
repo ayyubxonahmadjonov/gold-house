@@ -101,7 +101,13 @@
     "enter_your_name": "Enter your name",
     "register":"Register",
     "catalog":"Catalog",
-    "no_products_found":"Products not found"
+    "no_products_found":"Products not found",
+    "product":"Product",
+  "final_price":"Final price",
+  "quantity":"Quantity",
+  "available":"Available",
+  "not_available":"Not available"
+
     }
     
     
